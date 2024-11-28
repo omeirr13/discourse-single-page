@@ -1,35 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Post from "./Post";
 import Sidebar from "./Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../redux/features/categoriesSlice";
+import Select from "react-select";
+import { createPost, deletePost } from "../redux/features/postsSlice";
 
 const ForumPage = () => {
-    const [posts, setPosts] = useState([
-        {
-            id: 1,
-            username: "أسم المستخدم",
-            time: "3 أيام",
-            content: "السلام عليكم، أرغب في معرفة طرق تحسين أداء الموقع لدي.",
-            replies: 4,
-        },
-        {
-            id: 2,
-            username: "أسم المستخدم",
-            time: "1 أسبوع",
-            content: "هل يوجد إمكانية لإضافة خاصية لتحميل الملفات بشكل أسرع؟",
-            replies: 2,
-        },
-    ]);
-
     const [formVisible, setFormVisible] = useState(false);
     const [newPost, setNewPost] = useState({
         title: "",
         category: "",
-        subject: "",
-        content: "",
-        selectedOption: "",
+        raw: "",
     });
+
+    const dispatch = useDispatch();
+    const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
+    const { posts, status: postsStatus, error: postsError } = useSelector((state) => state.posts);
+
+    useEffect(() => {
+        dispatch(fetchCategories());
+    }, [dispatch]);
+
+    const handleSelectChange = (selectedOption) => {
+        setNewPost({ ...newPost, category: selectedOption });
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -38,29 +35,29 @@ const ForumPage = () => {
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        setPosts([
-            ...posts,
-            {
-                ...newPost,
-                id: posts.length + 1,
-                username: "أسم المستخدم",
-                time: "الآن",
-                replies: 0,
-            },
-        ]);
-        setNewPost({ title: "", category: "", subject: "", content: "", selectedOption: "" });
+        // setPosts([
+        //     ...posts,
+        //     {
+        //         ...newPost,
+        //         id: posts.length + 1,
+        //         username: "أسم المستخدم",
+        //         time: "الآن",
+        //         replies: 0,
+        //     },
+        // ]);
+        dispatch(createPost(newPost));
+        setNewPost({ title: "", category: "", raw: "" });
         setFormVisible(false);
     };
 
     const handleClose = () => {
-        setNewPost({ title: "", category: "", subject: "", content: "", selectedOption: "" });
+        setNewPost({ title: "", category: "",raw: "" });
         setFormVisible(false);
     };
 
-    const handleDelete = (postId) => {
-        setPosts(posts.filter((post) => post.id !== postId));
-    };
-
+    if (categoriesStatus === "loading" || postsStatus == "loading") {
+        return <p>Loading...</p>;
+    }
     return (
         <div className="flex space-x-8 justify-center">
             {formVisible && (
@@ -69,10 +66,7 @@ const ForumPage = () => {
                         <div className="rounded-lg p-4 mb-6">
                             <form onSubmit={handleFormSubmit}>
                                 <div className="mb-4">
-                                    <label
-                                        htmlFor="title"
-                                        className="block text-right font-semibold text-gray-800"
-                                    >
+                                    <label htmlFor="title" className="block text-right font-semibold text-gray-800">
                                         اكتب العنوان
                                     </label>
                                     <input
@@ -87,60 +81,38 @@ const ForumPage = () => {
                                 </div>
 
                                 <div className="mb-4">
-                                    <div className="flex space-x-4 gap-3 items-center bg-white w-[43vw] h-[54px] p-2 border border-gray-300 rounded-lg">
-                                        <label>
-                                            <input
-                                                type="radio"
-                                                name="selectedOption"
-                                                value="option1"
-                                                checked={newPost.selectedOption === "option1"}
-                                                onChange={handleInputChange}
-                                                className="ml-2"
-                                            />
-                                            الاقسام
-                                        </label>
-                                        <label>
-                                            <input
-                                                type="radio"
-                                                name="selectedOption"
-                                                value="option2"
-                                                checked={newPost.selectedOption === "option2"}
-                                                onChange={handleInputChange}
-                                                className="ml-2"
-                                            />
-                                            الموضوع
-                                        </label>
-                                    </div>
+                                    <label htmlFor="selectedOptions" className="block text-right font-semibold text-gray-800">
+                                        اختر الأقسام أو الموضوع:
+                                    </label>
+                                    <Select
+                                        // isMulti
+                                        name="selectedOptions"
+                                        options={categories}
+                                        value={newPost.selectedOptions}
+                                        onChange={handleSelectChange}
+                                        className="mt-2 w-[43vw]"
+                                        placeholder="اختر الأقسام أو الموضوع"
+                                    />
                                 </div>
 
-
                                 <div className="mb-4">
-                                    <label
-                                        htmlFor="content"
-                                        className="block text-right font-semibold text-gray-800"
-                                    >
+                                    <label htmlFor="content" className="block text-right font-semibold text-gray-800">
                                         اكتب موضوعك هنا:
                                     </label>
                                     <ReactQuill
-                                        value={newPost.content}
-                                        onChange={(content) => setNewPost({ ...newPost, content })}
-                                        className="p-2 rounded-lg ml-2"
+                                        value={newPost.raw}
+                                        onChange={(raw) => setNewPost({ ...newPost, raw })}
+                                        className="p-2 rounded-lg"
                                         theme="snow"
                                         dir="rtl"
                                     />
                                 </div>
+
                                 <div className="flex space-x-4 mt-4">
-                                    <button
-                                        type="submit"
-                                        className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white"
-                                    >
+                                    <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
                                         نشر
                                     </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleClose}
-                                        className="px-4 py-2 rounded bg-gray-200 text-black"
-                                    >
+                                    <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
                                         إلغاء
                                     </button>
                                 </div>
@@ -162,7 +134,7 @@ const ForumPage = () => {
                             key={post.id}
                             post={post}
                             index={index}
-                            handleDelete={handleDelete}
+                            handleDelete={() => { dispatch(deletePost(post.id)) }}
                         />
                     ))}
                 </div>

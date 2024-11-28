@@ -11,7 +11,7 @@ const Post = ({ post, index, handleDelete }) => {
                     <p className="text-sm text-gray-500 text-right">{post.time}</p>
                 </div>
                 <div
-                    onClick={() => handleDelete(post.id)}
+                    onClick={handleDelete}
                     className="text-gray-500 hover:text-red-600 focus:outline-none mt-1 mr-2 cursor-pointer"
                     aria-label="Delete"
                 >
