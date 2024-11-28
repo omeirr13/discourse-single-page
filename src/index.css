@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 body {
+  background-color: #F8F8F8;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -16,3 +17,31 @@ code {
     monospace;
 }
 
+
+
+.btn{
+  background-color: #BAF3E6 !important;
+  color: #004D5A !important;
+}
+
+.ql-editor {
+  direction: rtl !important;  
+  text-align: right !important;
+}
+.ql-picker-label{
+  text-align: left;
+}
+
+.ql-toolbar{
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  width: 43vw;
+  background-color: #FAFAFA;
+}
+
+.ql-container{
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  width: 43vw;
+  height: 290px !important;
+}
