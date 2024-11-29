@@ -41,7 +41,7 @@ const postsSlice = createSlice({
             state.posts = state.posts.filter((post) => post.topic_id !== action.payload);
         },
         addPost: (state, action) => {
-            state.posts.push(action.payload);  
+            state.posts.unshift(action.payload);  
         },
     },
 });
