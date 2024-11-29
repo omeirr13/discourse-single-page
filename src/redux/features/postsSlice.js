@@ -5,21 +5,21 @@ const postsSlice = createSlice({
     name: 'posts',
     initialState: {
         posts: [
-            {
-            id: 1,
-            name: "Site Feedback 1",
-            username: "Site Feedback 1",
-            category_id: 1,
-            created_at: "2024-11-27T09:54:42.914Z",
-            cooked: "hello"
-        },
-        {
-            id: 2,
-            name: "Site Feedback 2",
-            username: "Site Feedback 2",
-            category_id: 2,
-            created_at:"2023-02-30T09:54:42.914Z"
-        },
+        //     {
+        //     id: 1,
+        //     name: "Site Feedback 1",
+        //     username: "Site Feedback 1",
+        //     category_id: 1,
+        //     created_at: "2024-11-27T09:54:42.914Z",
+        //     cooked: "hello"
+        // },
+        // {
+        //     id: 2,
+        //     name: "Site Feedback 2",
+        //     username: "Site Feedback 2",
+        //     category_id: 2,
+        //     created_at:"2023-02-30T09:54:42.914Z"
+        // },
         ],
         status: 'idle',
         error: null,
@@ -37,7 +37,8 @@ const postsSlice = createSlice({
             state.error = action.payload;
         },
         removePost: (state, action) => {
-            state.posts = state.posts.filter((post) => post.id !== action.payload);
+            console.log("payload: ",action.payload);
+            state.posts = state.posts.filter((post) => post.topic_id !== action.payload);
         },
         addPost: (state, action) => {
             state.posts.push(action.payload);  
@@ -45,7 +46,7 @@ const postsSlice = createSlice({
     },
 });
 
-export const { setLoading, setPosts, setError, removePost } = postsSlice.actions;
+export const { setLoading, setPosts, setError, removePost, addPost } = postsSlice.actions;
 
 export const fetchPosts = () => async (dispatch) => {
     try {
@@ -92,7 +93,13 @@ export const createPost = (post) => async(dispatch) => {
             category: post.category.id
         };
 
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/posts.json`, body);
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/posts.json`, body,{
+            headers: {
+                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+                'Content-Type': 'application/json'
+            }
+        });
 
         dispatch(addPost(response.data)); 
     }
