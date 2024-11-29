@@ -35,11 +35,13 @@ code {
 .ql-toolbar{
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+  margin-right:-7px !important;
   width: 43vw;
   background-color: #FAFAFA;
 }
 
 .ql-container{
+  margin-right:-7px !important;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   width: 43vw;

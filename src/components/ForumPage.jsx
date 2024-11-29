@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Post from "./Post";
 import Sidebar from "./Sidebar";
 import ReactQuill from "react-quill";
@@ -56,6 +56,23 @@ const ForumPage = () => {
         setFormVisible(false);
     };
 
+    
+    const modalRef = useRef(null); 
+    
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                handleClose();
+            }
+        };
+        
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [handleClose]);
+    
     if (categoriesStatus === "loading" || postsStatus == "loading") {
         return <p>Loading...</p>;
     }
@@ -63,7 +80,7 @@ const ForumPage = () => {
         <div className="flex space-x-8 justify-center">
             {formVisible && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-20">
-                    <div className="w-1/2 p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl">
+                    <div className="w-1/2 p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl" ref={modalRef}>
                         <div className="rounded-lg p-4 mb-6">
                             <form onSubmit={handleFormSubmit}>
                                 <div className="mb-4">

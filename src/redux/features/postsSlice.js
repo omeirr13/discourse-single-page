@@ -5,18 +5,21 @@ const postsSlice = createSlice({
     name: 'posts',
     initialState: {
         posts: [
-        //     {
-        //     id: 1,
-        //     name: "Site Feedback 1",
-        //     username: "Site Feedback 1",
-        //     category_id: 1,
-        // },
-        // {
-        //     id: 2,
-        //     name: "Site Feedback 2",
-        //     username: "Site Feedback 2",
-        //     category_id: 2,
-        // },
+            {
+            id: 1,
+            name: "Site Feedback 1",
+            username: "Site Feedback 1",
+            category_id: 1,
+            created_at: "2024-11-27T09:54:42.914Z",
+            cooked: "hello"
+        },
+        {
+            id: 2,
+            name: "Site Feedback 2",
+            username: "Site Feedback 2",
+            category_id: 2,
+            created_at:"2023-02-30T09:54:42.914Z"
+        },
         ],
         status: 'idle',
         error: null,
@@ -35,6 +38,9 @@ const postsSlice = createSlice({
         },
         removePost: (state, action) => {
             state.posts = state.posts.filter((post) => post.id !== action.payload);
+        },
+        addPost: (state, action) => {
+            state.posts.push(action.payload);  
         },
     },
 });
@@ -69,13 +75,14 @@ export const createPost = (post) => async(dispatch) => {
             dispatch(setError("Incomplete information"));
             return;
         }
-        console.log(post);
         const body = {
             ...post,
             category: post.category.id
-        }
-        console.log(body);
-        await axios.post(`${process.env.REACT_APP_API_URL}/posts.json`, body);
+        };
+
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/posts.json`, body);
+
+        dispatch(addPost(response.data)); 
     }
     catch(err){
         dispatch(setError(err.message));
