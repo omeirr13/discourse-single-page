@@ -50,7 +50,13 @@ export const { setLoading, setPosts, setError, removePost } = postsSlice.actions
 export const fetchPosts = () => async (dispatch) => {
     try {
         dispatch(setLoading());
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/posts.json`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/posts.json`,{
+            headers: {
+                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+                'Content-Type': 'application/json'
+            }
+        });
         console.log("response: ", response);
         const posts = response.data.latest_posts;
         console.log("posts coming...", posts);
@@ -60,9 +66,15 @@ export const fetchPosts = () => async (dispatch) => {
     }
 };
 
-export const deletePost = (id) => async (dispatch) => {
+export const deleteTopic = (id) => async (dispatch) => {
     try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/t/${id}.json`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/t/${id}.json` ,{
+            headers: {
+                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+                'Content-Type': 'application/json'
+            }
+        });
         dispatch(removePost(id));
     } catch (err) {
         dispatch(setError(err.message));

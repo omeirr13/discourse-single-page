@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
-import { createPost, deletePost, fetchPosts } from "../redux/features/postsSlice";
+import { createPost, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
 
 const ForumPage = () => {
     const [formVisible, setFormVisible] = useState(false);
@@ -152,7 +152,7 @@ const ForumPage = () => {
                             key={post.id}
                             post={post}
                             index={index}
-                            handleDelete={() => { dispatch(deletePost(post.id)) }}
+                            handleDelete={() => { dispatch(deleteTopic(post.topic_id)) }}
                         />
                     ))}
                 </div>

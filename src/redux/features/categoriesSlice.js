@@ -39,7 +39,13 @@ export const { setLoading, setCategories, setError } = categoriesSlice.actions;
 export const fetchCategories = () => async (dispatch) => {
   try {
     dispatch(setLoading());
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/categories.json`);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/categories.json`,{
+      headers: {
+          'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+          'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+          'Content-Type': 'application/json'
+      }
+  });
     const categories = response.data.category_list.categories;
     dispatch(setCategories(categories.map((category) => ({
       ...category, 
