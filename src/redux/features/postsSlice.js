@@ -4,18 +4,19 @@ import axios from 'axios';
 const postsSlice = createSlice({
     name: 'posts',
     initialState: {
-        posts: [{
-            id: 1,
-            name: "Site Feedback 1",
-            username: "Site Feedback 1",
-            category_id: 1,
-        },
-        {
-            id: 2,
-            name: "Site Feedback 2",
-            username: "Site Feedback 2",
-            category_id: 2,
-        },
+        posts: [
+        //     {
+        //     id: 1,
+        //     name: "Site Feedback 1",
+        //     username: "Site Feedback 1",
+        //     category_id: 1,
+        // },
+        // {
+        //     id: 2,
+        //     name: "Site Feedback 2",
+        //     username: "Site Feedback 2",
+        //     category_id: 2,
+        // },
         ],
         status: 'idle',
         error: null,
@@ -43,8 +44,10 @@ export const { setLoading, setPosts, setError, removePost } = postsSlice.actions
 export const fetchPosts = () => async (dispatch) => {
     try {
         dispatch(setLoading());
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/categories.json`);
-        const posts = response.latest_posts;
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/posts.json`);
+        console.log("response: ", response);
+        const posts = response.data.latest_posts;
+        console.log("posts coming...", posts);
         dispatch(setPosts(posts));
     } catch (err) {
         dispatch(setError(err.message));
@@ -53,7 +56,7 @@ export const fetchPosts = () => async (dispatch) => {
 
 export const deletePost = (id) => async (dispatch) => {
     try {
-        // await axios.delete(`${process.env.REACT_APP_API_URL}/t/${id}.json`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/t/${id}.json`);
         dispatch(removePost(id));
     } catch (err) {
         dispatch(setError(err.message));
@@ -72,7 +75,7 @@ export const createPost = (post) => async(dispatch) => {
             category: post.category.id
         }
         console.log(body);
-        // const response = await axios.post('http://localhost:3000/posts.json', body);
+        await axios.post(`${process.env.REACT_APP_API_URL}/posts.json`, body);
     }
     catch(err){
         dispatch(setError(err.message));

@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
-import { createPost, deletePost } from "../redux/features/postsSlice";
+import { createPost, deletePost, fetchPosts } from "../redux/features/postsSlice";
 
 const ForumPage = () => {
     const [formVisible, setFormVisible] = useState(false);
@@ -22,6 +22,7 @@ const ForumPage = () => {
 
     useEffect(() => {
         dispatch(fetchCategories());
+        dispatch(fetchPosts());
     }, [dispatch]);
 
     const handleSelectChange = (selectedOption) => {

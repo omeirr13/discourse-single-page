@@ -4,16 +4,17 @@ import axios from 'axios';
 const categoriesSlice = createSlice({
   name: 'categories',
   initialState: {
-    categories: [{
-      id: 1,
-      value: "واحد",
-      label: "واحد",
-    },
-    {
-      id: 2,
-      value: "اثنان",
-      label: "اثنان",
-    },
+    categories: [
+    //   {
+    //   id: 1,
+    //   value: "واحد",
+    //   label: "واحد",
+    // },
+    // {
+    //   id: 2,
+    //   value: "اثنان",
+    //   label: "اثنان",
+    // },
   ],
     status: 'idle',
     error: null,
@@ -39,7 +40,7 @@ export const fetchCategories = () => async (dispatch) => {
   try {
     dispatch(setLoading());
     const response = await axios.get(`${process.env.REACT_APP_API_URL}/categories.json`);
-    const categories = response.category_list.categories;
+    const categories = response.data.category_list.categories;
     dispatch(setCategories(categories.map((category) => ({
       ...category, 
       label: category.name, 

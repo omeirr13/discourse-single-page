@@ -21,7 +21,7 @@ const Post = ({ post, index, handleDelete }) => {
 
             <div
                 className="content text-right text-gray-700 mb-4"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: post.cooked }}
             />
         </div>
     );
