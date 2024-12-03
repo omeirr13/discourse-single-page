@@ -53,8 +53,36 @@ export const fetchCategories = () => async (dispatch) => {
       value: category.name, 
       id: category.id
     }))));
+
+    dispatch(setCategories(response.category_list.categories));
+
+    // AUTO LOGIN DISCOURSE CODE -------------------------
+
+  // const response = await fetch(`${process.env.REACT_APP_API_URL}/session`, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+  //     'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+  //   },
+  //   body: JSON.stringify({
+  //     login: `${process.env.REACT_APP_API_USERNAME}`,// API username
+  //     password: 'ashar11223344', // Admin password (used for session creation)
+  //   }),
+  //   credentials: 'include', // Ensure cookies are included in the request
+  // });
+
+  // console.log("cat response coming...");
+  // console.log(response);
+
+  // if (!response.ok) {
+  //   throw new Error('Failed to log in to Discourse.');
+  // }
+
+  // window.location.href = `http://localhost:4200/admin`;
+
+  // END AUTO LOGIN DISCOURSE CODE ------------------------------
     
-    // dispatch(setCategories(response.category_list.categories));
   } catch (error) {
     dispatch(setError(error.message));
   }
