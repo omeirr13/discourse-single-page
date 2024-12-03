@@ -16,7 +16,7 @@ const Post = ({ post, index, handleDelete }) => {
                 <div className="mr-4 flex justify-between w-full">
                     <div className="flex gap-3">
                         <img src="/images/profile-pic.svg" />
-                        <p className="font-semibold text-gray-800 text-right">{post.username}</p>
+                        <p className="font-semibold text-gray-800 text-right">{post.last_poster_username}</p>
                     </div>
                     <div className="flex gap-3 w-44 justify-between ml-3">
                         <div
@@ -33,7 +33,7 @@ const Post = ({ post, index, handleDelete }) => {
 
             <div
                 className="content text-right text-gray-700 mb-4 mr-5"
-                dangerouslySetInnerHTML={{ __html: post.cooked }}
+                dangerouslySetInnerHTML={{ __html: post.title }}
             />
             <div className="flex gap-5 mr-5">
                 <div className="flex gap-1">

@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
-import { createPost, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
+import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
 
 const ForumPage = () => {
     const [formVisible, setFormVisible] = useState(false);
@@ -46,7 +46,7 @@ const ForumPage = () => {
         //         replies: 0,
         //     },
         // ]);
-        dispatch(createPost(newPost));
+        dispatch(createTopic(newPost));
         setNewPost({ title: "", category: "", raw: "" });
         setFormVisible(false);
     };
@@ -152,7 +152,7 @@ const ForumPage = () => {
                             key={post.id}
                             post={post}
                             index={index}
-                            handleDelete={() => { dispatch(deleteTopic(post.topic_id)) }}
+                            handleDelete={() => { dispatch(deleteTopic(post.id)) }}
                         />
                     ))}
                 </div>

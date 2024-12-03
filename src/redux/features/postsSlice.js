@@ -36,30 +36,29 @@ const postsSlice = createSlice({
             state.status = 'failed';
             state.error = action.payload;
         },
-        removePost: (state, action) => {
+        removeTopic: (state, action) => {
             console.log("payload: ",action.payload);
-            state.posts = state.posts.filter((post) => post.topic_id !== action.payload);
+            state.posts = state.posts.filter((topic) => topic.id !== action.payload);
         },
-        addPost: (state, action) => {
+        addTopic: (state, action) => {
             state.posts.unshift(action.payload);  
         },
     },
 });
 
-export const { setLoading, setPosts, setError, removePost, addPost } = postsSlice.actions;
+export const { setLoading, setPosts, setError, removeTopic, addTopic } = postsSlice.actions;
 
 export const fetchPosts = () => async (dispatch) => {
     try {
         dispatch(setLoading());
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/posts.json`,{
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/latest.json`,{
             headers: {
                 'Api-Key': `${process.env.REACT_APP_API_KEY}`,
                 'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
                 'Content-Type': 'application/json'
             }
         });
-        console.log("response: ", response);
-        const posts = response.data.latest_posts;
+        const posts = response.data.topic_list.topics;
         console.log("posts coming...", posts);
         dispatch(setPosts(posts));
     } catch (err) {
@@ -76,13 +75,13 @@ export const deleteTopic = (id) => async (dispatch) => {
                 'Content-Type': 'application/json'
             }
         });
-        dispatch(removePost(id));
+        dispatch(removeTopic(id));
     } catch (err) {
         dispatch(setError(err.message));
     }
 }
 
-export const createPost = (post) => async(dispatch) => {
+export const createTopic = (post) => async(dispatch) => {
     try{
         if(!post || !post.title || !post.category || !post.raw){
             dispatch(setError("Incomplete information"));
@@ -101,7 +100,7 @@ export const createPost = (post) => async(dispatch) => {
             }
         });
 
-        dispatch(addPost(response.data)); 
+        dispatch(addTopic(response.data)); 
     }
     catch(err){
         dispatch(setError(err.message));
