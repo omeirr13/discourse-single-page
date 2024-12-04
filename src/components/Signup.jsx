@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import StepperComponent from "./Stepper";
 
-const AddYourInfoForm = ({ onNext }) => {
+const AddYourInfoForm = () => {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
 
-    const handleNext = () => {
-        onNext();
+    const handleSave = () => {
+        console.log("save");
+        //api call
     };
 
     return (
@@ -55,7 +56,7 @@ const AddYourInfoForm = ({ onNext }) => {
                 </div>
             </div>
             <button
-                onClick={handleNext}
+                onClick={handleSave}
                 className="mt-6 w-full bg-[#BAF3E6] text-[#004D5A] py-3 rounded-md"
             >
                 تسجيل الدخول
@@ -74,11 +75,7 @@ const AddYourInfoForm = ({ onNext }) => {
 };
 
 const Signup = () => {
-    const [currentStep, setCurrentStep] = useState(0);
-
-    const handleNext = () => {
-        setCurrentStep((prev) => prev + 1);
-    };
+    // const [currentStep, setCurrentStep] = useState(0);
 
     return (
         <div className="flex items-center justify-center h-screen bg-white">
@@ -94,13 +91,13 @@ const Signup = () => {
                 </div>
 
                 <div className="flex-1 p-8 border-l">
-                    <div className="flex justify-end">
+                    <div className="flex justify-end w-[24rem]">
                         <p className="text-[#444444] text-[30px] font-bold">انضم الينا</p>
                     </div>
-                    <div className="mb-3 mt-7 flex justify-center">
+                    {/* <div className="mb-3 mt-7 flex justify-center">
                         <StepperComponent currentStep={currentStep} />
-                    </div>
-                    {currentStep === 0 && <AddYourInfoForm onNext={handleNext} />}
+                    </div> */}
+                    <AddYourInfoForm />
                 </div>
             </div>
         </div>
