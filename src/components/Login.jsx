@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import StepperComponent from "./Stepper";
 
 const AddYourInfoForm = () => {
-    const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
 
     const handleSave = () => {
         console.log("save");
@@ -14,15 +12,7 @@ const AddYourInfoForm = () => {
 
     return (
         <div>
-            <div className="space-y-4 mt-5">
-                <p className="text-[14px] mb-0 text-[#444444] font-medium text-right">البريد الالكتروني</p>
-                <input
-                    type="email"
-                    placeholder="البريد الالكتروني"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3 !mt-2 h-[38px] border-[#EEEEEE] border-[1px] rounded-md text-right"
-                />
+            <div className="space-y-4 mt-20">
                 <p className="text-[14px] mb-0 text-[#444444] font-medium text-right">اسم المستخدم</p>
                 <input
                     type="text"
@@ -39,21 +29,6 @@ const AddYourInfoForm = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full p-3 !mt-2 h-[38px] border-[#EEEEEE] border-[1px] rounded-md text-right"
                 />
-                <p className="text-[14px] mb-0 text-[#444444] font-medium text-right">الاسم(اختياري)</p>
-                <input
-                    type="text"
-                    placeholder="الاسم"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full p-3 !mt-2 h-[38px] border-[#EEEEEE] border-[1px] rounded-md text-right"
-                />
-                <div className="flex items-center justify-end">
-                    <label htmlFor="terms" className="text-gray-600">
-                        أوافق على
-                        <span className="text-[#004D5A] font-medium"> شروط الخدمة و سياسة الخصوصية</span>
-                    </label>
-                    <input type="checkbox" id="terms" className="ml-2 w-[20px] h-[20px] rounded-sm" />
-                </div>
             </div>
             <button
                 onClick={handleSave}
@@ -61,12 +36,12 @@ const AddYourInfoForm = () => {
             >
                 تسجيل الدخول
             </button>
-            <div className="flex flex-col items-center justify-center p-6 pb-0 border-t mt-6 border-t-[#EEEEEE]">
+            <div className="flex flex-col items-center justify-center p-6 pb-0 border-t mt-20 border-t-[#EEEEEE]">
                 <p>
-                    هل لديك حساب بالفعل؟
+                    ليس لديك حساب؟
                 </p>
                 <p className="text-[#004D5A]">
-                    تسجيل الدخول
+                    قم بإنشاء حساب الان
                 </p>
             </div>
 
@@ -74,7 +49,7 @@ const AddYourInfoForm = () => {
     );
 };
 
-const Signup = () => {
+const Login = () => {
     // const [currentStep, setCurrentStep] = useState(0);
 
     return (
@@ -92,7 +67,7 @@ const Signup = () => {
 
                 <div className="flex-1 p-8 border-l">
                     <div className="flex justify-end w-[24rem]">
-                        <p className="text-[#444444] text-[30px] font-bold">انضم الينا</p>
+                        <p className="text-[#444444] text-[30px] font-bold">أهلاً بعودتك</p>
                     </div>
                     {/* <div className="mb-3 mt-7 flex justify-center">
                         <StepperComponent currentStep={currentStep} />
@@ -104,4 +79,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default Login;
