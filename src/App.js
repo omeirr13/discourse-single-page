@@ -1,10 +1,21 @@
-import React from "react";
+import React,  { useEffect }  from "react";
 import ForumPage from "./components/ForumPage";
-import { Route, Routes } from 'react-router-dom'; 
+import { Route, Routes, useNavigate } from 'react-router-dom'; 
 import Signup from "./components/Signup";
 
 
 function App() {
+
+  const navigate = useNavigate();
+
+  const isAuthenticated = false;
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/signup");
+    }
+  }, [navigate, isAuthenticated]);
+
   return (
     <div className="App">
       <Routes> 
