@@ -51,10 +51,12 @@ export const { setLoading, setPosts, setError, removeTopic, addTopic } = postsSl
 export const fetchPosts = () => async (dispatch) => {
     try {
         dispatch(setLoading());
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/latest.json`,{
             headers: {
                 'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-                'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+                'Api-Username': user.username,
                 'Content-Type': 'application/json'
             }
         });
@@ -68,10 +70,12 @@ export const fetchPosts = () => async (dispatch) => {
 
 export const deleteTopic = (id) => async (dispatch) => {
     try {
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
         await axios.delete(`${process.env.REACT_APP_API_URL}/t/${id}.json` ,{
             headers: {
                 'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-                'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+                'Api-Username': user.username,
                 'Content-Type': 'application/json'
             }
         });
@@ -92,10 +96,13 @@ export const createTopic = (post) => async(dispatch) => {
             category: post.category.id
         };
 
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
+
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/posts.json`, body,{
             headers: {
                 'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-                'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+                'Api-Username': user.username,
                 'Content-Type': 'application/json'
             }
         });

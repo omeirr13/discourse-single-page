@@ -39,10 +39,14 @@ export const { setLoading, setCategories, setError } = categoriesSlice.actions;
 export const fetchCategories = () => async (dispatch) => {
   try {
     dispatch(setLoading());
+
+    const userObj = localStorage.getItem("salla_discourse_user");
+    const user = JSON.parse(userObj);
+
     const response = await axios.get(`${process.env.REACT_APP_API_URL}/categories.json`,{
       headers: {
           'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-          'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
+          'Api-Username': user.username,
           'Content-Type': 'application/json'
       }
   });

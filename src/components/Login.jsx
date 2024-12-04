@@ -1,39 +1,39 @@
 import React, { useState } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { encryptData } from "../crypto";
 
 const AddYourInfoForm = () => {
-    const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
     const navigate = useNavigate();
 
-    const handleSave = async () => {
-        console.log(email, username, password,name);
-
-        if(!email && !username && !password && !name){
+    const handleSave = async(event) => {
+        event.preventDefault();
+        if( !username && !password){
             alert("Please fill out all fields");
             return;
         }
         try {
-            //create user in discourse
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/users.json`,  {
-                email,
-                username,
-                password,
-                name,
-                active:true, //bypass email verififcation
-                approved:true, //bypass email verififcation
-            }, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/session`,  {
+                login: username,
+                password
+            }, 
+            {
                 headers: {
                     "Content-Type": "application/json",
                     "Api-Key": `${process.env.REACT_APP_API_KEY}`,
                     "Api-Username": `${process.env.REACT_APP_API_USERNAME}`,
-                }
+                },
+                withCredentials: true, 
             });
 
-            navigate("/login");
+            console.log(response.data.user);
+            const secretKey = process.env.REACT_APP_SECRET;
+            const encryptedPassword = encryptData(password, secretKey);
+            localStorage.setItem('salla_discourse_user', JSON.stringify(response.data.user));
+            localStorage.setItem('salla_discourse_token', encryptedPassword);
+            navigate('/');
         }
         catch(error){
             console.log(error);
@@ -43,22 +43,13 @@ const AddYourInfoForm = () => {
     return (
         <div>
             <form onSubmit={handleSave}>
-                <div className="space-y-4">
-                    <p className="text-[14px] mb-0 text-[#444444] font-medium text-right mt-5">البريد الالكتروني</p>
-                    <input
-                        type="email"
-                        placeholder="البريد الالكتروني"
-                        value={email}
-                        required
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-3 !mt-2 h-[38px] border-[#EEEEEE] border-[1px] rounded-md text-right"
-                    />
+                <div className="space-y-4 mt-20">
                     <p className="text-[14px] mb-0 text-[#444444] font-medium text-right">اسم المستخدم</p>
                     <input
                         type="text"
-                        required
                         placeholder="اسم المستخدم"
                         value={username}
+                        required
                         onChange={(e) => setUsername(e.target.value)}
                         className="w-full p-3 !mt-2 h-[38px] border-[#EEEEEE] border-[1px] rounded-md text-right"
                     />
@@ -71,22 +62,6 @@ const AddYourInfoForm = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full p-3 !mt-2 h-[38px] border-[#EEEEEE] border-[1px] rounded-md text-right"
                     />
-                    <p className="text-[14px] mb-0 text-[#444444] font-medium text-right">الاسم(اختياري)</p>
-                    <input
-                        type="text"
-                        placeholder="الاسم"
-                        value={name}
-                        required
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full p-3 !mt-2 h-[38px] border-[#EEEEEE] border-[1px] rounded-md text-right"
-                    />
-                    <div className="flex items-center justify-end">
-                        <label htmlFor="terms" className="text-gray-600">
-                            أوافق على
-                            <span className="text-[#004D5A] font-medium"> شروط الخدمة و سياسة الخصوصية</span>
-                        </label>
-                        <input type="checkbox" id="terms" className="ml-2 w-[20px] h-[20px] rounded-sm" />
-                    </div>
                 </div>
                 <button type="submit"
                     className="mt-6 w-full bg-[#BAF3E6] text-[#004D5A] py-3 rounded-md"
@@ -94,12 +69,13 @@ const AddYourInfoForm = () => {
                     تسجيل الدخول
                 </button>
             </form>
-            <div className="flex flex-col items-center justify-center p-6 pb-0 border-t mt-6 border-t-[#EEEEEE]">
+
+            <div className="flex flex-col items-center justify-center p-6 pb-0 border-t mt-20 border-t-[#EEEEEE]">
                 <p>
-                    هل لديك حساب بالفعل؟
+                    ليس لديك حساب؟
                 </p>
                 <p className="text-[#004D5A]">
-                    تسجيل الدخول
+                    قم بإنشاء حساب الان
                 </p>
             </div>
 
@@ -107,7 +83,7 @@ const AddYourInfoForm = () => {
     );
 };
 
-const Signup = () => {
+const Login = () => {
     // const [currentStep, setCurrentStep] = useState(0);
 
     return (
@@ -125,7 +101,7 @@ const Signup = () => {
 
                 <div className="flex-1 p-8 border-l">
                     <div className="flex justify-end w-[24rem]">
-                        <p className="text-[#444444] text-[30px] font-bold">انضم الينا</p>
+                        <p className="text-[#444444] text-[30px] font-bold">أهلاً بعودتك</p>
                     </div>
                     {/* <div className="mb-3 mt-7 flex justify-center">
                         <StepperComponent currentStep={currentStep} />
@@ -137,4 +113,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default Login;
