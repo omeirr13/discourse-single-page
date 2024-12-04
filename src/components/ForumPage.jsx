@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
+import Header from "./Header";
 
 const ForumPage = () => {
     const [formVisible, setFormVisible] = useState(false);
@@ -105,85 +106,89 @@ const ForumPage = () => {
     }
 
     return (
-        <div className="flex justify-end">
-            <div className="flex space-x-8 justify-end">
-                {formVisible && (
-                    <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-20">
-                        <div className="w-1/2 p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl" ref={modalRef}>
-                            <div className="rounded-lg p-4 mb-6">
-                                <form onSubmit={handleFormSubmit}>
-                                    <div className="mb-4">
-                                        <label htmlFor="title" className="block text-right font-semibold text-gray-800">
-                                            اكتب العنوان
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="title"
-                                            name="title"
-                                            value={newPost.title}
-                                            onChange={handleInputChange}
-                                            className="w-[43vw] h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
-                                            placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
-                                        />
-                                    </div>
+        <>
+            <Header/>
+            <div className="flex justify-end">
+                <div className="flex space-x-8 justify-end">
+                    {formVisible && (
+                        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-20">
+                            <div className="w-1/2 p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl" ref={modalRef}>
+                                <div className="rounded-lg p-4 mb-6">
+                                    <form onSubmit={handleFormSubmit}>
+                                        <div className="mb-4">
+                                            <label htmlFor="title" className="block text-right font-semibold text-gray-800">
+                                                اكتب العنوان
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="title"
+                                                name="title"
+                                                value={newPost.title}
+                                                onChange={handleInputChange}
+                                                className="w-[43vw] h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
+                                                placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
+                                            />
+                                        </div>
 
-                                    <div className="mb-4">
-                                        <label htmlFor="selectedOptions" className="block text-right font-semibold text-gray-800">
-                                            اختر الأقسام أو الموضوع:
-                                        </label>
-                                        <Select
-                                            // isMulti
-                                            name="selectedOptions"
-                                            options={categories}
-                                            value={newPost.selectedOptions}
-                                            onChange={handleSelectChange}
-                                            className="mt-2 w-[43vw]"
-                                            placeholder="اختر الأقسام أو الموضوع"
-                                        />
-                                    </div>
+                                        <div className="mb-4">
+                                            <label htmlFor="selectedOptions" className="block text-right font-semibold text-gray-800">
+                                                اختر الأقسام أو الموضوع:
+                                            </label>
+                                            <Select
+                                                // isMulti
+                                                name="selectedOptions"
+                                                options={categories}
+                                                value={newPost.selectedOptions}
+                                                onChange={handleSelectChange}
+                                                className="mt-2 w-[43vw]"
+                                                placeholder="اختر الأقسام أو الموضوع"
+                                            />
+                                        </div>
 
-                                    <div className="mb-4">
-                                        <label htmlFor="content" className="block text-right font-semibold text-gray-800">
-                                            اكتب موضوعك هنا:
-                                        </label>
-                                        <ReactQuill
-                                            value={newPost.raw}
-                                            onChange={(raw) => setNewPost({ ...newPost, raw })}
-                                            className="p-2 rounded-lg"
-                                            theme="snow"
-                                            dir="rtl"
-                                        />
-                                    </div>
+                                        <div className="mb-4">
+                                            <label htmlFor="content" className="block text-right font-semibold text-gray-800">
+                                                اكتب موضوعك هنا:
+                                            </label>
+                                            <ReactQuill
+                                                value={newPost.raw}
+                                                onChange={(raw) => setNewPost({ ...newPost, raw })}
+                                                className="p-2 rounded-lg"
+                                                theme="snow"
+                                                dir="rtl"
+                                            />
+                                        </div>
 
-                                    <div className="flex space-x-4 mt-4">
-                                        <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
-                                            نشر
-                                        </button>
-                                        <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
-                                            إلغاء
-                                        </button>
-                                    </div>
-                                </form>
+                                        <div className="flex space-x-4 mt-4">
+                                            <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
+                                                نشر
+                                            </button>
+                                            <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
+                                                إلغاء
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
-                <div className="p-6 mt-4 w-[795px]" dir="rtl">
-                    <DefaultPostSearch />
-                    <div className="rounded-lg p-4 mb-6 w-full">
-                        {posts.map((post, index) => (
-                            <Post
-                                key={post.id}
-                                post={post}
-                                index={index}
-                                handleDelete={() => { dispatch(deleteTopic(post.id)) }}
-                            />
-                        ))}
+                    )}
+                    <div className="p-6 mt-4 w-[795px]" dir="rtl">
+                        <DefaultPostSearch />
+                        <div className="rounded-lg p-4 mb-6 w-full">
+                            {posts.map((post, index) => (
+                                <Post
+                                    key={post.id}
+                                    post={post}
+                                    index={index}
+                                    handleDelete={() => { dispatch(deleteTopic(post.id)) }}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
+                <Sidebar />
             </div>
-            <Sidebar />
-        </div>
+        </>
+
     );
 };
 

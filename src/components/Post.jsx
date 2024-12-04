@@ -28,16 +28,6 @@ const Post = ({ post, index, handleDelete }) => {
                                 />
                             </div>
                         </div>
-                        {/* <div className="flex gap-3 w-44 justify-between ml-3">
-                            <div
-                                onClick={handleDelete}
-                                className="text-gray-500 hover:text-red-600 focus:outline-none mt-1 mr-2 cursor-pointer"
-                                aria-label="Delete"
-                            >
-                                <FontAwesomeIcon icon={faTrash} className="w-4 h-4 mb-3" />
-                            </div>
-                            <p className="text-sm text-gray-500 text-right">{date}</p>
-                        </div> */}
                     </div>
                 </div>
 
