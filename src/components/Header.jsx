@@ -1,8 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from 'react-router-dom'; 
+import axios from 'axios';
 
 const Header = () => {
+    const navigate = useNavigate();
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const buttonRef = useRef(null);
+
+    const userObj = localStorage.getItem("salla_discourse_user");
+    const user = JSON.parse(userObj);
+    let userName  = "";
+    let avatarTemplate  = "";
+    if(user){
+        userName = user.username;
+        avatarTemplate = process.env.REACT_APP_API_URL + user.avatar_template.replace("{size}","28");
+    }
 
     const toggleDropdown = () => setDropdownVisible(prevState => !prevState);
 
@@ -19,8 +31,28 @@ const Header = () => {
         };
     }, []);
 
-    const logout = () => {
-        console.log("logging out");
+    const logout = async() => {
+
+        try {
+
+            await axios.post(`${process.env.REACT_APP_API_URL}/admin/users/${user.id}/log_out.json`,{},
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Api-Key": `${process.env.REACT_APP_API_KEY}`,
+                        "Api-Username": `${process.env.REACT_APP_API_USERNAME}`,
+                    }
+                });
+        
+                localStorage.removeItem("salla_discourse_user");
+                localStorage.removeItem("salla_discourse_token");
+                navigate("/login");
+
+        }
+        catch(error){
+            console.log(error);
+        }
+
     }
     return (
         <header className="flex items-center justify-between p-4 bg-[#003C47] border-b">
@@ -54,8 +86,8 @@ const Header = () => {
                         </div>
                     )}
                 </div>
-                <span className="text-lg text-[#F8F8F8]">إبراهيم شمس</span>
-                <img src="/images/header-image.svg" alt="Profile" className="w-10 h-10 rounded-full" />
+                <span className="text-lg text-[#F8F8F8]"> {userName}</span>
+                <img src={avatarTemplate} alt="Profile" className="w-10 h-10 rounded-full" />
             </div>
 
             <div className="flex items-center space-x-6">
