@@ -36,7 +36,7 @@ const Header = () => {
                     
                     {isDropdownVisible && (
                         <div 
-                            className="absolute mt-2 w-40 bg-[#FBFDFF] rounded-lg shadow-lg z-50 dropdown-menu"
+                            className="absolute mt-[20px] w-40 bg-[#FBFDFF] rounded-lg shadow-lg z-50 dropdown-menu"
                             style={{
                                 right: buttonRef.current && 
                                        (window.innerWidth - buttonRef.current.getBoundingClientRect().right) < 200 
