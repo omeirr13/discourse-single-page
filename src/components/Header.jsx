@@ -1,15 +1,12 @@
 import React from 'react';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faBell } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
     return (
-        <header className="flex items-center justify-between p-4 bg-white border-b">
+        <header className="flex items-center justify-between p-4 bg-[#003C47] border-b">
             <div className="flex items-center space-x-3 ml-4">
-                <img src="/images/header-image.svg" alt="Profile" className="w-10 h-10 rounded-full border-2 border-yellow-500" />
-                <span className="text-lg font-semibold text-gray-800">أسماء التاجري</span>
-                <FontAwesomeIcon icon={faBell} className="w-4 h-4 cursor-pointer" style={{marginLeft: "2rem"}}/>
-                <FontAwesomeIcon icon={faSearch} className="w-4 h-4 cursor-pointer" style={{marginLeft: "2rem"}}/>
+                <img src="/images/down-arrow.svg" alt="Profile" className="rounded-full h-[7px] mt-2" />
+                <span className="text-lg text-[#F8F8F8]">إبراهيم شمس</span>
+                <img src="/images/header-image.svg" alt="Profile" className="w-10 h-10 rounded-full" />
 
             </div>
 
@@ -23,8 +20,7 @@ const Header = () => {
             </div>
 
             <div className="flex items-center">
-                <img src="/images/logo-text.svg" alt="Logo" className="h-8 mr-2" />
-                <img src="/images/logo.svg" alt="Salla" className="h-8 mr-4" />
+                <img src="/images/logo.svg" alt="Salla" className="w-[95px] h-[48px] mr-4" />
             </div>
         </header>
     );

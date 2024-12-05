@@ -8,6 +8,7 @@ import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
 import Header from "./Header";
+import LeftSidebar from "./LeftSidebar";
 
 const ForumPage = () => {
     const [formVisible, setFormVisible] = useState(false);
@@ -91,13 +92,13 @@ const ForumPage = () => {
                 </div>
                 <input
                     type="text"
-                    className="mr-4 mt-5 border-[#BBBBBB] border-[1px] border-solid rounded-[8px] h-[45px] w-[795px] pr-12 pl-4"
+                    className="mr-4 mt-5 border-[#BBBBBB] border-[1px] border-solid rounded-[8px] h-[45px] w-[50vw] pr-[3vw] pl-4"
                     placeholder="ابحث عن سؤالك هنا ..."
                     style={{
                         backgroundImage: "url('/images/sidebar/search.png')",
                         backgroundSize: '20px 20px',
                         backgroundRepeat: 'no-repeat',
-                        backgroundPosition: '760px center',
+                        backgroundPosition: '47.5vw center',
                     }}
                 />
 
@@ -107,9 +108,9 @@ const ForumPage = () => {
 
     return (
         <>
-            <Header/>
+            <Header />
             <div className="flex justify-end">
-                <div className="flex space-x-8 justify-end">
+                <div className="flex space-x-8 justify-end w-full">
                     {formVisible && (
                         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-20">
                             <div className="w-1/2 p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl" ref={modalRef}>
@@ -171,22 +172,29 @@ const ForumPage = () => {
                             </div>
                         </div>
                     )}
-                    <div className="p-6 mt-4 w-[795px]" dir="rtl">
+                    <div className="p-6 mt-4 w-full" dir="rtl">
                         <DefaultPostSearch />
-                        <div className="rounded-lg p-4 mb-6 w-full">
-                            {posts.map((post, index) => (
-                                <Post
-                                    key={post.id}
-                                    post={post}
-                                    index={index}
-                                    handleDelete={() => { dispatch(deleteTopic(post.id)) }}
-                                />
-                            ))}
+                        <div className="flex">
+                            <div className="posts-container w-[47vw] mt-[3rem]" style={{ display: 'inline-block', verticalAlign: 'top' }}>
+                                {posts.map((post, index) => (
+                                    <Post
+                                        key={post.id}
+                                        post={post}
+                                        index={index}
+                                        handleDelete={() => { dispatch(deleteTopic(post.id)) }}
+                                    />
+                                ))}
+                            </div>
+
+                                <LeftSidebar />
                         </div>
+
+
                     </div>
                 </div>
                 <Sidebar />
             </div>
+
         </>
 
     );
