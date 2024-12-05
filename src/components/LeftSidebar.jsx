@@ -14,11 +14,13 @@ const LeftSidebar = () => {
             </div>
             <div className="mt-8 text-[#666666] w-[25vw]">
                 {qawaneen.map((qanoon, index) => (
-                    <div className="flex gap-3 mt-3">
+                    <div className="flex gap-3 mt-4">
+                    <div>
                         <div className="flex justify-center items-center w-[26px] h-[26px] bg-[#EEEEEE] rounded-full">
                             <p className="text-[#666666]">{index + 1}</p>
                         </div>
-                        <p>{qanoon.value}</p>
+                    </div>
+                        <p className="mr-3"> {qanoon.value}</p>
                     </div>
                 ))}
             </div>
