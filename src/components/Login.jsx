@@ -6,7 +6,12 @@ import { encryptData } from "../crypto";
 const AddYourInfoForm = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    const redirectToCreateAccount = () =>{
+        navigate("/signup");
+    }
 
     const handleSave = async(event) => {
         event.preventDefault();
@@ -28,11 +33,15 @@ const AddYourInfoForm = () => {
                 withCredentials: true, 
             });
 
-            console.log(response.data.user);
+            if(response.data.error){
+                setError(response.data.error);
+                return;
+            }
             const secretKey = process.env.REACT_APP_SECRET;
             const encryptedPassword = encryptData(password, secretKey);
             localStorage.setItem('salla_discourse_user', JSON.stringify(response.data.user));
             localStorage.setItem('salla_discourse_token', encryptedPassword);
+            setError("");
             navigate('/');
         }
         catch(error){
@@ -44,6 +53,7 @@ const AddYourInfoForm = () => {
         <div>
             <form onSubmit={handleSave}>
                 <div className="space-y-4 mt-20">
+                    {error ? <div className="text-[14px] text-[#FF0000] font-medium text-right">{error}</div> : <></>}
                     <p className="text-[14px] mb-0 text-[#444444] font-medium text-right">اسم المستخدم</p>
                     <input
                         type="text"
@@ -74,7 +84,7 @@ const AddYourInfoForm = () => {
                 <p>
                     ليس لديك حساب؟
                 </p>
-                <p className="text-[#004D5A]">
+                <p onClick={redirectToCreateAccount} className="text-[#004D5A] cursor-pointer">
                     قم بإنشاء حساب الان
                 </p>
             </div>

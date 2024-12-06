@@ -21,7 +21,7 @@ function App() {
     if (!isAuthenticated) {
       navigate("/login");
     }
-  }, [navigate, isAuthenticated]);
+  }, []);
 
   return (
     <div className="App">

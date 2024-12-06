@@ -7,9 +7,15 @@ const AddYourInfoForm = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const handleSave = async () => {
+    const redirectToLogin = () =>{
+        navigate("/login");
+    }
+
+    const handleSave = async (event) => {
+        event.preventDefault();
         console.log(email, username, password,name);
 
         if(!email && !username && !password && !name){
@@ -33,6 +39,11 @@ const AddYourInfoForm = () => {
                 }
             });
 
+            if(response.data.errors){
+                setError(response.data.message);
+                return;
+            }
+            setError("");
             navigate("/login");
         }
         catch(error){
@@ -44,6 +55,7 @@ const AddYourInfoForm = () => {
         <div>
             <form onSubmit={handleSave}>
                 <div className="space-y-4">
+                    {error ? <div className="text-[14px] text-[#FF0000] font-medium text-right">{error}</div> : <></>}
                     <p className="text-[14px] mb-0 text-[#444444] font-medium text-right mt-5">البريد الالكتروني</p>
                     <input
                         type="email"
@@ -98,7 +110,7 @@ const AddYourInfoForm = () => {
                 <p>
                     هل لديك حساب بالفعل؟
                 </p>
-                <p className="text-[#004D5A]">
+                <p onClick={redirectToLogin}  className="text-[#004D5A] cursor-pointer">
                     تسجيل الدخول
                 </p>
             </div>
