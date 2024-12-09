@@ -47,3 +47,9 @@ code {
   width: 43vw;
   height: 290px !important;
 }
+
+
+.home-search::placeholder{
+  text-align: center;
+  margin-left:30px;
+}

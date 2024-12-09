@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faBell } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -54,42 +56,51 @@ const Header = () => {
         }
 
     }
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
     return (
-        <header className="flex items-center justify-between p-4 bg-[#003C47] border-b">
-            <div className="flex items-center space-x-3 ml-4">
-                <div className="relative">
-                    <img 
-                        src="/images/down-arrow.svg" 
-                        alt="Profile" 
-                        className="rounded-full h-[7px] mt-2 cursor-pointer dropdown-button" 
-                        onClick={toggleDropdown}
-                        ref={buttonRef} 
-                    />
-                    
-                    {isDropdownVisible && (
-                        <div 
-                            className="absolute mt-[20px] w-40 bg-[#FBFDFF] rounded-lg shadow-lg z-50 dropdown-menu"
-                            style={{
-                                right: buttonRef.current && 
-                                       (window.innerWidth - buttonRef.current.getBoundingClientRect().right) < 200 
-                                       ? '0' 
-                                       : 'auto',
-                                left: buttonRef.current && 
-                                      (window.innerWidth - buttonRef.current.getBoundingClientRect().right) >= 200
-                                      ? '0' 
-                                      : 'auto',
-                            }}
-                        >
-                            <button className="w-full text-left px-4 py-2 text-[#003C47] text-sm rounded-b-lg" onClick={logout}>
-                                Logout
-                            </button>
-                        </div>
-                    )}
-                </div>
-                <span className="text-lg text-[#F8F8F8]"> {userName}</span>
-                <img src={avatarTemplate} alt="Profile" className="w-10 h-10 rounded-full" />
+        <header className="flex items-center justify-between sm:p-4 p-4 pl-0 bg-white border-b">
+            <div className="flex items-center space-x-3 ml-0 sm:ml-4 relative">
+            <img 
+                src="/images/header/smile.png" 
+                alt="Profile" 
+                className="w-10 h-10 rounded-full border-2 border-yellow-500 hidden sm:block" 
+            />
+            <span className="text-lg font-semibold text-gray-800 hidden sm:block">
+                أسماء التاجري
+            </span>
+
+            <div className="relative">
+                <img 
+                    src={`/images/header/arrow-down.svg`} 
+                    className={`cursor-pointer hidden sm:block ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                    onClick={() => setIsDropdownOpen(prev => !prev)} 
+                />
+
+{isDropdownOpen && (
+    <div className="absolute right-[-17px] mt-4 w-48 ml-4 bg-white rounded-md shadow-lg border border-gray-300 z-50">
+        {/* Triangle Arrow */}
+        <div className="absolute top-[-9px] right-4 w-4 h-4 bg-white border-l border-t border-gray-300 transform rotate-45"></div>
+        
+        {/* Dropdown Content */}
+        <ul className="py-2">
+            <li 
+                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                onClick={() => logout()}
+            >
+                Logout
+            </li>
+        </ul>
+    </div>
+)}
+
             </div>
 
+            <img src={`/images/header/bell.svg`} className="cursor-pointer ml-0 sm:!ml-[40px]" />
+            <img src={`/images/header/search.svg`} className="cursor-pointer !ml-[40px]" />
+        </div>
+            {/* Additional buttons */}
             <div className="flex items-center space-x-6">
                 <button className="text-xl">
                     <i className="fas fa-bell"></i>
@@ -98,12 +109,14 @@ const Header = () => {
                     <i className="fas fa-search"></i>
                 </button>
             </div>
-
+    
+            {/* Logo */}
             <div className="flex items-center">
-                <img src="/images/logo.svg" alt="Salla" className="w-[95px] h-[48px] mr-4" />
+                <img src="/images/logo.svg" alt="Salla" className="h-8 mr-4" />
             </div>
         </header>
     );
+    
 };
 
 export default Header;

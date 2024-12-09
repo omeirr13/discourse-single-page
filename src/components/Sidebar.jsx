@@ -20,7 +20,7 @@ const Sidebar = () => {
     const toggleRawabat = () => setIsRawabatOpen(!isRawabatOpen);
 
     return (
-        <div className="rounded-lg p-4 max-w-xs w-full h-screen mt-[2rem]" dir="rtl" style={{ height: "calc(100vh - 73px)", width: "230px" }}>
+        <div className="rounded-lg p-4 max-w-xs w-full h-screen mt-[2rem] hidden sm:block" dir="rtl" style={{ height: "calc(100vh - 73px)", width: "230px" }}>
             <ul className="space-y-4 text-gray-600 text-right mr-5 mt-4 w-full">
                 {sidebar_items.items.map((item, index) => (
                     <Item key={index} name={item.name} image={item.image} />

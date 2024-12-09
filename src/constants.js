@@ -12,7 +12,7 @@ export const sidebar_items = {
   ],
   majtama_items: [
     { name: "تجارب التجار", image: "person.png" },
-    { name: "محتاج فزعتكم", image: "pattiyan.png" },
+    { name: "محتاج فزعتكم", image: "bandages.png" },
     { name: "مصادر للتجار", image: "magnify.png" },
     { name: "مساحة إعلانية", image: "100.png" },
   ],
