@@ -72,23 +72,23 @@ const Home = () => {
     const [filterSelected, setFilterSelected] = useState("new");
     const handleChangeFilterSelected = (filter) => {
         setFilterSelected(filter);
-        if(filter ==="new"){
+        if (filter === "new") {
             dispatch(fetchPosts("new"));
         }
         else {
             dispatch(fetchPosts("latest"));
         }
-        
+
     }
 
     const [filterListOpen, setFilterListOpen] = useState(false);
-    if (postsStatus == "loading") {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
-            </div>
-        );
-    }
+    const [selectedFilter, setSelectedFilter] = useState(null);
+
+    const handleFilterSelect = (filter) => {
+        setSelectedFilter(filter);
+        setFilterListOpen(false); // Close the dropdown after selecting a filter
+    };
+
 
     const DefaultPostSearch = () => {
         return (
@@ -165,7 +165,7 @@ const Home = () => {
                     <p className="text-[#333333] mt-[10px] font-semibold">
                         don’t miss it👋
                     </p>
-                <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
+                    <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
                     <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
                         <img src={`/images/arrow-left.svg`} className="cursor-pointer rotate-180 p-4" />
                     </div>
@@ -201,6 +201,13 @@ const Home = () => {
                 </div>
             </div>
         )
+    }
+    if (postsStatus == "loading") {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
+            </div>
+        );
     }
     return (
         <>
@@ -312,10 +319,33 @@ const Home = () => {
                                         <span className={filterSelected === "most viewed" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("most viewed")}>الأكثر مشاهدة</span>
                                     </div>
                                     <div>
-                                        <div className="flex gap-12 border-[1px] border-[#DDDDDD] rounded-md px-3 py-2">
-                                            <span className="text-[#666666]">Filters</span>
-                                            <img src={`/images/header/arrow-down.svg`} className={`cursor-pointer ${filterListOpen ? 'rotate-180' : ''}`} onClick={() => setFilterListOpen(prev => !prev)} />
+                                        <div className="flex gap-12 border-[1px] border-[#DDDDDD] rounded-md px-3 py-2 cursor-pointer" onClick={() => setFilterListOpen(prev => !prev)}>
+                                            <span className="text-[#666666]">
+                                                {selectedFilter ? selectedFilter : 'Filters'}
+                                            </span>
+                                            <img
+                                                src={`/images/header/arrow-down.svg`}
+                                                className={`cursor-pointer ${filterListOpen ? 'rotate-180' : ''}`}
+                                                
+                                            />
                                         </div>
+                                        {filterListOpen && (
+                                            <div className="absolute mt-2 border-[1px] border-[#DDDDDD] rounded-md w-[200px] bg-white">
+                                                <ul className="p-2">
+                                                    {['Filter 1', 'Filter 2', 'Filter 3'].map((filter) => (
+                                                        <li
+                                                            key={filter}
+                                                            className={`cursor-pointer p-2 hover:bg-gray-100 ${selectedFilter === filter ? 'bg-gray-200' : ''} flex justify-center items-center`}
+                                                            onClick={() => handleFilterSelect(filter)}
+                                                        >
+                                                            {filter}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+
+
                                     </div>
                                 </div>
                                 <div className="mt-2">
