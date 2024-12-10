@@ -1,7 +1,7 @@
 import moment from 'moment';
 import 'moment/locale/ar'; // Import Arabic locale
 
-const PostDetail = ({ post }) => {
+const HomePost = ({ post }) => {
 
     const humanFriendlyDate = moment(post.last_posted_at).locale('ar').fromNow();
     const firstletter = post.last_poster_username.charAt(0);
@@ -14,12 +14,21 @@ const PostDetail = ({ post }) => {
                             <div className="flex gap-3">
                                 <div className="w-[44px] h-[44px] bg-[#83ECFF] rounded-full flex items-center justify-center mb-1">
                                     <p className="text-[#06778B] text-[20px] font-semibold leading-none">
-                                        {post.last_poster_username.charAt(0)}
+                                        {firstletter}
                                     </p>
                                 </div>
 
                                 <div className="flex-col">
-                                    <p className="text-[#444444] font-medium">لوك عيسى</p>
+                                    <div className="flex gap-3 text-[14px] font-medium">
+                                        <p className="text-[#444444] font-medium">{post.last_poster_username}</p>
+                                        <span className="mb-1 text-[#999999]">محتاج فزعتكم</span>
+                                        <div className="bg-[#EFFBF6] rounded-full">
+                                            <div className="flex gap-2 px-3">
+                                                <img src="/images/home/tick.svg" />
+                                                <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
                                         dangerouslySetInnerHTML={{ __html: post.title }}
@@ -32,29 +41,40 @@ const PostDetail = ({ post }) => {
 
 
             </div>
-            <div className="flex gap-5 w-full">
+            <div className="flex gap-5 w-full justify-between">
                 <div className="p-3 flex gap-8">
-                    {/* <div className="flex gap-2">
-                        <img src="/images/message-cloud.svg" />
-                        <span className="mb-1">{post.posts_count}</span>
-                    </div> */}
-
                     <div className="flex gap-2 items-center">
-                        <span className="mb-1">{post.like_count}</span>
-                        <img src="/images/heart.svg" className="cursor-pointer" />
+                        <img src="/images/home/like.svg" className="cursor-pointer" />
+                        <span className="mb-1 text-[#999999]">{post.like_count}</span>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                        <img src="/images/home/cloud.svg" className="cursor-pointer" />
+                        <span className="mb-1 text-[#999999]">{post.like_count}</span>
                     </div>
                     <div className="flex gap-2">
-                        <span className="mb-1">رد</span>
-                        <img src="/images/reply.svg" className="cursor-pointer" />
+                        <img src="/images/home/eye.svg" className="cursor-pointer" />
+                        <span className="mb-1 text-[#999999]">12</span>
                     </div>
-                    {/* <div className="flex gap-2">
-                        <img src="/images/clock.svg" />
-                        <span className="mb-1">{humanFriendlyDate}</span>
-                    </div> */}
                 </div>
+
+                <div className="p-3 flex gap-8">
+                    <div className="flex gap-2 items-center">
+                        <img src="/images/home/save.svg" className="cursor-pointer" />
+                        <span className="mb-1 text-[#999999]">اقرأ لاحقاً</span>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                        <img src="/images/home/share.svg" className="cursor-pointer" />
+                        <span className="mb-1 text-[#999999]">انشر</span>
+                    </div>
+                    <div className="flex gap-2">
+                        <img src="/images/home/clock.svg" className="cursor-pointer" />
+                        <span className="mb-1 text-[#999999]">3 س</span>
+                    </div>
+                </div>
+
             </div>
         </div>
 
     );
 };
-export default PostDetail;
+export default HomePost;

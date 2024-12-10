@@ -7,9 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
-import Header from "./Header";
-import LeftSidebar from "./LeftSidebar";
-import PostDetail from "./PostDetail";
+import HomePost from "./PostDetail";
 
 const Home = () => {
     const [formVisible, setFormVisible] = useState(false);
@@ -113,6 +111,90 @@ const Home = () => {
         )
     }
 
+    const HomeSuggestedPost = () => {
+        return (
+            <div className="flex flex-col items-center mt-[18px]">
+                <div className="flex gap-3 items-start justify-end mb-4">
+                    <p className="text-[#333333] mt-[10px] font-semibold">
+                        don’t miss it👋
+                    </p>
+                    <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
+                    <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
+                        <img src={`/images/arrow-left.svg`} className="cursor-pointer rotate-180 p-4" />
+                    </div>
+                    <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
+                        <img src={`/images/arrow-left.svg`} className="cursor-pointer p-4" />
+                    </div>
+                </div>
+                <div className="bg-white rounded-lg m-8 mt-1 px-3 py-2" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                    <div className="flex flex-col gap-3">
+                        <div className="mt-2">
+                            <span className="bg-[#83ECFF]  text-[#207A8A] p-1 rounded-lg">التسويق الالكتروني</span>
+                        </div>
+                        <img src="/images/home/suggested1.png" />
+                        <p className="text-[#333333] text-[18px]">ورشة عمل: كيفية تحقيق التوازن بين المبيعات والتسويق</p>
+                        <p className="text-[#333333] text-[14px] font-medium">أحمد مصطفى مدرب التنمية البشرية </p>
+                        <div className="flex">
+                            <img src="/images/home/calendar.svg" className="ml-1" />
+                            <div className="flex text-[12px] text-[#666666]">
+
+                                <p className="ml-1">الخميس</p>
+                                <p className="ml-1">5 يونيو 2025</p>
+                                <p>9:30 ص</p>
+                            </div>
+                        </div>
+                        <button className="flex justify-center items-center border-[1px] border-[#76E8CD] p-3 m-2 rounded-md">
+                            <span className="text-[#004D5A] font-bold">open now</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+    const HomeSuggestedTopic = () => {
+        return (
+            <div className="flex flex-col items-center mt-[18px]">
+                <div className="flex gap-3 items-start justify-end mb-4">
+                    <p className="text-[#333333] mt-[10px] font-semibold">
+                        don’t miss it👋
+                    </p>
+                    <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
+                    <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
+                        <img src={`/images/arrow-left.svg`} className="cursor-pointer rotate-180 p-4" />
+                    </div>
+                    <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
+                        <img src={`/images/arrow-left.svg`} className="cursor-pointer p-4" />
+                    </div>
+                </div>
+                <div className="bg-white rounded-lg m-8 mt-1 px-3 py-2" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                    <div className="flex flex-col">
+                        <img src="/images/home/suggested2.png" />
+                        <p className="text-[#666666] text-[16px] font-bold mt-2">تحسين تجربة المستخدم</p>
+                        <p className="text-[#333333] text-[14px] font-normal line-clamp-2">
+                            تحسين تجربة المستخدم في متجرك الإلكتروني أحد العناوين الأساسية في مهمتك لجذب المزيد من العملاء، وتعزيز ولائهم للمتجر، وإليك عدّة نصائح تساعدك في مهمّة
+                        </p>
+
+                        <div className="flex mt-4 justify-between">
+                            <div className="mt-2 flex gap-2 items-center bg-[#FFF7DF] rounded-md px-2 max-h-fit">
+                                <img src="/images/home/star.png" className="w-[16px] h-[16px]" />
+                                <span className="text-[#A46F29] text-[14px] font-medium p-1 rounded-lg">مواضيع مميزة</span>
+                            </div>
+                            <div className="p-3 flex gap-8">
+                                <div className="flex gap-2 items-center">
+                                    <img src="/images/home/like.svg" className="cursor-pointer" />
+                                    <span className="mb-1 text-[#999999]">14</span>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <img src="/images/home/cloud.svg" className="cursor-pointer" />
+                                    <span className="mb-1 text-[#999999]">12</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
     return (
         <>
             <div className="flex justify-end">
@@ -180,7 +262,7 @@ const Home = () => {
                     )}
                     <div className="sm:p-6 mt-4 w-full" dir="rtl">
                         <div
-                            className="flex flex-col items-center justify-center"
+                            className="flex flex-col items-center justify-center pb-[90px]"
                         >
                             <span
                                 className="text-[#004D5A] sm:text-[64px] text-[48px] font-extrabold text-center"
@@ -230,7 +312,7 @@ const Home = () => {
                                 </div>
                                 <div className="mt-2">
                                     {posts.map((post, index) => (
-                                        <PostDetail
+                                        <HomePost
                                             key={post.id}
                                             post={post}
                                             index={index}
@@ -240,17 +322,10 @@ const Home = () => {
                                 </div>
                             </div>
                             {/* left part */}
-                            <div className="w-1/3 mt-6 sm:flex gap-3 items-start justify-end ml-9 hidden">
-                                <p className="text-[#333333] mt-[10px] font-semibold">
-                                    don’t miss it 👋 
-                                </p>
-                                <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
-                                <div className="bg-white rounded-full">
-                                    <img src={`/images/arrow-left.svg`} className="cursor-pointer rotate-180 p-4" />
-                                </div>
-                                <div className="bg-white rounded-full">
-                                    <img src={`/images/arrow-left.svg`} className="cursor-pointer p-4" />
-                                </div>
+                            <div className="w-1/3 sm:flex hidden flex-col gap-4">
+                                <HomeSuggestedPost />
+                                <HomeSuggestedTopic />
+                                <HomeSuggestedTopic />
                             </div>
 
                         </div>

@@ -87,7 +87,7 @@ const Login = () => {
     // const [currentStep, setCurrentStep] = useState(0);
 
     return (
-        <div className="flex items-center justify-center h-screen bg-white">
+        <div className="flex ite    ms-center justify-center h-screen bg-white">
             <div className="flex bg-white rounded-lg shadow-lg max-w-4xl w-full">
                 <div className="flex-col flex items-center justify-center p-8 bg-teal-50">
                     <h1 className="text-3xl font-bold text-black mb-4">
