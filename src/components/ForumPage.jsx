@@ -9,7 +9,7 @@ import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
 import Header from "./Header";
 import LeftSidebar from "./LeftSidebar";
-import PostDetail from "./PostDetail";
+// import PostDetail from "./PostDetail";
 
 const ForumPage = () => {
     const [formVisible, setFormVisible] = useState(false);
@@ -185,7 +185,7 @@ const ForumPage = () => {
                 </div>
                         {/* <DefaultPostSearch /> */}
                         <div className="flex">
-                            <div className="posts-container w-full mt-2" style={{ display: 'inline-block', verticalAlign: 'top' }}>
+                            {/* <div className="posts-container w-full mt-2" style={{ display: 'inline-block', verticalAlign: 'top' }}>
                                 {posts.map((post, index) => (
                                     <PostDetail
                                         key={post.id}
@@ -194,7 +194,7 @@ const ForumPage = () => {
                                         handleDelete={() => { dispatch(deleteTopic(post.id)) }}
                                     />
                                 ))}
-                            </div>
+                            </div> */}
 
                                 {/* <LeftSidebar /> */}
                         </div>

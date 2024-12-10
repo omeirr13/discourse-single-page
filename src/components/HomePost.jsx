@@ -12,11 +12,12 @@ const HomePost = ({ post }) => {
                     <div className="flex justify-between w-full">
                         <div className="flex justify-between w-full">
                             <div className="flex gap-3">
-                                <div className="w-[44px] h-[44px] bg-[#83ECFF] rounded-full flex items-center justify-center mb-1">
+                                <img src="/images/header/smile.png" className="w-[44px] h-[44px]" />
+                                {/* <div className="w-[44px] h-[44px] bg-[#83ECFF] rounded-full flex items-center justify-center mb-1">
                                     <p className="text-[#06778B] text-[20px] font-semibold leading-none">
                                         {firstletter}
                                     </p>
-                                </div>
+                                </div> */}
 
                                 <div className="flex-col">
                                     <div className="flex gap-3 text-[14px] font-medium">

@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
-import HomePost from "./PostDetail";
-
+import HomePost from "./HomePost";
 const Home = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [newPost, setNewPost] = useState({
@@ -158,7 +157,7 @@ const Home = () => {
                     <p className="text-[#333333] mt-[10px] font-semibold">
                         don’t miss it👋
                     </p>
-                    <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
+                <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
                     <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
                         <img src={`/images/arrow-left.svg`} className="cursor-pointer rotate-180 p-4" />
                     </div>
