@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Post from "./Post";
 import Sidebar from "./Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -9,8 +8,9 @@ import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
 import Header from "./Header";
 import LeftSidebar from "./LeftSidebar";
+import PostDetail from "./PostDetail";
 
-const ForumPage = () => {
+const PostDetails = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [newPost, setNewPost] = useState({
         title: "",
@@ -175,7 +175,7 @@ const ForumPage = () => {
                         <div className="flex">
                             <div className="posts-container w-[47vw] mt-[3rem]" style={{ display: 'inline-block', verticalAlign: 'top' }}>
                                 {posts.map((post, index) => (
-                                    <Post
+                                    <PostDetail
                                         key={post.id}
                                         post={post}
                                         index={index}
@@ -198,4 +198,4 @@ const ForumPage = () => {
     );
 };
 
-export default ForumPage;
+export default PostDetails;

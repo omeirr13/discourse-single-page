@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Post from "./Post";
 import Sidebar from "./Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
