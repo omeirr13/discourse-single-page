@@ -8,6 +8,7 @@ import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSli
 import HomePost from "./HomePost";
 const Home = () => {
     const [formVisible, setFormVisible] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(""); // Search query state
     const [newPost, setNewPost] = useState({
         title: "",
         category: "",
@@ -29,6 +30,16 @@ const Home = () => {
         const { name, value } = e.target;
         setNewPost({ ...newPost, [name]: value });
     };
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const filteredPosts = posts.filter(
+        (post) =>
+            post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
@@ -279,6 +290,7 @@ const Home = () => {
                                 type="text"
                                 className="mt-5 hidden sm:block border-[#BBBBBB] border-[1px] border-solid rounded-[8px] h-[45px] w-[37vw] pr-[3vw] pl-4 home-search"
                                 placeholder="ابحث عن سؤالك"
+                                onChange={handleSearchChange}
                                 style={{
                                     backgroundImage: "url('/images/sidebar/search.png')",
                                     backgroundSize: "20px 20px",
@@ -307,10 +319,10 @@ const Home = () => {
                                     </div>
                                 </div>
                                 <div className="mt-2">
-                                    {posts.length === 0 ? (
+                                    {filteredPosts.length === 0 ? (
                                         <div>أُووبس! لا توجد مشاركات جديدة</div>
                                     ) : (
-                                        posts.map((post, index) => (
+                                        filteredPosts.map((post, index) => (
                                             <HomePost
                                                 key={post.id}
                                                 post={post}

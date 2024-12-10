@@ -23,13 +23,14 @@ const HomePost = ({ post }) => {
                                     <div className="flex gap-3 text-[14px] font-medium">
                                         <p className="text-[#444444] font-medium">{post.topic_creator?.username}</p>
                                         <span className="mb-1 text-[#999999]">{post.category?.name}</span>
-                                        {/* <div className="bg-[#EFFBF6] rounded-full">
+                                        <div className="bg-[#EFFBF6] rounded-full">
                                             <div className="flex gap-2 px-3">
                                                 <img src="/images/home/tick.svg" />
                                                 <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
                                             </div>
-                                        </div> */}
+                                        </div>
                                     </div>
+                                    <p className='font-bold'>{post.title}</p>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
                                         dangerouslySetInnerHTML={{ __html: truncateString(post.description, 100) }}
