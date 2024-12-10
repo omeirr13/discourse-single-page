@@ -76,7 +76,11 @@ const PostDetails = () => {
     }, [handleClose]);
 
     if (categoriesStatus === "loading" || postsStatus == "loading") {
-        return <p>Loading...</p>;
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
+            </div>
+        );
     }
 
     // const DefaultPostSearch = () => {

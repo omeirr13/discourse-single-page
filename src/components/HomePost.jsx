@@ -3,6 +3,11 @@ import 'moment/locale/ar'; // Import Arabic locale
 
 const HomePost = ({ post }) => {
 
+    function truncateString(str, maxLength) {
+        if (!str) return "";
+        return str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
+    }
+
     const humanFriendlyDate = moment(post.last_posted_at || post.created_at).locale('ar').fromNow();
     const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator.avatar.replace("{size}","28") }`;
     return (
@@ -12,7 +17,7 @@ const HomePost = ({ post }) => {
                     <div className="flex justify-between w-full">
                         <div className="flex justify-between w-full">
                             <div className="flex gap-3">
-                                <img src={poster_image} className="w-[44px] h-[44px]" />
+                                <img src={poster_image} className="w-[44px] h-[44px] rounded-full" />
 
                                 <div className="flex-col">
                                     <div className="flex gap-3 text-[14px] font-medium">
@@ -27,7 +32,7 @@ const HomePost = ({ post }) => {
                                     </div>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
-                                        dangerouslySetInnerHTML={{ __html: post.description }}
+                                        dangerouslySetInnerHTML={{ __html: truncateString(post.description, 100) }}
                                     />
                                 </div>
                             </div>
