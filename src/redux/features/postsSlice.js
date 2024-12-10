@@ -48,12 +48,12 @@ const postsSlice = createSlice({
 
 export const { setLoading, setPosts, setError, removeTopic, addTopic } = postsSlice.actions;
 
-export const fetchPosts = () => async (dispatch) => {
+export const fetchPosts = (method="new") => async (dispatch) => {
     try {
         dispatch(setLoading());
         const userObj = localStorage.getItem("salla_discourse_user");
         const user = JSON.parse(userObj);
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/latest.json`,{
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/${method}.json?order=views&ascending=false`,{
             headers: {
                 'Api-Key': `${process.env.REACT_APP_API_KEY}`,
                 'Api-Username': user.username,

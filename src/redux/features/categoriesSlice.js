@@ -5,16 +5,6 @@ const categoriesSlice = createSlice({
   name: 'categories',
   initialState: {
     categories: [
-    //   {
-    //   id: 1,
-    //   value: "واحد",
-    //   label: "واحد",
-    // },
-    // {
-    //   id: 2,
-    //   value: "اثنان",
-    //   label: "اثنان",
-    // },
   ],
     status: 'idle',
     error: null,
@@ -36,14 +26,18 @@ const categoriesSlice = createSlice({
 
 export const { setLoading, setCategories, setError } = categoriesSlice.actions;
 
-export const fetchCategories = () => async (dispatch) => {
+export const fetchCategories = (is_include_subcategories=false) => async (dispatch) => {
   try {
     dispatch(setLoading());
 
     const userObj = localStorage.getItem("salla_discourse_user");
     const user = JSON.parse(userObj);
+    let url = `${process.env.REACT_APP_API_URL}/categories.json`;
+    if(is_include_subcategories){
+      url = `${process.env.REACT_APP_API_URL}/categories.json?include_subcategories=true`;
+    }
 
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/categories.json`,{
+    const response = await axios.get(url,{
       headers: {
           'Api-Key': `${process.env.REACT_APP_API_KEY}`,
           'Api-Username': user.username,
@@ -59,33 +53,6 @@ export const fetchCategories = () => async (dispatch) => {
     }))));
 
     dispatch(setCategories(response.category_list.categories));
-
-    // AUTO LOGIN DISCOURSE CODE -------------------------
-
-  // const response = await fetch(`${process.env.REACT_APP_API_URL}/session`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-  //     'Api-Username': `${process.env.REACT_APP_API_USERNAME}`,
-  //   },
-  //   body: JSON.stringify({
-  //     login: `${process.env.REACT_APP_API_USERNAME}`,// API username
-  //     password: 'ashar11223344', // Admin password (used for session creation)
-  //   }),
-  //   credentials: 'include', // Ensure cookies are included in the request
-  // });
-
-  // console.log("cat response coming...");
-  // console.log(response);
-
-  // if (!response.ok) {
-  //   throw new Error('Failed to log in to Discourse.');
-  // }
-
-  // window.location.href = `http://localhost:4200/admin`;
-
-  // END AUTO LOGIN DISCOURSE CODE ------------------------------
     
   } catch (error) {
     dispatch(setError(error.message));

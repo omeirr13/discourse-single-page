@@ -64,6 +64,13 @@ const Home = () => {
     const [filterSelected, setFilterSelected] = useState("new");
     const handleChangeFilterSelected = (filter) => {
         setFilterSelected(filter);
+        if(filter ==="new"){
+            dispatch(fetchPosts("new"));
+        }
+        else {
+            dispatch(fetchPosts("latest"));
+        }
+        
     }
 
     const [filterListOpen, setFilterListOpen] = useState(false);
@@ -260,7 +267,7 @@ const Home = () => {
                                     textShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
                                 }}
                             >
-                                Salla Community
+                                جماعة سلا
                             </span>
 
                             <p className="mt-4 text-center hidden sm:block text-[#707070]">
@@ -270,7 +277,7 @@ const Home = () => {
                             <input
                                 type="text"
                                 className="mt-5 hidden sm:block border-[#BBBBBB] border-[1px] border-solid rounded-[8px] h-[45px] w-[37vw] pr-[3vw] pl-4 home-search"
-                                placeholder="search for your question"
+                                placeholder="ابحث عن سؤالك"
                                 style={{
                                     backgroundImage: "url('/images/sidebar/search.png')",
                                     backgroundSize: "20px 20px",
@@ -288,8 +295,8 @@ const Home = () => {
                             <div className="sm:w-2/3 mt-4">
                                 <div className="hidden sm:flex justify-between m-3">
                                     <div className="flex gap-5">
-                                        <span className={filterSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("new")}>new</span>
-                                        <span className={filterSelected === "most viewed" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("most viewed")}>most viewed</span>
+                                        <span className={filterSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("new")}>جديد</span>
+                                        <span className={filterSelected === "most viewed" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("most viewed")}>الأكثر مشاهدة</span>
                                     </div>
                                     <div>
                                         <div className="flex gap-12 border-[1px] border-[#DDDDDD] rounded-md px-3 py-2">
@@ -299,14 +306,18 @@ const Home = () => {
                                     </div>
                                 </div>
                                 <div className="mt-2">
-                                    {posts.map((post, index) => (
-                                        <HomePost
-                                            key={post.id}
-                                            post={post}
-                                            index={index}
-                                            handleDelete={() => { dispatch(deleteTopic(post.id)) }}
-                                        />
-                                    ))}
+                                    {posts.length === 0 ? (
+                                        <div>أُووبس! لا توجد مشاركات جديدة</div>
+                                    ) : (
+                                        posts.map((post, index) => (
+                                            <HomePost
+                                                key={post.id}
+                                                post={post}
+                                                index={index}
+                                                handleDelete={() => { dispatch(deleteTopic(post.id)) }}
+                                            />
+                                        ))
+                                    )}
                                 </div>
                             </div>
                             {/* left part */}

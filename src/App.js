@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import ForumPage from "./components/ForumPage";
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Signup from "./components/Signup";
 import Login from "./components/Login";

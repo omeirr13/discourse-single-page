@@ -3,9 +3,8 @@ import 'moment/locale/ar'; // Import Arabic locale
 
 const HomePost = ({ post }) => {
 
-    const humanFriendlyDate = moment(post.last_posted_at).locale('ar').fromNow();
-    const firstletter = post.last_poster_username.charAt(0);
-    const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator.avatar }`;
+    const humanFriendlyDate = moment(post.last_posted_at || post.created_at).locale('ar').fromNow();
+    const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator.avatar.replace("{size}","28") }`;
     return (
         <div className="border-[#DDDDDD] border-[1px] border-l-0 border-t-0 border-r-0 bg-white rounded-lg m-3" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4 pb-0">
@@ -13,23 +12,18 @@ const HomePost = ({ post }) => {
                     <div className="flex justify-between w-full">
                         <div className="flex justify-between w-full">
                             <div className="flex gap-3">
-                                <img src="/images/header/smile.png" className="w-[44px] h-[44px]" />
-                                {/* <div className="w-[44px] h-[44px] bg-[#83ECFF] rounded-full flex items-center justify-center mb-1">
-                                    <p className="text-[#06778B] text-[20px] font-semibold leading-none">
-                                        {firstletter}
-                                    </p>
-                                </div> */}
+                                <img src={poster_image} className="w-[44px] h-[44px]" />
 
                                 <div className="flex-col">
                                     <div className="flex gap-3 text-[14px] font-medium">
                                         <p className="text-[#444444] font-medium">{post.topic_creator.username}</p>
                                         <span className="mb-1 text-[#999999]">{post.category.name}</span>
-                                        <div className="bg-[#EFFBF6] rounded-full">
+                                        {/* <div className="bg-[#EFFBF6] rounded-full">
                                             <div className="flex gap-2 px-3">
                                                 <img src="/images/home/tick.svg" />
                                                 <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
