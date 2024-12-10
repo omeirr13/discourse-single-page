@@ -3,7 +3,6 @@ import Sidebar from "./Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
 import HomePost from "./HomePost";
@@ -16,11 +15,9 @@ const Home = () => {
     });
 
     const dispatch = useDispatch();
-    const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
     const { posts, status: postsStatus, error: postsError } = useSelector((state) => state.posts);
 
     useEffect(() => {
-        dispatch(fetchCategories());
         dispatch(fetchPosts());
     }, [dispatch]);
 
@@ -74,7 +71,7 @@ const Home = () => {
     }
 
     const [filterListOpen, setFilterListOpen] = useState(false);
-    if (categoriesStatus === "loading" || postsStatus == "loading") {
+    if (postsStatus == "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
                 <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
@@ -225,7 +222,7 @@ const Home = () => {
                                             <Select
                                                 // isMulti
                                                 name="selectedOptions"
-                                                options={categories}
+                                                options={[]}
                                                 value={newPost.selectedOptions}
                                                 onChange={handleSelectChange}
                                                 className="mt-2 w-[43vw]"

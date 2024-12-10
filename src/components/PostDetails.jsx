@@ -19,11 +19,9 @@ const PostDetails = () => {
     });
 
     const dispatch = useDispatch();
-    const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
     const { posts, status: postsStatus, error: postsError } = useSelector((state) => state.posts);
 
     useEffect(() => {
-        dispatch(fetchCategories());
         dispatch(fetchPosts());
     }, [dispatch]);
 
@@ -75,7 +73,7 @@ const PostDetails = () => {
         };
     }, [handleClose]);
 
-    if (categoriesStatus === "loading" || postsStatus == "loading") {
+    if (postsStatus == "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
                 <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
@@ -141,7 +139,7 @@ const PostDetails = () => {
                                             <Select
                                                 // isMulti
                                                 name="selectedOptions"
-                                                options={categories}
+                                                options={[]}
                                                 value={newPost.selectedOptions}
                                                 onChange={handleSelectChange}
                                                 className="mt-2 w-[43vw]"

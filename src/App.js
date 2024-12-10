@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Header from "./components/Header";
 import PostDetails from "./components/PostDetails";
 import Home from "./components/Home";
+import Sidebar from "./components/Sidebar";
 
 
 function App() {
