@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/features/categoriesSlice";
 import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
-import PostDetail from "./PostDetail";
+// import PostDetail from "./PostDetail";
 import LeftDetailSidebar from "./LeftDetailSidebar";
 
 const PostDetails = () => {
@@ -66,14 +66,14 @@ const PostDetails = () => {
                         </div>
                         <div className="flex ">
                             <div className="posts-container w-[47vw] mt-[3rem]" style={{ display: 'inline-block', verticalAlign: 'top' }}>
-                                {posts.map((post, index) => (
-                                    <PostDetail
-                                        key={post.id}
-                                        post={post}
-                                        index={index}
-                                        handleDelete={() => { dispatch(deleteTopic(post.id)) }}
-                                    />
-                                ))}
+                                {/* {posts.map((post, index) => (
+                                    // <PostDetail
+                                    //     key={post.id}
+                                    //     post={post}
+                                    //     index={index}
+                                    //     handleDelete={() => { dispatch(deleteTopic(post.id)) }}
+                                    // />
+                                ))} */}
                             </div>
 
                             <LeftDetailSidebar />
