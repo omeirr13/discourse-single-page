@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
+import React from "react";
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Header from "./components/Header";
@@ -9,22 +9,7 @@ import Home from "./components/Home";
 
 function App() {
 
-  const navigate = useNavigate();
-  let isAuthenticated = false;
   const location = useLocation();
-
-  const encryptedPassword = localStorage.getItem('salla_discourse_token');
-  const encryptedUser = localStorage.getItem('salla_discourse_user');
-
-  if (encryptedPassword && encryptedUser) {
-    isAuthenticated = true;
-  }
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
-  }, []);
 
   const showHeader = location.pathname !== "/login" && location.pathname !== "/signup";
 

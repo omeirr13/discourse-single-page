@@ -32,6 +32,10 @@ export const fetchCategories = (is_include_subcategories=false) => async (dispat
 
     const userObj = localStorage.getItem("salla_discourse_user");
     const user = JSON.parse(userObj);
+    let username = process.env.REACT_APP_API_USERNAME;
+    if(user){
+        username = user.username;
+    }
     let url = `${process.env.REACT_APP_API_URL}/categories.json`;
     if(is_include_subcategories){
       url = `${process.env.REACT_APP_API_URL}/categories.json?include_subcategories=true`;
@@ -40,7 +44,7 @@ export const fetchCategories = (is_include_subcategories=false) => async (dispat
     const response = await axios.get(url,{
       headers: {
           'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-          'Api-Username': user.username,
+          'Api-Username': username,
           'Content-Type': 'application/json'
       }
   });
