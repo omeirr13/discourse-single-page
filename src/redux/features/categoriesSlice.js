@@ -48,15 +48,15 @@ export const fetchCategories = (is_include_subcategories=false) => async (dispat
           'Content-Type': 'application/json'
       }
   });
-    const categories = response.data.category_list.categories;
-    dispatch(setCategories(categories.map((category) => ({
-      ...category, 
-      label: category.name, 
-      value: category.name, 
-      id: category.id
-    }))));
 
-    dispatch(setCategories(response.category_list.categories));
+    const filteredCategories = response.data.category_list.categories.filter(
+      (category) => category.id !== 3 && category.id !== 4
+    );
+    const categories = filteredCategories.sort(
+      (a, b) => (a.subcategory_count === null ? -1 : 1)
+    );
+
+    dispatch(setCategories(categories));
     
   } catch (error) {
     dispatch(setError(error.message));

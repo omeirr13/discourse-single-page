@@ -42,8 +42,7 @@ const Sidebar = () => {
     return (
         <div className="rounded-lg p-4 max-w-xs w-full h-screen mt-[2rem] hidden sm:block" dir="rtl" style={{ height: "calc(100vh - 73px)", width: "230px" }}>
             {categories.map((category) => {
-                if (category.id !== 4 && category.id !== 3) {
-                    if (!category.subcategory_list) { //if no parent...means not a child
+                    if (!category.subcategory_list) {
                         if (!category.has_children) {
                             return (
                                 <Item name={category.name} image={category.image} link={category.topic_url} />
@@ -51,13 +50,13 @@ const Sidebar = () => {
                         }
                     }
                     else {
-                        console.log("ok");
                         return (
                             <>
                                 <div className="flex justify-between items-center w-48" onClick={() => toggle(category.id)} >
                                     <h3 className="font-semibold text-[16px] text-gray-800 text-right mb-4 mt-4 mr-4 cursor-pointer">{category.name}</h3>
                                     <img src={`/images/sidebar/arrow-down.png`} className={`w-6 h-6 ml-[-5px] cursor-pointer ${!closedIds.includes(category.id) ? 'rotate-180' : ''}`} />
-                                </div>                                {!closedIds.includes(category.id) && (
+                                </div> 
+                                {!closedIds.includes(category.id) && (
                                     <ul className="space-y-4 text-gray-600 text-right mr-5">
                                         {category.subcategory_list.map((subcategory) => (
                                             <Item name={subcategory.name} image={subcategory.image} link={category.topic_url} />
@@ -68,7 +67,6 @@ const Sidebar = () => {
                         )
 
                     }
-                }
             })}
             {/* <ul className="space-y-4 text-gray-600 text-right mr-5 mt-4 w-full">
                 {categories.slice(2, 6).map((category, index) => {
