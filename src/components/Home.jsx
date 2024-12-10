@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Post from "./Post";
 import Sidebar from "./Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -37,16 +36,6 @@ const Home = () => {
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        // setPosts([
-        //     ...posts,
-        //     {
-        //         ...newPost,
-        //         id: posts.length + 1,
-        //         username: "أسم المستخدم",
-        //         time: "الآن",
-        //         replies: 0,
-        //     },
-        // ]);
         dispatch(createTopic(newPost));
         setNewPost({ title: "", category: "", raw: "" });
         setFormVisible(false);

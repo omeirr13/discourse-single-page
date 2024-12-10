@@ -5,6 +5,7 @@ const HomePost = ({ post }) => {
 
     const humanFriendlyDate = moment(post.last_posted_at).locale('ar').fromNow();
     const firstletter = post.last_poster_username.charAt(0);
+    const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator.avatar }`;
     return (
         <div className="border-[#DDDDDD] border-[1px] border-l-0 border-t-0 border-r-0 bg-white rounded-lg m-3" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4 pb-0">
@@ -20,8 +21,8 @@ const HomePost = ({ post }) => {
 
                                 <div className="flex-col">
                                     <div className="flex gap-3 text-[14px] font-medium">
-                                        <p className="text-[#444444] font-medium">{post.last_poster_username}</p>
-                                        <span className="mb-1 text-[#999999]">محتاج فزعتكم</span>
+                                        <p className="text-[#444444] font-medium">{post.topic_creator.username}</p>
+                                        <span className="mb-1 text-[#999999]">{post.category.name}</span>
                                         <div className="bg-[#EFFBF6] rounded-full">
                                             <div className="flex gap-2 px-3">
                                                 <img src="/images/home/tick.svg" />
@@ -31,7 +32,7 @@ const HomePost = ({ post }) => {
                                     </div>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
-                                        dangerouslySetInnerHTML={{ __html: post.title }}
+                                        dangerouslySetInnerHTML={{ __html: post.description }}
                                     />
                                 </div>
                             </div>
@@ -49,26 +50,26 @@ const HomePost = ({ post }) => {
                     </div>
                     <div className="flex gap-2 items-center">
                         <img src="/images/home/cloud.svg" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">{post.like_count}</span>
+                        <span className="mb-1 text-[#999999]">{post.reply_count}</span>
                     </div>
                     <div className="flex gap-2">
                         <img src="/images/home/eye.svg" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">12</span>
+                        <span className="mb-1 text-[#999999]">{post.views}</span>
                     </div>
                 </div>
 
                 <div className="p-3 flex gap-8">
-                    <div className="flex gap-2 items-center">
+                    {/* <div className="flex gap-2 items-center">
                         <img src="/images/home/save.svg" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">اقرأ لاحقاً</span>
                     </div>
                     <div className="flex gap-2 items-center">
                         <img src="/images/home/share.svg" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">انشر</span>
-                    </div>
+                    </div> */}
                     <div className="flex gap-2">
                         <img src="/images/home/clock.svg" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">3 س</span>
+                        <span className="mb-1 text-[#999999]">{humanFriendlyDate}</span>
                     </div>
                 </div>
 

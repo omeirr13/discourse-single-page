@@ -7,7 +7,6 @@ export const sidebar_items = {
   ],
   jadeed: [
     { name: "أخبار سلة", image: "eyes.png" },
-    { name: "فعاليات ولقاءات", image: "eyes.png" },
     { name: "منصة المقترحات", image: "eyes.png" },
   ],
   majtama_items: [

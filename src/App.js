@@ -25,7 +25,7 @@ function App() {
     if (!isAuthenticated) {
       navigate("/login");
     }
-  }, [navigate, isAuthenticated]);
+  }, []);
 
   const showHeader = location.pathname !== "/login" && location.pathname !== "/signup";
 

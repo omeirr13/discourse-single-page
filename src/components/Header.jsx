@@ -63,13 +63,11 @@ const Header = () => {
         <header className="flex items-center justify-between sm:p-4 p-4 pl-0 bg-white border-b">
             <div className="flex items-center space-x-3 ml-0 sm:ml-4 relative">
             <img 
-                src="/images/header/smile.png" 
+                src={avatarTemplate} 
                 alt="Profile" 
                 className="w-10 h-10 rounded-full border-2 border-yellow-500 hidden sm:block" 
             />
-            <span className="text-lg font-semibold text-gray-800 hidden sm:block">
-                أسماء التاجري
-            </span>
+            <span className="text-lg font-semibold text-gray-800 hidden sm:block">{userName}</span>
 
             <div className="relative">
                 <img 
@@ -89,7 +87,7 @@ const Header = () => {
                 className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                 onClick={() => logout()}
             >
-                Logout
+                تسجيل الخروج
             </li>
         </ul>
     </div>
