@@ -1,7 +1,7 @@
 import moment from 'moment';
 import 'moment/locale/ar'; // Import Arabic locale
 
-const Post = ({ post }) => {
+const PostDetail = ({ post }) => {
 
     const humanFriendlyDate = moment(post.last_posted_at).locale('ar').fromNow();
     const firstletter = post.last_poster_username.charAt(0);
@@ -81,4 +81,4 @@ const Post = ({ post }) => {
 
     );
 };
-export default Post;
+export default PostDetail;
