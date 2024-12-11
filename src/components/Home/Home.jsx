@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import { createTopic, deleteTopic, fetchPosts } from "../redux/features/postsSlice";
+import { createTopic, deleteTopic, fetchPosts } from "../../redux/features/postsSlice";
 import HomePost from "./HomePost";
+
 const Home = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState(""); // Search query state

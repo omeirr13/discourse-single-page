@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import { encryptData } from "../crypto";
+import { encryptData } from "../../crypto";
 
 const AddYourInfoForm = () => {
     const [username, setUsername] = useState("");
