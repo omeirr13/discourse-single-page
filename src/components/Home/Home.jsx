@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import HomePost from "./HomePost";
 import Sidebar from "../Sidebar";
-import { createTopic, deleteTopic, fetchPosts, fetchCategoryPosts } from "../../redux/features/postsSlice";
+import { deleteTopic, fetchPosts, fetchCategoryPosts } from "../../redux/features/postsSlice";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
 const Home = () => {
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
@@ -229,8 +229,8 @@ const Home = () => {
                             <div className="sm:w-2/3 mt-4">
                                 <div className="hidden sm:flex justify-between m-3">
                                     <div className="flex gap-5">
-                                        <span className={sortSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeSortSelected("new")}>جديد</span>
-                                        <span className={sortSelected === "latest" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeSortSelected("latest")}>الأكثر مشاهدة</span>
+                                        <span className={sortSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeSortSelected("new")}>جديد</span>
+                                        <span className={sortSelected === "latest" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeSortSelected("latest")}>الأكثر مشاهدة</span>
                                     </div>
                                     <div className=" mt-2 border  rounded-lg shadow-lg w-56 bg-white">
                                         <div className="flex flex-col p-2">

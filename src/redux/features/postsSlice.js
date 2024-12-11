@@ -72,7 +72,7 @@ export const fetchPosts = (method="new") => async (dispatch) => {
     }
 };
 
-export const fetchCategroryPosts = (category, method) => async (dispatch) => {
+export const fetchCategoryPosts = (category, method) => async (dispatch) => {
     try {
         dispatch(setLoading());
         const userObj = localStorage.getItem("salla_discourse_user");
@@ -81,6 +81,9 @@ export const fetchCategroryPosts = (category, method) => async (dispatch) => {
         if(user){
             username = user.username;
         }
+
+        console.log("url is coming...");
+        console.log(`${process.env.REACT_APP_API_URL}/c/${category}/l/${method}.json?order=views&ascending=false`);
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/c/${category}/l/${method}.json?order=views&ascending=false`,{
             headers: {
                 'Api-Key': `${process.env.REACT_APP_API_KEY}`,

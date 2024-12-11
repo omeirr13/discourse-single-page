@@ -1,7 +1,7 @@
 import moment from 'moment';
 import 'moment/locale/ar'; // Import Arabic locale
 
-const CategoryPost = ({ post }) => {
+const CategoryPostItem = ({ post }) => {
 
     function truncateString(str, maxLength) {
         if (!str) return "";
@@ -79,4 +79,4 @@ const CategoryPost = ({ post }) => {
 
     );
 };
-export default CategoryPost;
+export default CategoryPostItem;

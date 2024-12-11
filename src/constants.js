@@ -1,25 +1,9 @@
 export const sidebar_items = {
-  items: [
-    { name: "الرئيسية", image: "home.png" },
-    { name: "استكشف المجتمع", image: "eyes.png" },
-    { name: "مواضيع مميزة", image: "star.png" },
-    { name: "فعاليات ولقاءات", image: "eyes.png" },
-  ],
-  jadeed: [
-    { name: "أخبار سلة", image: "eyes.png" },
-    { name: "منصة المقترحات", image: "eyes.png" },
-  ],
-  majtama_items: [
-    { name: "تجارب التجار", image: "person.png" },
-    { name: "محتاج فزعتكم", image: "bandages.png" },
-    { name: "مصادر للتجار", image: "magnify.png" },
-    { name: "مساحة إعلانية", image: "100.png" },
-  ],
   rawabat_items: [
-    { name: "أكاديمية سلة", image: "diagonal-arrow.svg" },
-    { name: "مركز المساعدة", image: "diagonal-arrow.svg" },
-    { name: "مدونة سلة", image: "diagonal-arrow.svg" },
-    { name: "فيديوهات تعليمية", image: "diagonal-arrow.svg" },
+    { name: "أكاديمية سلة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
+    { name: "مركز المساعدة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
+    { name: "مدونة سلة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
+    { name: "فيديوهات تعليمية", image: "/images/sidebar/diagonal-arrow.png" , link: "http://google.com/"},
   ]
 }
 

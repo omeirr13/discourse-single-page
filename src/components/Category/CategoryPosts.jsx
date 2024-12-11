@@ -3,17 +3,18 @@ import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import Select from "react-select";
-import { createTopic, deleteTopic, fetchCategoryPosts, fetchPosts } from "../../redux/features/postsSlice";
-import CategoryPost from "./CategoryPost";
+import { createTopic, deleteTopic, fetchCategoryPosts} from "../../redux/features/postsSlice";
+import CategoryPostItem from "./CategoryPostItem";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
 import { useParams } from "react-router-dom";
 
-const CategoryDetail = () => {
+const CategoryPosts = () => {
     const { categoryId } = useParams();
 
     const [formVisible, setFormVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
+    const [filterSelected, setFilterSelected] = useState("new");
+
     const [newPost, setNewPost] = useState({
         title: "",
         category: "",
@@ -24,8 +25,8 @@ const CategoryDetail = () => {
     const { posts, status: postsStatus, error: postsError } = useSelector((state) => state.posts);
 
     useEffect(() => {
-        dispatch(fetchCategoryPosts(categoryId, "latest"));
-    }, [dispatch]);
+        dispatch(fetchCategoryPosts(categoryId, filterSelected));
+    }, [dispatch, categoryId,filterSelected]);
 
     const handleSelectChange = (selectedOption) => {
         setNewPost({ ...newPost, category: selectedOption });
@@ -74,28 +75,12 @@ const CategoryDetail = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [handleClose]);
-    const [filterSelected, setFilterSelected] = useState("new");
+
     const handleChangeFilterSelected = (filter) => {
         setFilterSelected(filter);
-        if (filter === "new") {
-            dispatch(fetchPosts("new"));
-        }
-        else {
-            dispatch(fetchPosts("latest"));
-        }
-
+        dispatch(fetchCategoryPosts(categoryId, filter));
     }
 
-    const [filterListOpen, setFilterListOpen] = useState(false);
-    const [selectedFilter, setSelectedFilter] = useState(null);
-
-    const handleFilterSelect = (category) => {
-        if (selectedFilter === category) {
-            setSelectedFilter(null);
-        } else {
-            setSelectedFilter(category);
-        }
-    };
 
     const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
 
@@ -303,8 +288,8 @@ const CategoryDetail = () => {
                             <div className="w-full mt-4">
                                 <div className="hidden sm:flex justify-between m-3">
                                     <div className="flex gap-5">
-                                        <span className={filterSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("new")}>جديد</span>
-                                        <span className={filterSelected === "most viewed" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("most viewed")}>الأكثر مشاهدة</span>
+                                        <span className={filterSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeFilterSelected("new")}>جديد</span>
+                                        <span className={filterSelected === "latest" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeFilterSelected("latest")}>الأكثر مشاهدة</span>
                                     </div>
                                     <button type="submit" className="btn px-4  py-2 rounded text-white hover:underline" onClick={() => setFormVisible(true)}>
                                         Create
@@ -315,7 +300,7 @@ const CategoryDetail = () => {
                                         <div>أُووبس! لا توجد مشاركات جديدة</div>
                                     ) : (
                                         filteredPosts.map((post, index) => (
-                                            <CategoryPost
+                                            <CategoryPostItem
                                                 key={post.id}
                                                 post={post}
                                                 index={index}
@@ -346,4 +331,4 @@ const CategoryDetail = () => {
     );
 };
 
-export default CategoryDetail;
+export default CategoryPosts;
