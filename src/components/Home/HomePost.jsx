@@ -51,7 +51,7 @@ const HomePost = ({ post }) => {
                     </div>
                     <div className="flex gap-2 items-center">
                         <img src="/images/home/cloud.svg" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">{post.reply_count}</span>
+                        <span className="mb-1 text-[#999999]">{post.posts_count - 1 }</span>
                     </div>
                     <div className="flex gap-2">
                         <img src="/images/home/eye.svg" className="cursor-pointer" />
