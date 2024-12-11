@@ -84,9 +84,12 @@ const Home = () => {
     const [filterListOpen, setFilterListOpen] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState(null);
 
-    const handleFilterSelect = (filter) => {
-        setSelectedFilter(filter);
-        setFilterListOpen(false); // Close the dropdown after selecting a filter
+    const handleFilterSelect = (category) => {
+        if (selectedFilter === category) {
+            setSelectedFilter(null); 
+        } else {
+            setSelectedFilter(category);
+        }
     };
 
 
@@ -202,13 +205,16 @@ const Home = () => {
             </div>
         )
     }
-    if (postsStatus == "loading") {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
-            </div>
-        );
-    }
+    const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
+    console.log(categoriesStatus, postsStatus);
+    // if (categoriesStatus || postsStatus == "loading") {
+    //     return (
+    //         <div className="flex items-center justify-center h-screen">
+    //             <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
+    //         </div>
+    //     );
+    // }
+
     return (
         <>
             <div className="flex justify-end">
@@ -326,19 +332,19 @@ const Home = () => {
                                             <img
                                                 src={`/images/header/arrow-down.svg`}
                                                 className={`cursor-pointer ${filterListOpen ? 'rotate-180' : ''}`}
-                                                
+
                                             />
                                         </div>
                                         {filterListOpen && (
                                             <div className="absolute mt-2 border-[1px] border-[#DDDDDD] rounded-md w-[200px] bg-white">
                                                 <ul className="p-2">
-                                                    {['Filter 1', 'Filter 2', 'Filter 3'].map((filter) => (
+                                                    {categories.map((category) => (
                                                         <li
-                                                            key={filter}
-                                                            className={`cursor-pointer p-2 hover:bg-gray-100 ${selectedFilter === filter ? 'bg-gray-200' : ''} flex justify-center items-center`}
-                                                            onClick={() => handleFilterSelect(filter)}
+                                                            key={category.id}
+                                                            className={`cursor-pointer p-2 hover:bg-gray-100 ${selectedFilter === category.id ? 'bg-gray-200' : ''} flex justify-center items-center`}
+                                                            onClick={() => handleFilterSelect(category.name)}
                                                         >
-                                                            {filter}
+                                                            {category.name}
                                                         </li>
                                                     ))}
                                                 </ul>

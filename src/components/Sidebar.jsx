@@ -21,7 +21,7 @@ const Sidebar = () => {
     }, [dispatch]);
 
     const [closedIds, setClosedIds] = useState([]);
-    if (categoriesStatus == "loading") {
+    if (categoriesStatus === "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
                 <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
