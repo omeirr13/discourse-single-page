@@ -11,7 +11,6 @@ const PostDetail = ({ post }) => {
             <div className="p-4">
                 <div className="flex gap-8 pb-5">
                     <div className="flex gap-3 items-center">
-                        <img src="/images/sidebar/bandages.png" className="w-4 h-4" />
                         <p className="w-auto h-auto text-[14px] text-[#444444]">محتاج فزعتكم</p>
                     </div>
                     <div>

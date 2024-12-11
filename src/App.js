@@ -5,6 +5,7 @@ import Login from "./components/Auth/Login";
 import Header from "./components/Header";
 import PostDetails from "./components/PostDetails/PostDetails";
 import Home from "./components/Home/Home";
+import Sidebar from "./components/Sidebar";
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/detail/:postId" element={<PostDetails />} />
+        <Route path="/category-detail/:categoryId" element={<CategoryDetail />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
       </Routes>
