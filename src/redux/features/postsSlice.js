@@ -72,6 +72,30 @@ export const fetchPosts = (method="new") => async (dispatch) => {
     }
 };
 
+export const fetchCategroryPosts = (category, method) => async (dispatch) => {
+    try {
+        dispatch(setLoading());
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
+        let username = process.env.REACT_APP_API_USERNAME;
+        if(user){
+            username = user.username;
+        }
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/c/${category}/l/${method}.json?order=views&ascending=false`,{
+            headers: {
+                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                'Api-Username': username,
+                'Content-Type': 'application/json'
+            }
+        });
+        const posts = response.data.topic_list.topics;
+        console.log("category posts coming...", posts);
+        dispatch(setPosts(posts));
+    } catch (err) {
+        dispatch(setError(err.message));
+    }
+};
+
 export const deleteTopic = (id) => async (dispatch) => {
     try {
         const userObj = localStorage.getItem("salla_discourse_user");

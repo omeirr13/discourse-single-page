@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import { createTopic, deleteTopic, fetchPosts } from "../../redux/features/postsSlice";
 import HomePost from "./HomePost";
-
+import Sidebar from "../Sidebar";
+import { createTopic, deleteTopic, fetchPosts, fetchCategroryPosts } from "../../redux/features/postsSlice";
 const Home = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
@@ -70,29 +69,28 @@ const Home = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [handleClose]);
-    const [filterSelected, setFilterSelected] = useState("new");
-    const handleChangeFilterSelected = (filter) => {
-        setFilterSelected(filter);
-        if (filter === "new") {
-            dispatch(fetchPosts("new"));
+    const [sortSelected, setSortSelected] = useState("new");
+    const handleChangeSortSelected = (sort) => {
+        setSortSelected(sort);
+        if(filterSelected){
+            dispatch(fetchCategroryPosts(filterSelected,sort));
         }
         else {
-            dispatch(fetchPosts("latest"));
+            dispatch(fetchPosts(sort));
         }
-
     }
 
-    const [filterListOpen, setFilterListOpen] = useState(false);
-    const [selectedFilter, setSelectedFilter] = useState(null);
+    const [filterSelected, setFilterSelected] = useState("");
 
     const handleFilterSelect = (category) => {
-        if (selectedFilter === category) {
-            setSelectedFilter(null); 
-        } else {
-            setSelectedFilter(category);
+        setFilterSelected(category);
+        if(category){
+            dispatch(fetchCategroryPosts(category,sortSelected))
+        }
+        else {
+            dispatch(fetchPosts(sortSelected));
         }
     };
-
 
     const DefaultPostSearch = () => {
         return (
@@ -322,39 +320,27 @@ const Home = () => {
                             <div className="sm:w-2/3 mt-4">
                                 <div className="hidden sm:flex justify-between m-3">
                                     <div className="flex gap-5">
-                                        <span className={filterSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("new")}>جديد</span>
-                                        <span className={filterSelected === "most viewed" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeFilterSelected("most viewed")}>الأكثر مشاهدة</span>
+                                        <span className={sortSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeSortSelected("new")}>جديد</span>
+                                        <span className={sortSelected === "latest" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2` : `text-[#666666]`} onClick={() => handleChangeSortSelected("latest")}>الأكثر مشاهدة</span>
                                     </div>
-                                    <div>
-                                        <div className="flex gap-12 border-[1px] border-[#DDDDDD] rounded-md px-3 py-2 cursor-pointer" onClick={() => setFilterListOpen(prev => !prev)}>
-                                            <span className="text-[#666666]">
-                                                {selectedFilter ? selectedFilter : 'Filters'}
-                                            </span>
-                                            <img
-                                                src={`/images/header/arrow-down.svg`}
-                                                className={`cursor-pointer ${filterListOpen ? 'rotate-180' : ''}`}
-
-                                            />
+                                    <div className=" mt-2 border  rounded-lg shadow-lg w-56 bg-white">
+                                        <div className="flex flex-col p-2">
+                                            <select
+                                                className="w-full text-left px-2 py-2 rounded-md border"
+                                                onChange={(e) => handleFilterSelect(e.target.value)}
+                                                value={filterSelected}>
+                                                <option value="">حدد عامل التصفية</option>
+                                                {categories.map((category) => (
+                                                <option key={category.id} value={category.id}>
+                                                    {category.name}
+                                                </option>
+                                                ))}
+                                            </select>
                                         </div>
-                                        {filterListOpen && (
-                                            <div className="absolute mt-2 border-[1px] border-[#DDDDDD] rounded-md w-[200px] bg-white">
-                                                <ul className="p-2">
-                                                    {categories.map((category) => (
-                                                        <li
-                                                            key={category.id}
-                                                            className={`cursor-pointer p-2 hover:bg-gray-100 ${selectedFilter === category.id ? 'bg-gray-200' : ''} flex justify-center items-center`}
-                                                            onClick={() => handleFilterSelect(category.name)}
-                                                        >
-                                                            {category.name}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        )}
-
-
                                     </div>
+ 
                                 </div>
+                                
                                 <div className="mt-2">
                                     {filteredPosts.length === 0 ? (
                                         <div>أُووبس! لا توجد مشاركات جديدة</div>

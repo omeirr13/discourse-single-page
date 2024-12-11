@@ -1,11 +1,10 @@
 import React from "react";
 import { Route, Routes, useLocation } from 'react-router-dom';
-import Signup from "./components/Signup";
-import Login from "./components/Login";
+import Signup from "./components/Auth/Signup";
+import Login from "./components/Auth/Login";
 import Header from "./components/Header";
-import PostDetails from "./components/PostDetails";
-import Home from "./components/Home";
-import Sidebar from "./components/Sidebar";
+import PostDetails from "./components/PostDetails/PostDetails";
+import Home from "./components/Home/Home";
 
 
 function App() {
