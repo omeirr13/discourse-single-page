@@ -10,9 +10,15 @@ const Header = () => {
     const user = JSON.parse(userObj);
     let userName  = "";
     let avatarTemplate  = "";
+    let isAdmin = false;
+    let adminLink = "";
     if(user){
         userName = user.username;
-        avatarTemplate = process.env.REACT_APP_API_URL + user.avatar_template.replace("{size}","28");
+        avatarTemplate = process.env.REACT_APP_API_URL + user.avatar_template.replace("{size}","30");
+        if(user.admin){
+            isAdmin = true;
+            adminLink = process.env.REACT_APP_API_URL + "/admin";
+        }
     }
 
     const toggleDropdown = () => setDropdownVisible(prevState => !prevState);
@@ -63,7 +69,7 @@ const Header = () => {
                 <img 
                     src={avatarTemplate} 
                     alt="Profile" 
-                    className="w-10 h-10 rounded-full border-2 border-yellow-500 hidden sm:block" 
+                    className="w-10 h-10 rounded-full border-2 sm:block" 
                 />
                 <span className="text-lg font-semibold text-gray-800 hidden sm:block">{userName}</span>
 
@@ -105,7 +111,12 @@ const Header = () => {
             )}
     
             {/* Logo */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
+                {isAdmin && (
+                    <a className="font-bold cursor-pointer" href={adminLink} target="_blank">
+                        مسؤل
+                    </a>
+                )}
                 <img src="/images/logo.svg" alt="Salla" className="h-8 mr-4" />
             </div>
         </header>
