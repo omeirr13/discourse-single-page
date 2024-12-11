@@ -16,10 +16,10 @@ export const sidebar_items = {
     { name: "مساحة إعلانية", image: "100.png" },
   ],
   rawabat_items: [
-    { name: "أكاديمية سلة", image: "diagonal-arrow.png" },
-    { name: "مركز المساعدة", image: "diagonal-arrow.png" },
-    { name: "مدونة سلة", image: "diagonal-arrow.png" },
-    { name: "فيديوهات تعليمية", image: "diagonal-arrow.png" },
+    { name: "أكاديمية سلة", image: "diagonal-arrow.svg" },
+    { name: "مركز المساعدة", image: "diagonal-arrow.svg" },
+    { name: "مدونة سلة", image: "diagonal-arrow.svg" },
+    { name: "فيديوهات تعليمية", image: "diagonal-arrow.svg" },
   ]
 }
 

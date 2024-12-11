@@ -2,25 +2,20 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../redux/features/categoriesSlice";
 import { sidebar_items } from "../constants";
+import { Link } from "react-router-dom";
 
-const Item = ({ name }) => {
+const Item = ({ name, id }) => {
     return (
         <div className="flex gap-2">
-            <a href="#" target="_blank">
+            <Link to={`/category-detail/${id}`}>
                 <li className="inline text-[16px] hover:text-teal-700 text-base w-full cursor-pointer">{name}</li>
-            </a>
+            </Link>
         </div>
     );
 };
 
 
-const Sidebar = () => {
-    const dispatch = useDispatch();
-    const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
-
-    useEffect(() => {
-        dispatch(fetchCategories(true));
-    }, [dispatch]);
+const Sidebar = ({ categories }) => {
 
     const [closedIds, setClosedIds] = useState([]);
     const [linksOpen, setLinksOpen] = useState(true);
@@ -28,13 +23,13 @@ const Sidebar = () => {
     const toggleLinks = () => {
         setLinksOpen(prev => !prev);
     }
-    if (categoriesStatus === "loading") {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
-            </div>
-        );
-    }
+    // if (categoriesStatus === "loading") {
+    //     return (
+    //         <div className="flex items-center justify-center h-screen">
+    //             <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
+    //         </div>
+    //     );
+    // }
 
     const toggle = (id) => {
         if (closedIds.includes(id)) {
@@ -50,7 +45,7 @@ const Sidebar = () => {
                 if (!category.subcategory_list) {
                     if (!category.has_children) {
                         return (
-                            <Item name={category.name} />
+                            <Item name={category.name} id={category.id} />
                         )
                     }
                 }
@@ -64,7 +59,7 @@ const Sidebar = () => {
                             {!closedIds.includes(category.id) && (
                                 <ul className="space-y-4 text-gray-600 text-right mr-5">
                                     {category.subcategory_list.map((subcategory) => (
-                                        <Item name={subcategory.name} />
+                                        <Item name={subcategory.name} id={subcategory.id} />
                                     ))}
                                 </ul>
                             )}

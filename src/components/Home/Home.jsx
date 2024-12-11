@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import HomePost from "./HomePost";
 import Sidebar from "../Sidebar";
-import { createTopic, deleteTopic, fetchPosts, fetchCategroryPosts } from "../../redux/features/postsSlice";
+import { createTopic, deleteTopic, fetchPosts, fetchCategoryPosts } from "../../redux/features/postsSlice";
+import { fetchCategories } from "../../redux/features/categoriesSlice";
 const Home = () => {
-    const [formVisible, setFormVisible] = useState(false);
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
     const [newPost, setNewPost] = useState({
         title: "",
@@ -22,15 +22,6 @@ const Home = () => {
         dispatch(fetchPosts());
     }, [dispatch]);
 
-    const handleSelectChange = (selectedOption) => {
-        setNewPost({ ...newPost, category: selectedOption });
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewPost({ ...newPost, [name]: value });
-    };
-
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
@@ -41,39 +32,14 @@ const Home = () => {
             post.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
-        dispatch(createTopic(newPost));
-        setNewPost({ title: "", category: "", raw: "" });
-        setFormVisible(false);
-    };
-
-    const handleClose = () => {
-        setNewPost({ title: "", category: "", raw: "" });
-        setFormVisible(false);
-    };
-
 
     const modalRef = useRef(null);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                handleClose();
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [handleClose]);
     const [sortSelected, setSortSelected] = useState("new");
     const handleChangeSortSelected = (sort) => {
         setSortSelected(sort);
         if(filterSelected){
-            dispatch(fetchCategroryPosts(filterSelected,sort));
+            dispatch(fetchCategoryPosts(filterSelected,sort));
         }
         else {
             dispatch(fetchPosts(sort));
@@ -85,40 +51,40 @@ const Home = () => {
     const handleFilterSelect = (category) => {
         setFilterSelected(category);
         if(category){
-            dispatch(fetchCategroryPosts(category,sortSelected))
+            dispatch(fetchCategoryPosts(category,sortSelected))
         }
         else {
             dispatch(fetchPosts(sortSelected));
         }
     };
 
-    const DefaultPostSearch = () => {
-        return (
-            <div>
-                <div>
-                    <div className="flex gap-3 items-center">
-                        <img src="/images/sidebar/arrow-right.svg" />
-                        <img src="/images/sidebar/bandages.png" className="w-4 h-4" />
-                        <p className="font-bold w-auto h-auto text-[14px] text-[#444444]">محتاج فزعتكم</p>
+    // const DefaultPostSearch = () => {
+    //     return (
+    //         <div>
+    //             <div>
+    //                 <div className="flex gap-3 items-center">
+    //                     <img src="/images/sidebar/arrow-right.svg" />
+    //                     <img src="/images/sidebar/bandages.png" className="w-4 h-4" />
+    //                     <p className="font-bold w-auto h-auto text-[14px] text-[#444444]">محتاج فزعتكم</p>
 
-                    </div>
-                    {/* <p className="text-[#707070] mt-2">انشئ مجتمع سلة ليكون المكان الأمثل والأكثر موثوقية للتجارة، لتبادل الافكار  والخبرات</p> */}
-                </div>
-                {/* <input
-                    type="text"
-                    className="mr-4 mt-5 border-[#BBBBBB] border-[1px] border-solid rounded-[8px] h-[45px] w-[50vw] pr-[3vw] pl-4"
-                    placeholder="ابحث عن سؤالك هنا ..."
-                    style={{
-                        backgroundImage: "url('/images/sidebar/search.png')",
-                        backgroundSize: '20px 20px',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: '47.5vw center',
-                    }}
-                /> */}
+    //                 </div>
+    //                 {/* <p className="text-[#707070] mt-2">انشئ مجتمع سلة ليكون المكان الأمثل والأكثر موثوقية للتجارة، لتبادل الافكار  والخبرات</p> */}
+    //             </div>
+    //             {/* <input
+    //                 type="text"
+    //                 className="mr-4 mt-5 border-[#BBBBBB] border-[1px] border-solid rounded-[8px] h-[45px] w-[50vw] pr-[3vw] pl-4"
+    //                 placeholder="ابحث عن سؤالك هنا ..."
+    //                 style={{
+    //                     backgroundImage: "url('/images/sidebar/search.png')",
+    //                     backgroundSize: '20px 20px',
+    //                     backgroundRepeat: 'no-repeat',
+    //                     backgroundPosition: '47.5vw center',
+    //                 }}
+    //             /> */}
 
-            </div>
-        )
-    }
+    //         </div>
+    //     )
+    // }
 
     const HomeSuggestedPost = () => {
         return (
@@ -205,80 +171,23 @@ const Home = () => {
         )
     }
     const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
-    console.log(categoriesStatus, postsStatus);
-    // if (categoriesStatus || postsStatus == "loading") {
-    //     return (
-    //         <div className="flex items-center justify-center h-screen">
-    //             <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
-    //         </div>
-    //     );
-    // }
+
+    useEffect(() => {
+        dispatch(fetchCategories(true));
+    }, [dispatch]);
+
+    if (categoriesStatus =="loading" || postsStatus == "loading") {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
+            </div>
+        );
+    }
 
     return (
         <>
             <div className="flex justify-end">
                 <div className="flex justify-end w-full">
-                    {formVisible && (
-                        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-20">
-                            <div className="w-1/2 p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl" ref={modalRef}>
-                                <div className="rounded-lg p-4 mb-6">
-                                    <form onSubmit={handleFormSubmit}>
-                                        <div className="mb-4">
-                                            <label htmlFor="title" className="block text-right font-semibold text-gray-800">
-                                                اكتب العنوان
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="title"
-                                                name="title"
-                                                value={newPost.title}
-                                                onChange={handleInputChange}
-                                                className="w-[43vw] h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
-                                                placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
-                                            />
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <label htmlFor="selectedOptions" className="block text-right font-semibold text-gray-800">
-                                                اختر الأقسام أو الموضوع:
-                                            </label>
-                                            <Select
-                                                // isMulti
-                                                name="selectedOptions"
-                                                options={[]}
-                                                value={newPost.selectedOptions}
-                                                onChange={handleSelectChange}
-                                                className="mt-2 w-[43vw]"
-                                                placeholder="اختر الأقسام أو الموضوع"
-                                            />
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <label htmlFor="content" className="block text-right font-semibold text-gray-800">
-                                                اكتب موضوعك هنا:
-                                            </label>
-                                            <ReactQuill
-                                                value={newPost.raw}
-                                                onChange={(raw) => setNewPost({ ...newPost, raw })}
-                                                className="p-2 rounded-lg"
-                                                theme="snow"
-                                                dir="rtl"
-                                            />
-                                        </div>
-
-                                        <div className="flex space-x-4 mt-4">
-                                            <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
-                                                نشر
-                                            </button>
-                                            <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
-                                                إلغاء
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                     <div className="sm:p-6 mt-4 w-full" dir="rtl">
                         <div
                             className="flex flex-col items-center justify-center pb-[90px]"
@@ -370,7 +279,7 @@ const Home = () => {
 
                     </div>
                 </div>
-                <Sidebar />
+                <Sidebar categories={categories}/>
             </div>
 
         </>
