@@ -37,16 +37,22 @@ const postsSlice = createSlice({
             state.error = action.payload;
         },
         removeTopic: (state, action) => {
+            state.status = 'succeeded';
             console.log("payload: ",action.payload);
             state.posts = state.posts.filter((topic) => topic.id !== action.payload);
         },
         addTopic: (state, action) => {
+            state.status = 'succeeded';
             state.posts.unshift(action.payload);  
+        },
+        resetError: (state) => {
+            state.status = 'idle';
+            state.error = null;
         },
     },
 });
 
-export const { setLoading, setPosts, setError, removeTopic, addTopic } = postsSlice.actions;
+export const { setLoading, setPosts, setError, removeTopic, addTopic, resetError } = postsSlice.actions;
 
 export const fetchPosts = (method="new") => async (dispatch) => {
     try {
@@ -118,13 +124,15 @@ export const deleteTopic = (id) => async (dispatch) => {
 
 export const createTopic = (post) => async(dispatch) => {
     try{
+        
         if(!post || !post.title || !post.category || !post.raw){
-            dispatch(setError("Incomplete information"));
+            dispatch(setError(["Incomplete information"]));
             return;
         }
+        dispatch(setLoading()); // Start loading
         const body = {
             ...post,
-            category: post.category.id
+            // category: post.category.id
         };
 
         const userObj = localStorage.getItem("salla_discourse_user");
@@ -141,7 +149,8 @@ export const createTopic = (post) => async(dispatch) => {
         dispatch(addTopic(response.data)); 
     }
     catch(err){
-        dispatch(setError(err.message));
+        console.log("got error", err);
+        dispatch(setError(err.response.data.errors));
     }
 }
 export default postsSlice.reducer;

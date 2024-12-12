@@ -33,7 +33,7 @@ const HomePost = ({ post }) => {
                                     <p className='font-bold'>{post.title}</p>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
-                                        dangerouslySetInnerHTML={{ __html: truncateString(post.description, 100) }}
+                                        dangerouslySetInnerHTML={{ __html: post.description }}
                                     />
                                 </div>
                             </div>

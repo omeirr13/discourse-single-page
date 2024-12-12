@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import { createTopic, deleteTopic, fetchCategoryPosts} from "../../redux/features/postsSlice";
+import { createTopic, deleteTopic, fetchCategoryPosts, resetError } from "../../redux/features/postsSlice";
 import CategoryPostItem from "./CategoryPostItem";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
-import { useParams } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 const CategoryPosts = () => {
     const { categoryId } = useParams();
 
@@ -26,39 +26,32 @@ const CategoryPosts = () => {
 
     useEffect(() => {
         dispatch(fetchCategoryPosts(categoryId, filterSelected));
-    }, [dispatch, categoryId,filterSelected]);
-
-    const handleSelectChange = (selectedOption) => {
-        setNewPost({ ...newPost, category: selectedOption });
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewPost({ ...newPost, [name]: value });
-    };
+    }, [dispatch, categoryId, filterSelected]);
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
 
-    const filteredPosts = posts.filter(
-        (post) =>
-            post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            post.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredPosts = posts.filter(post => post);
 
+    const navigate = useNavigate();
     const handleFormSubmit = (e) => {
-        e.preventDefault();
-        dispatch(createTopic(newPost));
-        setNewPost({ title: "", category: "", raw: "" });
-        setFormVisible(false);
+        try {
+            e.preventDefault();
+            dispatch(createTopic({ ...newPost, category: categoryId }));
+            // if (postsStatus === 'succeeded') {
+            //     // dispatch(resetError());
+            //     // setFormVisible(false);
+            // }
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     const handleClose = () => {
         setNewPost({ title: "", category: "", raw: "" });
         setFormVisible(false);
     };
-
 
     const modalRef = useRef(null);
 
@@ -79,14 +72,76 @@ const CategoryPosts = () => {
     const handleChangeFilterSelected = (filter) => {
         setFilterSelected(filter);
         dispatch(fetchCategoryPosts(categoryId, filter));
-    }
-
+    };
 
     const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
 
     useEffect(() => {
         dispatch(fetchCategories(true));
     }, [dispatch]);
+
+    // quill
+    const quillRef = useRef();
+    const [editorValue, setEditorValue] = useState("");
+    const imageHandler = (e) => {
+        const editor = quillRef.current.getEditor();
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", "image/*");
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files[0];
+            if (/^image\//.test(file.type)) {
+                const formData = new FormData();
+                formData.append("type", "composer");
+                formData.append("synchronous", true);
+                formData.append("file", file);
+
+                const uploadUrl = `${process.env.REACT_APP_API_URL}/uploads.json`;
+                const userObj = localStorage.getItem("salla_discourse_user");
+                const user = JSON.parse(userObj);
+
+                try {
+                    const response = await axios.post(uploadUrl, formData, {
+                        headers: {
+                            'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                            'Api-Username': user.username,
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                    const data = response.data;
+                    const imageUrl = data.url;
+                    editor.insertEmbed(editor.getSelection().index, "image", imageUrl.replace("//", "http://"));
+                } catch (err) {
+                    console.log(err);
+                }
+            } else {
+                console.error("Only image files are allowed.");
+            }
+        };
+    };
+
+    const modules = useMemo(() => ({
+        toolbar: {
+            container: [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', "strike"],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' },
+                { 'indent': '-1' }, { 'indent': '+1' }],
+                ['image', "link"],
+                [{ 'color': ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc', '#9933ff', '#ffffff', '#facccc', '#ffebcc', '#ffffcc', '#cce8cc', '#cce0f5', '#ebd6ff', '#bbbbbb', '#f06666', '#ffc266', '#ffff66', '#66b966', '#66a3e0', '#c285ff', '#888888', '#a10000', '#b26b00', '#b2b200', '#006100', '#002966', '#3d1466'] }]
+            ],
+            handlers: {
+                image: imageHandler,
+            },
+        },
+    }), []);
+
+    const handleChange = useCallback((value) => {
+        setEditorValue(value);
+        setNewPost(prevState => ({ ...prevState, raw: value }));
+    }, []);
 
     if (categoriesStatus == "loading" || postsStatus == "loading") {
         return (
@@ -95,93 +150,6 @@ const CategoryPosts = () => {
             </div>
         );
     }
-
-    const MyQuillEditor = () => {
-        const [newPost, setNewPost] = useState({ raw: "" });
-
-        // Handle image upload
-        const handleImageUpload = () => {
-            const input = document.createElement("input");
-            input.setAttribute("type", "file");
-            input.setAttribute("accept", "image/*");
-            input.click();
-
-            input.onchange = async () => {
-                const file = input.files[0];
-                if (file) {
-                    const formData = new FormData();
-                    formData.append("type", "composer");
-                    formData.append("synchronous", true); 
-                    console.log(file);
-                    formData.append("file", file);
-
-                    const uploadUrl = `${process.env.REACT_APP_API_URL}/uploads.json`;
-
-                    const userObj = localStorage.getItem("salla_discourse_user");
-                    const user = JSON.parse(userObj);
-                    console.log(user.username, user);
-                    try {
-                        const response = await fetch(uploadUrl, {
-                            method: "POST",
-                            body: formData,
-                            headers: {
-                                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-                                'Api-Username': user.username,
-                                'Content-Type': 'multipart/form-data',
-                            },
-                        });
-
-                        if (!response.ok) {
-                            throw new Error("Failed to upload the image.");
-                        }
-
-                        const data = await response.json();
-
-                        // Assuming the response contains the image URL
-                        const imageUrl = data.url;
-
-                        // Insert the image URL into the editor
-                        const quill = document.querySelector(".ql-editor");
-                        const range = quill.getSelection();
-                        quill.insertEmbed(range.index, "image", imageUrl);
-                    } catch (error) {
-                        console.error("Image upload failed:", error);
-                    }
-                }
-            };
-        };
-
-        // Custom toolbar
-        const modules = {
-            toolbar: {
-                container: [
-                    ["strike", "bold"],
-                    [{ size: [] }],
-                    [
-                        { list: "ordered" },
-                        { list: "bullet" },
-                    ],
-                    ["link", "image"],
-                    ["clean"],
-                ],
-                handlers: {
-                    image: handleImageUpload,
-                },
-            },
-        };
-
-        return (
-            <ReactQuill
-                value={newPost.raw}
-                onChange={(raw) => setNewPost({ ...newPost, raw })}
-                className="p-2 rounded-lg"
-                theme="snow"
-                dir="rtl"
-                modules={modules}
-            />
-        );
-    };
-
 
     return (
         <>
@@ -193,6 +161,11 @@ const CategoryPosts = () => {
                                 <div className="rounded-lg p-4 mb-6 w-full">
                                     <form onSubmit={handleFormSubmit}>
                                         <div className="mb-4">
+                                            {postsError?.map((error, index) => (
+                                                <>
+                                                    <span className="text-[red]"> {error}</span><br />
+                                                </>
+                                            ))}
                                             <label htmlFor="title" className="block text-right font-semibold text-gray-800">
                                                 اكتب العنوان
                                             </label>
@@ -201,10 +174,11 @@ const CategoryPosts = () => {
                                                 id="title"
                                                 name="title"
                                                 value={newPost.title}
-                                                onChange={handleInputChange}
+                                                onChange={(e) => { setNewPost({ ...newPost, title: e.target.value }); console.log(newPost) }}
                                                 className="w-full h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
                                                 placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
                                             />
+
                                         </div>
 
                                         {/* <div className="mb-4">
@@ -233,7 +207,13 @@ const CategoryPosts = () => {
                                                 theme="snow"
                                                 dir="rtl"
                                             /> */}
-                                            <MyQuillEditor />
+                                            <ReactQuill
+                                                theme="snow"
+                                                ref={quillRef}
+                                                value={editorValue} // Bind the state to value
+                                                modules={modules}
+                                                onChange={handleChange}
+                                            />
                                         </div>
 
                                         <div className="flex space-x-4 mt-4">
@@ -286,14 +266,15 @@ const CategoryPosts = () => {
                         <div className="flex justify-center">
                             {/* right part */}
                             <div className="w-full mt-4">
-                                <div className="hidden sm:flex justify-between m-3">
-                                    <div className="flex gap-5">
+                                <div className="hidden sm:block m-3">
+                                    <div className="flex gap-5 items-center">
                                         <span className={filterSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeFilterSelected("new")}>جديد</span>
                                         <span className={filterSelected === "latest" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeFilterSelected("latest")}>الأكثر مشاهدة</span>
+                                        <button type="submit" className="btn px-8 py-3 text-[15px] rounded text-white hover:underline" onClick={() => setFormVisible(true)}>
+                                            يخلق
+                                        </button>
+                                        
                                     </div>
-                                    <button type="submit" className="btn px-4  py-2 rounded text-white hover:underline" onClick={() => setFormVisible(true)}>
-                                        Create
-                                    </button>
                                 </div>
                                 <div className="mt-2">
                                     {filteredPosts.length === 0 ? (
