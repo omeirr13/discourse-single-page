@@ -54,7 +54,7 @@ const Sidebar = ({ categories }) => {
                 if (!category.subcategory_list) {
                     if (!category.has_children) {
                         return (
-                            <ul className="space-y-4 text-gray-600 text-right mr-5">
+                            <ul className="space-y-4 text-gray-600 text-right mt-4 mr-5">
                                 <Item name={category.name} id={category.id} linkhref={`/category-detail/${category.id}`} />
                             </ul>
                         )

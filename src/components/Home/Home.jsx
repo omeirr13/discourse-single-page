@@ -227,7 +227,7 @@ const Home = () => {
 
                             {/* right part */}
                             <div className="sm:w-2/3 mt-4">
-                                <div className="hidden sm:flex justify-between m-3">
+                                <div className="hidden sm:flex justify-between items-end m-3">
                                     <div className="flex gap-5">
                                         <span className={sortSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeSortSelected("new")}>جديد</span>
                                         <span className={sortSelected === "latest" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeSortSelected("latest")}>الأكثر مشاهدة</span>
