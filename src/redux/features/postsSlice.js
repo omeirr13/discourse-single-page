@@ -111,14 +111,14 @@ export const deleteTopic = (id) => async (dispatch) => {
 
 export const createTopic = (post) => async (dispatch) => {
     try {
-        dispatch(setLoading());
-        
-        if (!post || !post.title || !post.category || !post.raw) {
-            dispatch(setError(["Incomplete information"]));
-            return;
-        }
-        const body = { ...post };
+        await dispatch(setLoading());
 
+        if (!post || !post.title || !post.category || !post.raw) {
+            await dispatch(setError(["Incomplete information"]));
+            return Promise.reject("Incomplete information");
+        }
+
+        const body = { ...post };
         const userObj = localStorage.getItem("salla_discourse_user");
         const user = JSON.parse(userObj);
 
@@ -130,10 +130,11 @@ export const createTopic = (post) => async (dispatch) => {
             }
         });
 
-        dispatch(addTopic(response.data));
+        await dispatch(addTopic(response.data));
+        return response.data;
     } catch (err) {
         dispatch(setError(err.response.data.errors));
+        return Promise.reject(err);
     }
 };
-
 export default postsSlice.reducer;

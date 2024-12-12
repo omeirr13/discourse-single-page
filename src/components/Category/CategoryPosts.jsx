@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createTopic, deleteTopic, fetchCategoryPosts, resetError, setLoading } from "../../redux/features/postsSlice";
 import CategoryPostItem from "./CategoryPostItem";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 const CategoryPosts = () => {
     const { categoryId } = useParams();
