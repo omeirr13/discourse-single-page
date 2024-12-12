@@ -1,15 +1,25 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import HomePost from "./HomePost";
 import Sidebar from "../Sidebar";
-import { deleteTopic, fetchPosts, fetchCategoryPosts } from "../../redux/features/postsSlice";
+import { deleteTopic, fetchPosts, fetchCategoryPosts, createTopic, resetError } from "../../redux/features/postsSlice";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
+import { useNavigate } from "react-router-dom";
+import ReactQuill from "react-quill";
+import axios from "axios";
 const Home = () => {
+    const { posts, status: postsStatus, error: postsError, loading: postsLoading } = useSelector((state) => state.posts);
+    const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
 
     const dispatch = useDispatch();
-    const { posts, status: postsStatus } = useSelector((state) => state.posts);
+    const navigate = useNavigate();
+    const [editorValue, setEditorValue] = useState("");
+    const modalRef = useRef(null);
+    const quillRef = useRef();
+
+    // const { posts, status: postsStatus } = useSelector((state) => state.posts);
 
     useEffect(() => {
         dispatch(fetchPosts());
@@ -21,15 +31,15 @@ const Home = () => {
 
     const filteredPosts = posts.filter(
         (post) => post
-            // post.title.toLowerCase().includes(searchQuery.toLowerCase()) 
-            // post.cooked.toLowerCase().includes(searchQuery.toLowerCase())
+        // post.title.toLowerCase().includes(searchQuery.toLowerCase()) 
+        // post.cooked.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const [sortSelected, setSortSelected] = useState("new");
     const handleChangeSortSelected = (sort) => {
         setSortSelected(sort);
-        if(filterSelected){
-            dispatch(fetchCategoryPosts(filterSelected,sort));
+        if (filterSelected) {
+            dispatch(fetchCategoryPosts(filterSelected, sort));
         }
         else {
             dispatch(fetchPosts(sort));
@@ -40,8 +50,8 @@ const Home = () => {
 
     const handleFilterSelect = (category) => {
         setFilterSelected(category);
-        if(category){
-            dispatch(fetchCategoryPosts(category,sortSelected))
+        if (category) {
+            dispatch(fetchCategoryPosts(category, sortSelected))
         }
         else {
             dispatch(fetchPosts(sortSelected));
@@ -160,11 +170,107 @@ const Home = () => {
             </div>
         )
     }
-    const { categories, status: categoriesStatus} = useSelector((state) => state.categories);
+
+    const [formVisible, setFormVisible] = useState(false);
+    const [newPost, setNewPost] = useState({
+        title: "",
+        category: "",
+        raw: "",
+    });
+    const handleFormSubmit = async (e) => {
+        try {
+            e.preventDefault();
+            await dispatch(createTopic({ ...newPost }));
+            console.log(postsStatus);
+            if (!postsLoading) {
+                handleClose();
+                navigate("/");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+    const handleClose = () => {
+        setNewPost({ title: "", category: "", raw: "" });
+        setEditorValue("");
+        setFormVisible(false);
+        dispatch(resetError());
+    };
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                handleClose();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [handleClose]);
 
     useEffect(() => {
         dispatch(fetchCategories(true));
     }, [dispatch]);
+
+    const imageHandler = (e) => {
+        const editor = quillRef.current.getEditor();
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", "image/*");
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files[0];
+            if (/^image\//.test(file.type)) {
+                const formData = new FormData();
+                formData.append("type", "composer");
+                formData.append("synchronous", true);
+                formData.append("file", file);
+
+                const uploadUrl = `${process.env.REACT_APP_API_URL}/uploads.json`;
+                const userObj = localStorage.getItem("salla_discourse_user");
+                const user = JSON.parse(userObj);
+
+                try {
+                    const response = await axios.post(uploadUrl, formData, {
+                        headers: {
+                            'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                            'Api-Username': user.username,
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                    const data = response.data;
+                    const imageUrl = data.url;
+                    editor.insertEmbed(editor.getSelection().index, "image", imageUrl.replace("//", "http://"));
+                } catch (err) {
+                    console.log(err);
+                }
+            } else {
+                console.error("Only image files are allowed.");
+            }
+        };
+    };
+    const modules = useMemo(() => ({
+        toolbar: {
+            container: [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', "strike"],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' },
+                { 'indent': '-1' }, { 'indent': '+1' }],
+                ['image', "link"],
+                [{ 'color': ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc', '#9933ff', '#ffffff', '#facccc', '#ffebcc', '#ffffcc', '#cce8cc', '#cce0f5', '#ebd6ff', '#bbbbbb', '#f06666', '#ffc266', '#ffff66', '#66b966', '#66a3e0', '#c285ff', '#888888', '#a10000', '#b26b00', '#b2b200', '#006100', '#002966', '#3d1466'] }]
+            ],
+            handlers: {
+                image: imageHandler,
+            },
+        },
+    }), []);
+    const handleChange = useCallback((value) => {
+        setEditorValue(value);
+        setNewPost(prevState => ({ ...prevState, raw: value }));
+    }, []);
 
     if (categoriesStatus === "loading" || postsStatus === "loading") {
         return (
@@ -178,6 +284,93 @@ const Home = () => {
         <>
             <div className="flex justify-end">
                 <div className="flex justify-end w-full">
+                    {formVisible && (
+                        <div className="fixed inset-0 z-50 flex justify-center items-end bg-black bg-opacity-20">
+                            <div className="flex w-[80vw] p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl" ref={modalRef}>
+                                <div className="rounded-lg p-4 mb-6 w-full">
+                                    <form onSubmit={handleFormSubmit}>
+                                        <div className="mb-4">
+                                            {postsError?.map((error, index) => (
+                                                <>
+                                                    <span key={index} className="text-[red]"> {error}</span><br />
+                                                </>
+                                            ))}
+                                            <label htmlFor="title" className="block text-right font-semibold text-gray-800">
+                                                اكتب العنوان
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="title"
+                                                name="title"
+                                                value={newPost.title}
+                                                onChange={(e) => { setNewPost({ ...newPost, title: e.target.value }); console.log(newPost) }}
+                                                className="w-full h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
+                                                placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
+                                            />
+
+
+                                        </div>
+                                        <div className="mb-4 h-[54px] flex items-center border gap-4 border-gray-300 rounded-md p-2">
+                                            {categories.map((category) => {
+                                                return (
+                                                    <div className="flex items-center" key={category.id}>
+                                                        <input
+                                                            type="radio"
+                                                            id={`category-${category.id}`} // Corrected syntax for unique ID
+                                                            name="options"
+                                                            onChange={() => {
+                                                                console.log(category.id);
+                                                                setNewPost({ ...newPost, category: category.id });
+                                                            }}
+                                                            className="form-radio ml-2 w-3 h-3 border-gray-300 focus:ring-0"
+                                                        />
+                                                        <label
+                                                            htmlFor={`category-${category.id}`} // Corrected syntax for matching ID
+                                                            className="ml-2 text-[#666666] font-medium"
+                                                        >
+                                                            {category.name}
+                                                        </label>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+
+
+
+                                        <div className="mb-4">
+                                            <label htmlFor="content" className="block text-right font-semibold mb-3 text-gray-800">
+                                                اكتب موضوعك هنا:
+                                            </label>
+                                            {/* <ReactQuill
+                                                value={newPost.raw}
+                                                onChange={(raw) => setNewPost({ ...newPost, raw })}
+                                                className="p-2 rounded-lg"
+                                                theme="snow"
+                                                dir="rtl"
+                                            /> */}
+                                            <ReactQuill
+                                                theme="snow"
+                                                ref={quillRef}
+                                                value={editorValue} // Bind the state to value
+                                                modules={modules}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+
+                                        <div className="flex space-x-4 mt-4">
+                                            <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
+                                                نشر
+                                            </button>
+                                            <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
+                                                إلغاء
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <div className="sm:p-6 mt-4 w-full" dir="rtl">
                         <div
                             className="flex flex-col items-center justify-center pb-[90px]"
@@ -210,6 +403,9 @@ const Home = () => {
                                 }}
                             /> */}
 
+                            <button type="submit" className="btn px-8 py-3 text-[14px] mt-9 font-bold rounded-lg text-[#004D5A] hover:underline w-[185px] h-[52px]" onClick={() => setFormVisible(true)}>
+                                أضف سؤال جديد +
+                            </button>
                         </div>
 
                         <div className="flex justify-center">
@@ -230,16 +426,16 @@ const Home = () => {
                                                 value={filterSelected}>
                                                 <option value="">حدد عامل التصفية</option>
                                                 {categories.map((category) => (
-                                                <option key={category.id} value={category.id}>
-                                                    {category.name}
-                                                </option>
+                                                    <option key={category.id} value={category.id}>
+                                                        {category.name}
+                                                    </option>
                                                 ))}
                                             </select>
                                         </div>
                                     </div>
- 
+
                                 </div>
-                                
+
                                 <div className="mt-2">
                                     {filteredPosts.length === 0 ? (
                                         <div>أُووبس! لا توجد مشاركات جديدة</div>
@@ -269,7 +465,7 @@ const Home = () => {
 
                     </div>
                 </div>
-                <Sidebar categories={categories} categoryId={-1}/>
+                <Sidebar categories={categories} categoryId={-1} />
             </div>
 
         </>

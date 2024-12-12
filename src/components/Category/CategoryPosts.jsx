@@ -20,10 +20,9 @@ const CategoryPosts = () => {
         category: "",
         raw: "",
     });
-
     const dispatch = useDispatch();
     const { posts, status: postsStatus, error: postsError, loading: postsLoading } = useSelector((state) => state.posts);
-    
+    console.log(postsError);
     useEffect(() => {
         dispatch(fetchCategoryPosts(categoryId, filterSelected));
     }, [dispatch, categoryId, filterSelected]);
@@ -37,7 +36,7 @@ const CategoryPosts = () => {
     const handleFormSubmit = async (e) => {
         try {
             e.preventDefault();
-            await dispatch(createTopic({ ...newPost }));
+            await dispatch(createTopic({ ...newPost, category: categoryId }));
             console.log(postsStatus);
             if (!postsLoading) {
                 handleClose();
@@ -183,31 +182,26 @@ const CategoryPosts = () => {
 
 
                                         </div>
-                                        <div className="mb-4 h-[54px] flex items-center border gap-4 border-gray-300 rounded-md p-2">
+                                        {/* <div className="mb-4 h-[54px] flex items-center border gap-4 border-gray-300 rounded-md p-2">
                                             {categories.map((category) => {
                                                 return (
-                                                    <div className="flex items-center" key={category.id}>
+                                                    <div className="flex items-center">
                                                         <input
                                                             type="radio"
-                                                            id={`category-${category.id}`} // Corrected syntax for unique ID
+                                                            id="sections"
                                                             name="options"
-                                                            onChange={() => {
-                                                                console.log(category.id);
-                                                                setNewPost({ ...newPost, category: category.id });
-                                                            }}
-                                                            className="form-radio ml-2 w-3 h-3 border-gray-300 focus:ring-0"
+                                                            className="form-radio ml-2 w-3 h-3  border-gray-300 focus:ring-0"
                                                         />
                                                         <label
-                                                            htmlFor={`category-${category.id}`} // Corrected syntax for matching ID
+                                                            htmlFor="sections"
                                                             className="ml-2 text-[#666666] font-medium"
                                                         >
                                                             {category.name}
                                                         </label>
                                                     </div>
-                                                );
+                                                )
                                             })}
-                                        </div>
-
+                                        </div> */}
 
 
 
