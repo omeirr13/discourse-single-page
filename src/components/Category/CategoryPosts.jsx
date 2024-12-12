@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createTopic, deleteTopic, fetchCategoryPosts, resetError } from "../../redux/features/postsSlice";
 import CategoryPostItem from "./CategoryPostItem";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 const CategoryPosts = () => {
     const { categoryId } = useParams();
@@ -34,7 +34,6 @@ const CategoryPosts = () => {
 
     const filteredPosts = posts.filter(post => post);
 
-    const navigate = useNavigate();
     const handleFormSubmit = (e) => {
         try {
             e.preventDefault();
@@ -75,7 +74,7 @@ const CategoryPosts = () => {
         dispatch(fetchCategoryPosts(categoryId, filter));
     };
 
-    const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
+    const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
 
     useEffect(() => {
         dispatch(fetchCategories(true));
@@ -144,7 +143,7 @@ const CategoryPosts = () => {
         setNewPost(prevState => ({ ...prevState, raw: value }));
     }, []);
 
-    if (categoriesStatus == "loading" || postsLoading) {
+    if (categoriesStatus === "loading" || postsLoading) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />

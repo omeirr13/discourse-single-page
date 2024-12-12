@@ -21,8 +21,8 @@ const HomePost = ({ post }) => {
                 <div className="flex items-start mb-4">
                     <div className="flex justify-between w-full">
                         <div className="flex justify-between w-full">
-                            <div className="flex gap-3">
-                                <img src={poster_image} className="w-[44px] h-[44px] rounded-full" />
+                            <div className="flex gap-3" alt="">
+                                <img src={poster_image} alt="" className="w-[44px] h-[44px] rounded-full" />
 
                                 <div className="flex-col">
                                     <div className="flex gap-3 text-[14px] font-medium">
@@ -30,7 +30,7 @@ const HomePost = ({ post }) => {
                                         <span className="mb-1 text-[#999999]">{post.category?.name}</span>
                                         <div className="bg-[#EFFBF6] rounded-full">
                                             <div className="flex gap-2 px-3">
-                                                <img src="/images/home/tick.svg" />
+                                                <img src="/images/home/tick.svg" alt="" />
                                                 <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
                                             </div>
                                         </div>
@@ -38,7 +38,7 @@ const HomePost = ({ post }) => {
                                     <p className='font-bold'>{post.title}</p>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
-                                        dangerouslySetInnerHTML={{ __html: extractTextAndTruncate(post.description) }}
+                                        dangerouslySetInnerHTML={{ __html: extractTextAndTruncate(post.cooked) }}
                                     />
                                 </div>
                             </div>
@@ -51,15 +51,15 @@ const HomePost = ({ post }) => {
             <div className="flex gap-5 w-full justify-between">
                 <div className="p-3 flex gap-8">
                     <div className="flex gap-2 items-center">
-                        <img src="/images/home/like.svg" className="cursor-pointer" />
+                        <img src="/images/home/like.svg" alt="" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">{post.like_count}</span>
                     </div>
                     <div className="flex gap-2 items-center">
-                        <img src="/images/home/cloud.svg" className="cursor-pointer" />
+                        <img src="/images/home/cloud.svg" alt="" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">{post.posts_count - 1}</span>
                     </div>
                     <div className="flex gap-2">
-                        <img src="/images/home/eye.svg" className="cursor-pointer" />
+                        <img src="/images/home/eye.svg" alt="" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">{post.views}</span>
                     </div>
                 </div>
@@ -74,7 +74,7 @@ const HomePost = ({ post }) => {
                         <span className="mb-1 text-[#999999]">انشر</span>
                     </div> */}
                     <div className="flex gap-2">
-                        <img src="/images/home/clock.svg" className="cursor-pointer" />
+                        <img src="/images/home/clock.svg" alt="" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">{humanFriendlyDate}</span>
                     </div>
                 </div>

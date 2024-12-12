@@ -1,22 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import ReactQuill from "react-quill";
+import { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import Select from "react-select";
 import HomePost from "./HomePost";
 import Sidebar from "../Sidebar";
 import { deleteTopic, fetchPosts, fetchCategoryPosts } from "../../redux/features/postsSlice";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
 const Home = () => {
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
-    const [newPost, setNewPost] = useState({
-        title: "",
-        category: "",
-        raw: "",
-    });
 
     const dispatch = useDispatch();
-    const { posts, status: postsStatus, error: postsError } = useSelector((state) => state.posts);
+    const { posts, status: postsStatus } = useSelector((state) => state.posts);
 
     useEffect(() => {
         dispatch(fetchPosts());
@@ -27,13 +20,10 @@ const Home = () => {
     };
 
     const filteredPosts = posts.filter(
-        (post) => post
-            // post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            // post.description.toLowerCase().includes(searchQuery.toLowerCase())
+        (post) => 
+            post.title.toLowerCase().includes(searchQuery.toLowerCase()) 
+            // post.cooked.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
-
-    const modalRef = useRef(null);
 
     const [sortSelected, setSortSelected] = useState("new");
     const handleChangeSortSelected = (sort) => {
@@ -95,10 +85,10 @@ const Home = () => {
                     </p>
                     <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
                     <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
-                        <img src={`/images/arrow-left.svg`} className="cursor-pointer rotate-180 p-4" />
+                        <img src={`/images/arrow-left.svg`} alt="Arrow left" className="cursor-pointer rotate-180 p-4" />
                     </div>
                     <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
-                        <img src={`/images/arrow-left.svg`} className="cursor-pointer p-4" />
+                        <img src={`/images/arrow-left.svg`} alt="Arrow left" className="cursor-pointer p-4" />
                     </div>
                 </div>
                 <div className="bg-white rounded-lg m-8 mt-1 px-3 py-2" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
@@ -106,11 +96,11 @@ const Home = () => {
                         <div className="mt-2">
                             <span className="bg-[#83ECFF]  text-[#207A8A] p-1 rounded-lg">التسويق الالكتروني</span>
                         </div>
-                        <img src="/images/home/suggested1.png" />
+                        <img src="/images/home/suggested1.png" alt="suggested" />
                         <p className="text-[#333333] text-[18px]">ورشة عمل: كيفية تحقيق التوازن بين المبيعات والتسويق</p>
                         <p className="text-[#333333] text-[14px] font-medium">أحمد مصطفى مدرب التنمية البشرية </p>
                         <div className="flex">
-                            <img src="/images/home/calendar.svg" className="ml-1" />
+                            <img src="/images/home/calendar.svg" alt="calender" className="ml-1" />
                             <div className="flex text-[12px] text-[#666666]">
 
                                 <p className="ml-1">الخميس</p>
@@ -135,15 +125,15 @@ const Home = () => {
                     </p>
                     <div className="w-[94px] h-[1px] mx-4 bg-[#E6E6E6] mt-[24px]"></div>
                     <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
-                        <img src={`/images/arrow-left.svg`} className="cursor-pointer rotate-180 p-4" />
+                        <img src={`/images/arrow-left.svg`} alt="" className="cursor-pointer rotate-180 p-4" />
                     </div>
                     <div className="bg-white rounded-full border-[1px] border-[#EEEEEE]">
-                        <img src={`/images/arrow-left.svg`} className="cursor-pointer p-4" />
+                        <img src={`/images/arrow-left.svg`} alt="" className="cursor-pointer p-4" />
                     </div>
                 </div>
                 <div className="bg-white rounded-lg m-8 mt-1 px-3 py-2" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
                     <div className="flex flex-col">
-                        <img src="/images/home/suggested2.png" />
+                        <img src="/images/home/suggested2.png" alt="" />
                         <p className="text-[#666666] text-[16px] font-bold mt-2">تحسين تجربة المستخدم</p>
                         <p className="text-[#333333] text-[14px] font-normal line-clamp-2">
                             تحسين تجربة المستخدم في متجرك الإلكتروني أحد العناوين الأساسية في مهمتك لجذب المزيد من العملاء، وتعزيز ولائهم للمتجر، وإليك عدّة نصائح تساعدك في مهمّة
@@ -151,16 +141,16 @@ const Home = () => {
 
                         <div className="flex mt-4 justify-between">
                             <div className="mt-2 flex gap-2 items-center bg-[#FFF7DF] rounded-md px-2 max-h-fit">
-                                <img src="/images/home/star.png" className="w-[16px] h-[16px]" />
+                                <img src="/images/home/star.png" alt="" className="w-[16px] h-[16px]" />
                                 <span className="text-[#A46F29] text-[14px] font-medium p-1 rounded-lg">مواضيع مميزة</span>
                             </div>
                             <div className="p-3 flex gap-8">
                                 <div className="flex gap-2 items-center">
-                                    <img src="/images/home/like.svg" className="cursor-pointer" />
+                                    <img src="/images/home/like.svg" alt="" className="cursor-pointer" />
                                     <span className="mb-1 text-[#999999]">14</span>
                                 </div>
                                 <div className="flex gap-2 items-center">
-                                    <img src="/images/home/cloud.svg" className="cursor-pointer" />
+                                    <img src="/images/home/cloud.svg" alt="" className="cursor-pointer" />
                                     <span className="mb-1 text-[#999999]">12</span>
                                 </div>
                             </div>
@@ -170,13 +160,13 @@ const Home = () => {
             </div>
         )
     }
-    const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
+    const { categories, status: categoriesStatus} = useSelector((state) => state.categories);
 
     useEffect(() => {
         dispatch(fetchCategories(true));
     }, [dispatch]);
 
-    if (categoriesStatus =="loading" || postsStatus == "loading") {
+    if (categoriesStatus === "loading" || postsStatus === "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
                 <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
