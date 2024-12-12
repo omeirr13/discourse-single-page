@@ -53,7 +53,7 @@ const Sidebar = ({ categories, categoryId }) => {
     return (
         <div className="rounded-lg p-4 max-w-xs w-full h-screen mt-[2rem] hidden sm:block " dir="rtl" style={{ height: "calc(100vh - 73px)", width: "230px" }}>
             <ul className="space-y-4 text-gray-600 mt-4 text-right mr-5">
-                <Item name="Home" id={-1} linkhref={`/`} />
+                <Item name="بيت" id={-1} linkhref={`/`} />
             </ul>
             {categories.map((category) => {
                 if (!category.subcategory_list) {

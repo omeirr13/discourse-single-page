@@ -12,7 +12,6 @@ const CategoryPosts = () => {
     const { categoryId } = useParams();
 
     const [formVisible, setFormVisible] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(""); // Search query state
     const [filterSelected, setFilterSelected] = useState("new");
 
     const [newPost, setNewPost] = useState({
@@ -22,14 +21,10 @@ const CategoryPosts = () => {
     });
     const dispatch = useDispatch();
     const { posts, status: postsStatus, error: postsError, loading: postsLoading } = useSelector((state) => state.posts);
-    console.log(postsError);
     useEffect(() => {
         dispatch(fetchCategoryPosts(categoryId, filterSelected));
     }, [dispatch, categoryId, filterSelected]);
 
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
-    };
 
     const filteredPosts = posts.filter(post => post);
     const navigate = useNavigate();
@@ -81,6 +76,13 @@ const CategoryPosts = () => {
         dispatch(fetchCategories(true));
     }, [dispatch]);
 
+    const singleCategory = categories.find((category) => category.id == categoryId) || 
+    categories.flatMap((category) => category.subcategory_list || []).find((sub) => sub.id == categoryId);
+    let should_create_post = false;
+
+    if(singleCategory.only_admin_can_post){
+        should_create_post = true;
+    }
     // quill
     const quillRef = useRef();
     const [editorValue, setEditorValue] = useState("");
@@ -269,10 +271,12 @@ const CategoryPosts = () => {
                                     backgroundPosition: "34.5vw center",
                                 }}
                             /> */}
-
-                            <button type="submit" className="btn px-8 py-3 text-[14px] mt-9 font-bold rounded-lg text-[#004D5A] hover:underline w-[185px] h-[52px]" onClick={() => setFormVisible(true)}>
-                                أضف سؤال جديد +
-                            </button>
+                            {
+                            should_create_post && (
+                                <button type="submit" className="btn px-8 py-3 text-[14px] mt-9 font-bold rounded-lg text-[#004D5A] hover:underline w-[185px] h-[52px]" onClick={() => setFormVisible(true)}>
+                                    أضف سؤال جديد +
+                                </button>
+                            )}
                         </div>
 
                         <div className="flex justify-center">
