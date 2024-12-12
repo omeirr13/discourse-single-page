@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createTopic, deleteTopic, fetchCategoryPosts, resetError, setLoading } from "../../redux/features/postsSlice";
 import CategoryPostItem from "./CategoryPostItem";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 const CategoryPosts = () => {
     const { categoryId } = useParams();
@@ -76,7 +76,7 @@ const CategoryPosts = () => {
         dispatch(fetchCategoryPosts(categoryId, filter));
     };
 
-    const { categories, status: categoriesStatus, error: categoriesError } = useSelector((state) => state.categories);
+    const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
 
     useEffect(() => {
         dispatch(fetchCategories(true));

@@ -1,9 +1,9 @@
 export const sidebar_items = {
   rawabat_items: [
-    { name: "أكاديمية سلة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
-    { name: "مركز المساعدة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
-    { name: "مدونة سلة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
-    { name: "فيديوهات تعليمية", image: "/images/sidebar/diagonal-arrow.png" , link: "http://google.com/"},
+    { id:"1", name: "أكاديمية سلة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
+    { id:"2", name: "مركز المساعدة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
+    { id:"3", name: "مدونة سلة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
+    { id:"4", name: "فيديوهات تعليمية", image: "/images/sidebar/diagonal-arrow.png" , link: "http://google.com/"},
   ]
 }
 
