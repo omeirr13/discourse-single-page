@@ -3,29 +3,30 @@ import { sidebar_items } from "../constants";
 import { Link } from "react-router-dom";
 import React from "react";
 
-const Item = ({ name, linkhref }) => {
-    return (
-        <div className="flex gap-2">
-            <Link to={linkhref}>
-                <li className="inline text-[16px] hover:text-teal-700 text-base w-full cursor-pointer">{name}</li>
-            </Link>
-        </div>
-    );
-};
-
-const RbatItem = ({ name, image, linkhref }) => {
-    return (
-        <div className="flex gap-2">
-            <img src={image} alt="" />
-            <Link to={linkhref}>
-                <li className="inline text-[16px] hover:text-teal-700 text-base w-full cursor-pointer">{name}</li>
-            </Link>
-        </div>
-    );
-};
 
 
-const Sidebar = ({ categories }) => {
+const Sidebar = ({ categories, categoryId }) => {
+
+    const Item = ({ name, linkhref, id }) => {
+        return (
+            <div className="flex gap-2">
+                <Link to={linkhref} className={`w-[11rem] pr-4 rounded-lg ${categoryId == id ? 'bg-[#e5ebec] py-2 text-teal-700 font-bold' : ''}`}>
+                    <li className={`inline text-[16px] hover:text-teal-700 text-base cursor-pointer`}>{name}</li>
+                </Link>
+            </div>
+        );
+    };
+
+    const RbatItem = ({ name, image, linkhref }) => {
+        return (
+            <div className="flex gap-2">
+                <img src={image} alt="" />
+                <Link to={linkhref}>
+                    <li className="inline text-[16px] hover:text-teal-700 text-base w-full cursor-pointer">{name}</li>
+                </Link>
+            </div>
+        );
+    };
 
     const [closedIds, setClosedIds] = useState([]);
     const [linksOpen, setLinksOpen] = useState(true);
@@ -49,11 +50,9 @@ const Sidebar = ({ categories }) => {
             setClosedIds([...closedIds, id]);
         }
     }
-    console.log(categories);
     return (
         <div className="rounded-lg p-4 max-w-xs w-full h-screen mt-[2rem] hidden sm:block " dir="rtl" style={{ height: "calc(100vh - 73px)", width: "230px" }}>
             {categories.map((category) => {
-                console.log(category);
                 if (!category.subcategory_list) {
                     if (!category.has_children) {
                         return (

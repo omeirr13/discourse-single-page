@@ -181,25 +181,33 @@ const CategoryPosts = () => {
                                                 placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
                                             />
 
+
+                                        </div>
+                                        <div className="mb-4 h-[54px] flex items-center border gap-4 border-gray-300 rounded-md p-2">
+                                            {categories.map((category) => {
+                                                return (
+                                                    <div className="flex items-center">
+                                                        <input
+                                                            type="radio"
+                                                            id="sections"
+                                                            name="options"
+                                                            className="form-radio ml-2 w-3 h-3  border-gray-300 focus:ring-0"
+                                                        />
+                                                        <label
+                                                            htmlFor="sections"
+                                                            className="ml-2 text-[#666666] font-medium"
+                                                        >
+                                                            {category.name}
+                                                        </label>
+                                                    </div>
+                                                )
+                                            })}
                                         </div>
 
-                                        {/* <div className="mb-4">
-                                            <label htmlFor="selectedOptions" className="block text-right font-semibold text-gray-800">
-                                                اختر الأقسام أو الموضوع:
-                                            </label>
-                                            <Select
-                                                // isMulti
-                                                name="selectedOptions"
-                                                options={[]}
-                                                value={newPost.selectedOptions}
-                                                onChange={handleSelectChange}
-                                                className="mt-2 w-[43vw]"
-                                                placeholder="اختر الأقسام أو الموضوع"
-                                            />
-                                        </div> */}
+
 
                                         <div className="mb-4">
-                                            <label htmlFor="content" className="block text-right font-semibold text-gray-800">
+                                            <label htmlFor="content" className="block text-right font-semibold mb-3 text-gray-800">
                                                 اكتب موضوعك هنا:
                                             </label>
                                             {/* <ReactQuill
@@ -233,7 +241,7 @@ const CategoryPosts = () => {
                     )}
                     <div className="sm:p-6 mt-4 w-full" dir="rtl">
                         <div
-                            className="flex flex-col items-center justify-center pb-[90px]"
+                            className="flex flex-col items-center justify-center"
                         >
                             <span
                                 className="text-[#004D5A] sm:text-[64px] text-[48px] font-extrabold text-center"
@@ -246,7 +254,7 @@ const CategoryPosts = () => {
                                 جماعة سلا
                             </span>
 
-                            <p className="mt-4 text-center hidden sm:block text-[#707070]">
+                            {/* <p className="mt-4 text-center hidden sm:block text-[#707070]">
                                 Salla community tag line and description
                             </p>
 
@@ -261,8 +269,11 @@ const CategoryPosts = () => {
                                     backgroundRepeat: "no-repeat",
                                     backgroundPosition: "34.5vw center",
                                 }}
-                            />
+                            /> */}
 
+                            <button type="submit" className="btn px-8 py-3 text-[14px] mt-9 font-bold rounded-lg text-[#004D5A] hover:underline w-[185px] h-[52px]" onClick={() => setFormVisible(true)}>
+                                أضف سؤال جديد +
+                            </button>
                         </div>
 
                         <div className="flex justify-center">
@@ -272,10 +283,6 @@ const CategoryPosts = () => {
                                     <div className="flex gap-5 items-center">
                                         <span className={filterSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeFilterSelected("new")}>جديد</span>
                                         <span className={filterSelected === "latest" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeFilterSelected("latest")}>الأكثر مشاهدة</span>
-                                        <button type="submit" className="btn px-8 py-3 text-[15px] rounded text-white hover:underline" onClick={() => setFormVisible(true)}>
-                                            يخلق
-                                        </button>
-
                                     </div>
                                 </div>
                                 <div className="mt-2">
@@ -306,7 +313,7 @@ const CategoryPosts = () => {
 
                     </div>
                 </div>
-                <Sidebar categories={categories} />
+                <Sidebar categories={categories} categoryId={categoryId} />
             </div>
 
         </>

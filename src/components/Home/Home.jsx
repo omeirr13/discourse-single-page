@@ -193,7 +193,7 @@ const Home = () => {
                                 جماعة سلا
                             </span>
 
-                            <p className="mt-4 text-center hidden sm:block text-[#707070]">
+                            {/* <p className="mt-4 text-center hidden sm:block text-[#707070]">
                                 Salla community tag line and description
                             </p>
 
@@ -208,7 +208,7 @@ const Home = () => {
                                     backgroundRepeat: "no-repeat",
                                     backgroundPosition: "34.5vw center",
                                 }}
-                            />
+                            /> */}
 
                         </div>
 
