@@ -49,13 +49,14 @@ const Sidebar = ({ categories }) => {
             setClosedIds([...closedIds, id]);
         }
     }
+    console.log(categories);
     return (
         <div className="rounded-lg p-4 max-w-xs w-full h-screen mt-[2rem] hidden sm:block " dir="rtl" style={{ height: "calc(100vh - 73px)", width: "230px" }}>
             {categories.map((category) => {
                 if (!category.subcategory_list) {
                     if (!category.has_children) {
                         return (
-                            <ul className="space-y-4 text-gray-600 text-right mr-5" key={category.id}>
+                            <ul className="space-y-4 text-gray-600 mt-4 text-right mr-5" key={category.id}>
                                 <Item name={category.name} key={category.id} id={category.id} linkhref={`/category-detail/${category.id}`} />
                             </ul>
                         )
@@ -63,7 +64,7 @@ const Sidebar = ({ categories }) => {
                 }
                 else {
                     return (
-                        <React.Fragment key={category.id}>
+                        <div key={category.id}>
                             <div className="flex justify-between items-center w-48 mt-3" onClick={() => toggle(category.id)} >
                                 <h3 className="font-semibold text-[16px] text-gray-800 text-right mb-4 mt-4 mr-4 cursor-pointer">{category.name}</h3>
                                 <img src={`/images/sidebar/arrow-down.png`} alt="" className={`w-6 h-6 ml-[-5px] cursor-pointer ${!closedIds.includes(category.id) ? 'rotate-180' : ''}`} />
@@ -75,7 +76,7 @@ const Sidebar = ({ categories }) => {
                                     ))}
                                 </ul>
                             )}
-                        </React.Fragment>
+                        </div>
                     )
 
                 }

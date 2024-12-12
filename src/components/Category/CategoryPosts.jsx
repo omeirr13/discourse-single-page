@@ -3,10 +3,10 @@ import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import { createTopic, deleteTopic, fetchCategoryPosts, resetError } from "../../redux/features/postsSlice";
+import { createTopic, deleteTopic, fetchCategoryPosts, resetError, setLoading } from "../../redux/features/postsSlice";
 import CategoryPostItem from "./CategoryPostItem";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 const CategoryPosts = () => {
     const { categoryId } = useParams();
@@ -23,7 +23,7 @@ const CategoryPosts = () => {
 
     const dispatch = useDispatch();
     const { posts, status: postsStatus, error: postsError, loading: postsLoading } = useSelector((state) => state.posts);
-
+    console.log(postsError);
     useEffect(() => {
         dispatch(fetchCategoryPosts(categoryId, filterSelected));
     }, [dispatch, categoryId, filterSelected]);
@@ -33,13 +33,15 @@ const CategoryPosts = () => {
     };
 
     const filteredPosts = posts.filter(post => post);
-
-    const handleFormSubmit = (e) => {
+    const navigate = useNavigate();
+    const handleFormSubmit = async (e) => {
         try {
             e.preventDefault();
-            dispatch(createTopic({ ...newPost, category: categoryId }));
-            if (postsStatus === 'succeeded') {
+            await dispatch(createTopic({ ...newPost, category: categoryId }));
+            console.log(postsStatus);
+            if (!postsLoading) {
                 handleClose();
+                navigate("/");
             }
         } catch (err) {
             console.log(err);
@@ -143,7 +145,7 @@ const CategoryPosts = () => {
         setNewPost(prevState => ({ ...prevState, raw: value }));
     }, []);
 
-    if (categoriesStatus === "loading" || postsLoading) {
+    if (categoriesStatus == "loading" || postsStatus == "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
                 <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
@@ -273,7 +275,7 @@ const CategoryPosts = () => {
                                         <button type="submit" className="btn px-8 py-3 text-[15px] rounded text-white hover:underline" onClick={() => setFormVisible(true)}>
                                             يخلق
                                         </button>
-                                        
+
                                     </div>
                                 </div>
                                 <div className="mt-2">

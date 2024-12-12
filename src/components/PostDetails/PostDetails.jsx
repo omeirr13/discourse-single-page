@@ -7,7 +7,6 @@ import { fetchCategories } from "../../redux/features/categoriesSlice";
 import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../../redux/features/postsSlice";
 import Header from "../Header";
-import LeftSidebar from "../LeftSidebar";
 import PostDetail from "./PostDetail";
 
 const PostDetails = () => {
@@ -185,8 +184,6 @@ const PostDetails = () => {
                                     />
                                 ))}
                             </div>
-
-                                <LeftSidebar />
                         </div>
 
 
