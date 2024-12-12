@@ -6,7 +6,7 @@ const postsSlice = createSlice({
     initialState: {
         posts: [],
         status: 'idle',
-        error: null,
+        error: [],
         loading: false, // New loading state
     },
     reducers: {

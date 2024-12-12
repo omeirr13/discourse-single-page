@@ -20,8 +20,8 @@ const Home = () => {
     };
 
     const filteredPosts = posts.filter(
-        (post) => 
-            post.title.toLowerCase().includes(searchQuery.toLowerCase()) 
+        (post) => post
+            // post.title.toLowerCase().includes(searchQuery.toLowerCase()) 
             // post.cooked.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -216,9 +216,9 @@ const Home = () => {
 
 
                             {/* right part */}
-                            <div className="sm:w-2/3 mt-4">
-                                <div className="hidden sm:flex justify-between items-end m-3">
-                                    <div className="flex gap-5">
+                            <div className="w-full mt-4">
+                                <div className="hidden sm:flex justify-between m-3">
+                                    <div className="flex gap-5 items-center">
                                         <span className={sortSelected === "new" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeSortSelected("new")}>جديد</span>
                                         <span className={sortSelected === "latest" ? `text-[#333333] border-b-[2px] border-[#999999] pb-2 cursor-pointer` : `text-[#666666] cursor-pointer`} onClick={() => handleChangeSortSelected("latest")}>الأكثر مشاهدة</span>
                                     </div>
@@ -256,11 +256,11 @@ const Home = () => {
                                 </div>
                             </div>
                             {/* left part */}
-                            <div className="w-1/3 sm:flex hidden flex-col gap-4">
+                            {/* <div className="w-1/3 sm:flex hidden flex-col gap-4">
                                 <HomeSuggestedPost />
                                 <HomeSuggestedTopic />
                                 <HomeSuggestedTopic />
-                            </div>
+                            </div> */}
 
                         </div>
                     </div>
@@ -269,7 +269,7 @@ const Home = () => {
 
                     </div>
                 </div>
-                <Sidebar categories={categories}/>
+                <Sidebar categories={categories} categoryId={-1}/>
             </div>
 
         </>

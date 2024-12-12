@@ -23,7 +23,7 @@ const CategoryPosts = () => {
 
     const dispatch = useDispatch();
     const { posts, status: postsStatus, error: postsError, loading: postsLoading } = useSelector((state) => state.posts);
-    console.log(postsError);
+    
     useEffect(() => {
         dispatch(fetchCategoryPosts(categoryId, filterSelected));
     }, [dispatch, categoryId, filterSelected]);
@@ -37,7 +37,7 @@ const CategoryPosts = () => {
     const handleFormSubmit = async (e) => {
         try {
             e.preventDefault();
-            await dispatch(createTopic({ ...newPost, category: categoryId }));
+            await dispatch(createTopic({ ...newPost }));
             console.log(postsStatus);
             if (!postsLoading) {
                 handleClose();
@@ -165,7 +165,7 @@ const CategoryPosts = () => {
                                         <div className="mb-4">
                                             {postsError?.map((error, index) => (
                                                 <>
-                                                    <span className="text-[red]"> {error}</span><br />
+                                                    <span key={index} className="text-[red]"> {error}</span><br />
                                                 </>
                                             ))}
                                             <label htmlFor="title" className="block text-right font-semibold text-gray-800">
@@ -186,23 +186,28 @@ const CategoryPosts = () => {
                                         <div className="mb-4 h-[54px] flex items-center border gap-4 border-gray-300 rounded-md p-2">
                                             {categories.map((category) => {
                                                 return (
-                                                    <div className="flex items-center">
+                                                    <div className="flex items-center" key={category.id}>
                                                         <input
                                                             type="radio"
-                                                            id="sections"
+                                                            id={`category-${category.id}`} // Corrected syntax for unique ID
                                                             name="options"
-                                                            className="form-radio ml-2 w-3 h-3  border-gray-300 focus:ring-0"
+                                                            onChange={() => {
+                                                                console.log(category.id);
+                                                                setNewPost({ ...newPost, category: category.id });
+                                                            }}
+                                                            className="form-radio ml-2 w-3 h-3 border-gray-300 focus:ring-0"
                                                         />
                                                         <label
-                                                            htmlFor="sections"
+                                                            htmlFor={`category-${category.id}`} // Corrected syntax for matching ID
                                                             className="ml-2 text-[#666666] font-medium"
                                                         >
                                                             {category.name}
                                                         </label>
                                                     </div>
-                                                )
+                                                );
                                             })}
                                         </div>
+
 
 
 
