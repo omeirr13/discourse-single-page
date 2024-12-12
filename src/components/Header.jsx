@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
 
 const Header = () => {
     const navigate = useNavigate();
-    const [isDropdownVisible, setDropdownVisible] = useState(false);
 
     const userObj = localStorage.getItem("salla_discourse_user");
     const user = JSON.parse(userObj);
@@ -20,22 +19,6 @@ const Header = () => {
             adminLink = process.env.REACT_APP_API_URL + "/admin";
         }
     }
-
-    const toggleDropdown = () => setDropdownVisible(prevState => !prevState);
-
-    const closeDropdown = (e) => {
-        //if clicked inside dont close
-        if (e.target.closest('.dropdown-menu') || e.target.closest('.dropdown-button')) return;
-        setDropdownVisible(false);
-    };
-
-    useEffect(() => {
-        document.addEventListener('click', closeDropdown);
-        return () => {
-            document.removeEventListener('click', closeDropdown);
-        };
-    }, []);
-
     const logout = async() => {
 
         try {
@@ -75,7 +58,7 @@ const Header = () => {
 
                 <div className="relative">
                     <img 
-                        src={`/images/header/arrow-down.svg`} 
+                        src={`/images/header/arrow-down.svg`}  alt=""
                         className={`cursor-pointer hidden sm:block ${isDropdownOpen ? 'rotate-180' : ''}`} 
                         onClick={() => setIsDropdownOpen(prev => !prev)} 
                     />
@@ -98,8 +81,6 @@ const Header = () => {
                     )}
 
                 </div>
-                <img src={`/images/header/bell.svg`} className="cursor-pointer ml-0 sm:!ml-[40px]" />
-                <img src={`/images/header/search.svg`} className="cursor-pointer !ml-[40px]" />
             </div>
              ) : (
                 <button
@@ -113,7 +94,7 @@ const Header = () => {
             {/* Logo */}
             <div className="flex items-center gap-2">
                 {isAdmin && (
-                    <a className="font-bold cursor-pointer" href={adminLink} target="_blank">
+                    <a className="font-bold cursor-pointer" href={adminLink} target="_blank" rel="noreferrer">
                         مسؤل
                     </a>
                 )}
@@ -121,7 +102,5 @@ const Header = () => {
             </div>
         </header>
     );
-    
 };
-
 export default Header;

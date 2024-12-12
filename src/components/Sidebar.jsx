@@ -51,7 +51,7 @@ const Sidebar = ({ categories }) => {
     }
     return (
         <div className="rounded-lg p-4 max-w-xs w-full h-screen mt-[2rem] hidden sm:block " dir="rtl" style={{ height: "calc(100vh - 73px)", width: "230px" }}>
-            {categories.forEach((category) => {
+            {categories.map((category) => {
                 if (!category.subcategory_list) {
                     if (!category.has_children) {
                         return (
