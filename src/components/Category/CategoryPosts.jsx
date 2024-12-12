@@ -22,7 +22,7 @@ const CategoryPosts = () => {
     });
 
     const dispatch = useDispatch();
-    const { posts, status: postsStatus, error: postsError } = useSelector((state) => state.posts);
+    const { posts, status: postsStatus, error: postsError, loading: postsLoading } = useSelector((state) => state.posts);
 
     useEffect(() => {
         dispatch(fetchCategoryPosts(categoryId, filterSelected));
@@ -39,10 +39,9 @@ const CategoryPosts = () => {
         try {
             e.preventDefault();
             dispatch(createTopic({ ...newPost, category: categoryId }));
-            // if (postsStatus === 'succeeded') {
-            //     // dispatch(resetError());
-            //     // setFormVisible(false);
-            // }
+            if (postsStatus === 'succeeded') {
+                handleClose();
+            }
         } catch (err) {
             console.log(err);
         }
@@ -50,7 +49,9 @@ const CategoryPosts = () => {
 
     const handleClose = () => {
         setNewPost({ title: "", category: "", raw: "" });
+        setEditorValue("");
         setFormVisible(false);
+        dispatch(resetError());
     };
 
     const modalRef = useRef(null);
@@ -143,7 +144,7 @@ const CategoryPosts = () => {
         setNewPost(prevState => ({ ...prevState, raw: value }));
     }, []);
 
-    if (categoriesStatus == "loading" || postsStatus == "loading") {
+    if (categoriesStatus == "loading" || postsLoading) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />

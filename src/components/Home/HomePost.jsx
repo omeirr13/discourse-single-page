@@ -3,13 +3,18 @@ import 'moment/locale/ar'; // Import Arabic locale
 
 const HomePost = ({ post }) => {
 
-    function truncateString(str, maxLength) {
-        if (!str) return "";
-        return str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
+    function extractTextAndTruncate(description) {
+        // Remove all image tags
+        const textWithoutImages = description.replace(/<img[^>]*>/g, '');
+
+        // Truncate the text to 100 characters
+        const truncatedText = textWithoutImages.slice(0, 100);
+
+        return truncatedText;
     }
 
     const humanFriendlyDate = moment(post.last_posted_at || post.created_at).locale('ar').fromNow();
-    const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator?.avatar.replace("{size}","28") }`;
+    const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator?.avatar.replace("{size}", "28")}`;
     return (
         <div className="border-[#DDDDDD] border-[1px] border-l-0 border-t-0 border-r-0 bg-white rounded-lg m-3" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4 pb-0">
@@ -33,7 +38,7 @@ const HomePost = ({ post }) => {
                                     <p className='font-bold'>{post.title}</p>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
-                                        dangerouslySetInnerHTML={{ __html: post.description }}
+                                        dangerouslySetInnerHTML={{ __html: extractTextAndTruncate(post.description) }}
                                     />
                                 </div>
                             </div>
@@ -51,7 +56,7 @@ const HomePost = ({ post }) => {
                     </div>
                     <div className="flex gap-2 items-center">
                         <img src="/images/home/cloud.svg" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">{post.posts_count - 1 }</span>
+                        <span className="mb-1 text-[#999999]">{post.posts_count - 1}</span>
                     </div>
                     <div className="flex gap-2">
                         <img src="/images/home/eye.svg" className="cursor-pointer" />
