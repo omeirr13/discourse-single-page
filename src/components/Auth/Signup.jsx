@@ -9,6 +9,10 @@ const AddYourInfoForm = () => {
     const [name, setName] = useState("");
     const navigate = useNavigate();
 
+    const redirectSignin= () => {
+        navigate("/login");
+    }
+
     const handleSave = async () => {
         console.log(email, username, password,name);
 
@@ -98,7 +102,7 @@ const AddYourInfoForm = () => {
                 <p>
                     هل لديك حساب بالفعل؟
                 </p>
-                <p className="text-[#004D5A]">
+                <p className="text-[#004D5A] cursor-pointer" onClick={redirectSignin}>
                     تسجيل الدخول
                 </p>
             </div>

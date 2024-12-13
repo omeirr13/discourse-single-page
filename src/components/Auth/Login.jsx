@@ -8,6 +8,10 @@ const AddYourInfoForm = () => {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
+    const redirectSignup = () => {
+        navigate("/signup");
+    }
+
     const handleSave = async(event) => {
         event.preventDefault();
         if( !username && !password){
@@ -74,7 +78,7 @@ const AddYourInfoForm = () => {
                 <p>
                     ليس لديك حساب؟
                 </p>
-                <p className="text-[#004D5A]">
+                <p className="text-[#004D5A] cursor-pointer" onClick={redirectSignup}>
                     قم بإنشاء حساب الان
                 </p>
             </div>

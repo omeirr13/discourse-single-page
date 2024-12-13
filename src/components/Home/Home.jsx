@@ -19,6 +19,14 @@ const Home = () => {
     const modalRef = useRef(null);
     const quillRef = useRef();
 
+    let is_userLoggedIn = false;
+
+    const userObj = localStorage.getItem("salla_discourse_user");
+    const user = JSON.parse(userObj);
+
+    if(user){
+        is_userLoggedIn = true;
+    }
     // const { posts, status: postsStatus } = useSelector((state) => state.posts);
 
     useEffect(() => {
@@ -402,10 +410,11 @@ const Home = () => {
                                     backgroundPosition: "34.5vw center",
                                 }}
                             /> */}
-
+                            {is_userLoggedIn && (
                             <button type="submit" className="btn px-8 py-3 text-[14px] mt-9 font-bold rounded-lg text-[#004D5A] hover:underline w-[185px] h-[52px]" onClick={() => setFormVisible(true)}>
                                 أضف سؤال جديد +
                             </button>
+                             )}
                         </div>
 
                         <div className="flex justify-center">

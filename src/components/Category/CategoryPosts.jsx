@@ -80,7 +80,10 @@ const CategoryPosts = () => {
     categories.flatMap((category) => category.subcategory_list || []).find((sub) => sub.id == categoryId);
     let should_create_post = false;
 
-    if(singleCategory.only_admin_can_post){
+    const userObj = localStorage.getItem("salla_discourse_user");
+    const user = JSON.parse(userObj);
+
+    if(singleCategory.only_admin_can_post && user){
         should_create_post = true;
     }
     // quill
