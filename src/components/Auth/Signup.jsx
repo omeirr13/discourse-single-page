@@ -14,7 +14,6 @@ const AddYourInfoForm = () => {
     }
 
     const handleSave = async () => {
-        console.log(email, username, password,name);
 
         if(!email && !username && !password && !name){
             alert("Please fill out all fields");

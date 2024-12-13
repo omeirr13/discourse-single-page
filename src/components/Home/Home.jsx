@@ -11,6 +11,24 @@ import axios from "axios";
 const Home = () => {
     const { posts, status: postsStatus, error: postsError, loading: postsLoading } = useSelector((state) => state.posts);
     const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
+
+    const userObj = localStorage.getItem("salla_discourse_user");
+    const user = JSON.parse(userObj);
+
+
+    const combinedCategories = categories.reduce((acc, category) => {
+        acc.push(category);
+        if (category.subcategory_count > 0 && Array.isArray(category.subcategory_list)) {
+          acc.push(...category.subcategory_list);
+        }
+      
+        return acc;
+      }, []);
+
+      const filteredUserCategories = user && user.admin 
+      ? combinedCategories
+      : combinedCategories.filter(item => item.only_admin_can_post === false);
+
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
 
     const dispatch = useDispatch();
@@ -20,9 +38,6 @@ const Home = () => {
     const quillRef = useRef();
 
     let is_userLoggedIn = false;
-
-    const userObj = localStorage.getItem("salla_discourse_user");
-    const user = JSON.parse(userObj);
 
     if(user){
         is_userLoggedIn = true;
@@ -182,14 +197,13 @@ const Home = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [newPost, setNewPost] = useState({
         title: "",
-        category: "",
+        category: filteredUserCategories.length > 0 ? filteredUserCategories[0].id : "",
         raw: "",
     });
     const handleFormSubmit = async (e) => {
         try {
             e.preventDefault();
             await dispatch(createTopic({ ...newPost }));
-            console.log(postsStatus);
             if (!postsLoading) {
                 handleClose();
                 navigate("/");
@@ -311,7 +325,7 @@ const Home = () => {
                                                 id="title"
                                                 name="title"
                                                 value={newPost.title}
-                                                onChange={(e) => { setNewPost({ ...newPost, title: e.target.value }); console.log(newPost) }}
+                                                onChange={(e) => { setNewPost({ ...newPost, title: e.target.value }); }}
                                                 className="w-full h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
                                                 placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
                                             />
@@ -319,7 +333,7 @@ const Home = () => {
 
                                         </div>
                                         <div className="mb-4 h-[54px] flex items-center border gap-4 border-gray-300 rounded-md p-2">
-                                            {categories.map((category) => {
+                                            {filteredUserCategories.map((category) => {
                                                 return (
                                                     <div className="flex items-center" key={category.id}>
                                                         <input
@@ -331,6 +345,7 @@ const Home = () => {
                                                                 setNewPost({ ...newPost, category: category.id });
                                                             }}
                                                             className="form-radio ml-2 w-3 h-3 border-gray-300 focus:ring-0"
+                                                            checked={newPost.category === category.id} 
                                                         />
                                                         <label
                                                             htmlFor={`category-${category.id}`} // Corrected syntax for matching ID

@@ -32,7 +32,6 @@ const CategoryPosts = () => {
         try {
             e.preventDefault();
             await dispatch(createTopic({ ...newPost, category: categoryId }));
-            console.log(postsStatus);
             if (!postsLoading) {
                 handleClose();
                 navigate("/");
@@ -78,13 +77,20 @@ const CategoryPosts = () => {
 
     const singleCategory = categories.find((category) => category.id == categoryId) || 
     categories.flatMap((category) => category.subcategory_list || []).find((sub) => sub.id == categoryId);
-    let should_create_post = false;
 
     const userObj = localStorage.getItem("salla_discourse_user");
     const user = JSON.parse(userObj);
 
-    if(singleCategory.only_admin_can_post && user){
-        should_create_post = true;
+    let should_create_post = false;
+
+    if (user) {
+        if (user.admin) {
+            // Success criteria for admin
+            should_create_post = true;
+        } else if (!singleCategory.only_admin_can_post) {
+            // Success criteria for normal user
+            should_create_post = true;
+        }
     }
     // quill
     const quillRef = useRef();
@@ -180,7 +186,7 @@ const CategoryPosts = () => {
                                                 id="title"
                                                 name="title"
                                                 value={newPost.title}
-                                                onChange={(e) => { setNewPost({ ...newPost, title: e.target.value }); console.log(newPost) }}
+                                                onChange={(e) => { setNewPost({ ...newPost, title: e.target.value }); }}
                                                 className="w-full h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
                                                 placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
                                             />

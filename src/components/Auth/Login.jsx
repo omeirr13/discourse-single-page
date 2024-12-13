@@ -31,8 +31,6 @@ const AddYourInfoForm = () => {
                 },
                 withCredentials: true, 
             });
-
-            console.log(response.data.user);
             const secretKey = process.env.REACT_APP_SECRET;
             const encryptedPassword = encryptData(password, secretKey);
             localStorage.setItem('salla_discourse_user', JSON.stringify(response.data.user));
