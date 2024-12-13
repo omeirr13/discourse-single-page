@@ -19,7 +19,7 @@ function App() {
       {showHeader && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/detail/:postId" element={<PostDetails />} />
+        <Route path="/detail/:postId/" element={<PostDetails />} />
         <Route path="/category-detail/:categoryId" element={<CategoryPosts />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />

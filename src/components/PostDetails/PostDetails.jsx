@@ -8,20 +8,28 @@ import Select from "react-select";
 import { createTopic, deleteTopic, fetchPosts } from "../../redux/features/postsSlice";
 import Header from "../Header";
 import PostDetail from "./PostDetail";
+import { useParams } from "react-router-dom";
+import HomePost from "../Home/HomePost";
+import PostDetailItem from "./PostDetailItem";
 
 const PostDetails = () => {
+    const { postId } = useParams();
+    console.log(postId);
+
     const [formVisible, setFormVisible] = useState(false);
     const [newPost, setNewPost] = useState({
         title: "",
         category: "",
         raw: "",
     });
+    const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
+
 
     const dispatch = useDispatch();
     const { posts, status: postsStatus, error: postsError } = useSelector((state) => state.posts);
 
     useEffect(() => {
-        dispatch(fetchPosts());
+        dispatch(fetchPosts("latest"));
     }, [dispatch]);
 
     const handleSelectChange = (selectedOption) => {
@@ -80,33 +88,21 @@ const PostDetails = () => {
         );
     }
 
-    // const DefaultPostSearch = () => {
-    //     return (
-    //         <div>
-    //             <div className="mr-[4rem]">
+    const topic = posts[8];
+    const post = posts[0];
 
-    //                 <div className="flex gap-3">
-    //                     <img src="/images/sidebar/pattiyan.png" className="w-[48px] h-[48px]" />
-    //                     <p className="font-bold w-auto h-auto text-3xl">محتاج فزعتكم</p>
-    //                 </div>
-    //                 <p className="text-[#707070] mt-2">انشئ مجتمع سلة ليكون المكان الأمثل والأكثر موثوقية للتجارة، لتبادل الافكار  والخبرات</p>
-    //             </div>
-    //             <input
-    //                 type="text"
-    //                 className="mr-4 mt-5 border-[#BBBBBB] border-[1px] border-solid rounded-[8px] h-[45px] w-[50vw] pr-[3vw] pl-4"
-    //                 placeholder="ابحث عن سؤالك هنا ..."
-    //                 style={{
-    //                     backgroundImage: "url('/images/sidebar/search.png')",
-    //                     backgroundSize: '20px 20px',
-    //                     backgroundRepeat: 'no-repeat',
-    //                     backgroundPosition: '47.5vw center',
-    //                 }}
-    //             />
-
-    //         </div>
-    //     )
-    // }
-
+    const replies = [
+        {
+            replied_to: "وسيم يوسف",
+            replied_to_content: "السلام عليكم ورحمة الله وبركاته يعطيكم العافيه حابه استفسر في احد فاتح المتجر بوثيقة العمل الحر و ينزل له حساب المواطن؟او وثيقة العمل الحر توقفه؟",
+            reply: "السلام عليكم ورحمة الله وبركاته يعطيكم العافيه حابه استفسر في احد فاتح المتجر بوثيقة العمل الحر و ينزل له حساب المواطن؟او وثيقة العمل الحر توقفه؟",
+        },
+        {
+            replied_to: "وسيم يوسف",
+            replied_to_content: "السلام عليكم ورحمة الله وبركاته يعطيكم العافيه حابه استفسر في احد فاتح المتجر بوثيقة العمل الحر و ينزل له حساب المواطن؟او وثيقة العمل الحر توقفه؟",
+            reply: "السلام عليكم ورحمة الله وبركاته يعطيكم العافيه حابه استفسر في احد فاتح المتجر بوثيقة العمل الحر و ينزل له حساب المواطن؟او وثيقة العمل الحر توقفه؟",
+        }
+    ]
     return (
         <>
             <div className="flex justify-end">
@@ -174,22 +170,67 @@ const PostDetails = () => {
                     )}
                     <div className="p-6 mt-4 w-full" dir="rtl">
                         <div className="flex">
-                            <div className="posts-container w-[47vw] mt-[3rem]" style={{ display: 'inline-block', verticalAlign: 'top' }}>
-                                {posts.map((post, index) => (
-                                    <PostDetail
-                                        key={post.id}
-                                        post={post}
-                                        index={index}
-                                        handleDelete={() => { dispatch(deleteTopic(post.id)) }}
-                                    />
-                                ))}
+                            <div className="posts-container mt-[3rem]  w-full" style={{ display: 'inline-block', verticalAlign: 'top' }}>
+                                {/* {posts.map((post, index) => ( */}
+                                <PostDetail
+                                    key={post.id}
+                                    post={topic}
+                                    isTopic={true}
+                                    // index={index}
+                                    handleDelete={() => { dispatch(deleteTopic(post.id)) }}
+                                />
+                                <div className="my-5 flex justify-between">
+                                    <div className="flex gap-2 mr-3">
+                                        4 فزعات
+                                    </div>
+                                    <div className="py-2 px-6 border-[1px] border-[#DDDDDD] rounded-lg text-[#666666]">
+                                        رتب حسب<b> الأحدث</b>
+                                    </div>
+                                </div>
+                                <PostDetail
+                                    key={post.id}
+                                    post={post}
+                                    isTopic={false}
+                                    // index={index}
+                                    replies={replies}
+                                    handleDelete={() => { dispatch(deleteTopic(post.id)) }}
+                                />
+                                <PostDetail
+                                    key={post.id}
+                                    post={post}
+                                    isTopic={false}
+                                    // index={index}
+                                    handleDelete={() => { dispatch(deleteTopic(post.id)) }}
+                                />
+                                {/* ))} */}
+                            </div>
+                        </div>
+                        <div className="flex gap-4 mt-[2rem]">
+                            <div className="bg-[#004D5A] cursor-pointer flex gap-2 flex-grow-0 px-9 py-3 rounded-md">
+                                <img src="/images/post/link-forward.svg" className="w-[17px]" />
+                                <span className="text-white">رد</span>
+                            </div>
+                            <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md">
+                                <img src="/images/post/paper-clip.svg" />
+                                <span className="text-[#004D5A] font-medium">شارك</span>
                             </div>
                         </div>
 
 
+                        {/* last section */}
+                        <div className="mt-[6rem]">
+                            <span className="text-[18px] text-[#333333] font-medium">مواضيع مشابهة</span>
+                            <div className="mt-[2rem]">
+                                <PostDetailItem post={post} />
+                                <PostDetailItem post={post} />
+                            </div>
+                        </div>
+
+
+
                     </div>
                 </div>
-                <Sidebar />
+                <Sidebar categories={categories} categoryId={-1} />
             </div>
 
         </>

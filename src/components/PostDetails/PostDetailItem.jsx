@@ -2,7 +2,7 @@ import moment from 'moment';
 import 'moment/locale/ar'; // Import Arabic locale
 import { useNavigate } from 'react-router-dom';
 
-const HomePost = ({ post }) => {
+const PostDetailItem = ({ post }) => {
 
     function extractTextAndTruncate(description) {
         // Remove all image tags
@@ -66,14 +66,14 @@ const HomePost = ({ post }) => {
                 </div>
 
                 <div className="p-3 flex gap-8">
-                    {/* <div className="flex gap-2 items-center">
+                    <div className="flex gap-2 items-center">
                         <img src="/images/home/save.svg" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">اقرأ لاحقاً</span>
                     </div>
                     <div className="flex gap-2 items-center">
                         <img src="/images/home/share.svg" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">انشر</span>
-                    </div> */}
+                    </div>
                     <div className="flex gap-2">
                         <img src="/images/home/clock.svg" alt="" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">{humanFriendlyDate}</span>
@@ -85,4 +85,4 @@ const HomePost = ({ post }) => {
 
     );
 };
-export default HomePost;
+export default PostDetailItem;
