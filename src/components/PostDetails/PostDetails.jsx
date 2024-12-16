@@ -5,61 +5,32 @@ import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
 import Select from "react-select";
-import { createTopic, deleteTopic, fetchPosts } from "../../redux/features/postsSlice";
+import { appendPost, createTopic, deleteTopic, fetchPosts } from "../../redux/features/postsSlice";
 import Header from "../Header";
 import PostDetail from "./PostDetail";
 import { useParams } from "react-router-dom";
 import HomePost from "../Home/HomePost";
 import PostDetailItem from "./PostDetailItem";
+import { appendPostOfTopic, fetchTopicData } from "../../redux/features/topicsSlice";
+import axios from "axios";
 
 const PostDetails = () => {
-    const { postId } = useParams();
-    console.log(postId);
+    const { topicId } = useParams();
 
     const [formVisible, setFormVisible] = useState(false);
-    const [newPost, setNewPost] = useState({
-        title: "",
-        category: "",
-        raw: "",
-    });
+    const [replyContent, setReplyContent] = useState("");
+
     const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
 
 
     const dispatch = useDispatch();
-    const { posts, status: postsStatus, error: postsError } = useSelector((state) => state.posts);
-
     useEffect(() => {
-        dispatch(fetchPosts("latest"));
+        dispatch(fetchTopicData(topicId));
     }, [dispatch]);
-
-    const handleSelectChange = (selectedOption) => {
-        setNewPost({ ...newPost, category: selectedOption });
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewPost({ ...newPost, [name]: value });
-    };
-
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
-        // setPosts([
-        //     ...posts,
-        //     {
-        //         ...newPost,
-        //         id: posts.length + 1,
-        //         username: "أسم المستخدم",
-        //         time: "الآن",
-        //         replies: 0,
-        //     },
-        // ]);
-        dispatch(createTopic(newPost));
-        setNewPost({ title: "", category: "", raw: "" });
-        setFormVisible(false);
-    };
+    const { topicPosts, topicDetails, status: postsStatus, error } = useSelector((state) => state.topics);
 
     const handleClose = () => {
-        setNewPost({ title: "", category: "", raw: "" });
+        setReplyContent("");
         setFormVisible(false);
     };
 
@@ -80,6 +51,52 @@ const PostDetails = () => {
         };
     }, [handleClose]);
 
+
+    const post = topicDetails.mainPost || {};
+    const postRefs = useRef({});
+
+    const handleJumpToPost = (postId) => {
+        if (postRefs.current[postId]) {
+            postRefs.current[postId].scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        }
+    };
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        const { id, category_id } = topicDetails;
+        formData.append("raw", quillRef.current.getEditor().getText());
+        formData.append("category", category_id);
+        formData.append("topic_id", id);
+        formData.append("nested_post", "true");
+
+        try {
+            const userObj = localStorage.getItem("salla_discourse_user");
+            const user = JSON.parse(userObj);
+
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/posts`, formData, {
+                headers: {
+                    'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                    'Api-Username': user.username,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const { data } = response;
+            if (data.success) {
+                setReplyContent("");
+                setFormVisible(false);
+                dispatch(appendPostOfTopic(response?.data?.post));
+            } else {
+                console.error("Failed to post:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+    const quillRef = useRef(null);
     if (postsStatus == "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -87,22 +104,6 @@ const PostDetails = () => {
             </div>
         );
     }
-
-    const topic = posts[8];
-    const post = posts[0];
-
-    const replies = [
-        {
-            replied_to: "وسيم يوسف",
-            replied_to_content: "السلام عليكم ورحمة الله وبركاته يعطيكم العافيه حابه استفسر في احد فاتح المتجر بوثيقة العمل الحر و ينزل له حساب المواطن؟او وثيقة العمل الحر توقفه؟",
-            reply: "السلام عليكم ورحمة الله وبركاته يعطيكم العافيه حابه استفسر في احد فاتح المتجر بوثيقة العمل الحر و ينزل له حساب المواطن؟او وثيقة العمل الحر توقفه؟",
-        },
-        {
-            replied_to: "وسيم يوسف",
-            replied_to_content: "السلام عليكم ورحمة الله وبركاته يعطيكم العافيه حابه استفسر في احد فاتح المتجر بوثيقة العمل الحر و ينزل له حساب المواطن؟او وثيقة العمل الحر توقفه؟",
-            reply: "السلام عليكم ورحمة الله وبركاته يعطيكم العافيه حابه استفسر في احد فاتح المتجر بوثيقة العمل الحر و ينزل له حساب المواطن؟او وثيقة العمل الحر توقفه؟",
-        }
-    ]
     return (
         <>
             <div className="flex justify-end">
@@ -113,42 +114,13 @@ const PostDetails = () => {
                                 <div className="rounded-lg p-4 mb-6">
                                     <form onSubmit={handleFormSubmit}>
                                         <div className="mb-4">
-                                            <label htmlFor="title" className="block text-right font-semibold text-gray-800">
-                                                اكتب العنوان
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="title"
-                                                name="title"
-                                                value={newPost.title}
-                                                onChange={handleInputChange}
-                                                className="w-[43vw] h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
-                                                placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
-                                            />
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <label htmlFor="selectedOptions" className="block text-right font-semibold text-gray-800">
-                                                اختر الأقسام أو الموضوع:
-                                            </label>
-                                            <Select
-                                                // isMulti
-                                                name="selectedOptions"
-                                                options={[]}
-                                                value={newPost.selectedOptions}
-                                                onChange={handleSelectChange}
-                                                className="mt-2 w-[43vw]"
-                                                placeholder="اختر الأقسام أو الموضوع"
-                                            />
-                                        </div>
-
-                                        <div className="mb-4">
                                             <label htmlFor="content" className="block text-right font-semibold text-gray-800">
-                                                اكتب موضوعك هنا:
+                                                اكتب ردك هنا:
                                             </label>
                                             <ReactQuill
-                                                value={newPost.raw}
-                                                onChange={(raw) => setNewPost({ ...newPost, raw })}
+                                                ref={quillRef}
+                                                // value={replyContent}
+                                                // onChange={(raw) => setReplyContent(raw)}
                                                 className="p-2 rounded-lg"
                                                 theme="snow"
                                                 dir="rtl"
@@ -157,7 +129,9 @@ const PostDetails = () => {
 
                                         <div className="flex space-x-4 mt-4">
                                             <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
-                                                نشر
+                                                {
+                                                    postsStatus=="loading" ? "Loading" : "نشر" 
+                                                }
                                             </button>
                                             <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
                                                 إلغاء
@@ -173,40 +147,46 @@ const PostDetails = () => {
                             <div className="posts-container mt-[3rem]  w-full" style={{ display: 'inline-block', verticalAlign: 'top' }}>
                                 {/* {posts.map((post, index) => ( */}
                                 <PostDetail
-                                    key={post.id}
-                                    post={topic}
+                                    post={post}
+                                    topicDetails={topicDetails}
                                     isTopic={true}
                                     // index={index}
-                                    handleDelete={() => { dispatch(deleteTopic(post.id)) }}
+                                    handleJumpToPost={handleJumpToPost}
                                 />
-                                <div className="my-5 flex justify-between">
-                                    <div className="flex gap-2 mr-3">
+                                <div className="my-5 flex justify-end">
+                                    {/* <div className="flex gap-2 mr-3">
                                         4 فزعات
-                                    </div>
+                                    </div> */}
                                     <div className="py-2 px-6 border-[1px] border-[#DDDDDD] rounded-lg text-[#666666]">
                                         رتب حسب<b> الأحدث</b>
                                     </div>
                                 </div>
-                                <PostDetail
+                                {topicPosts.map((post) => {
+                                    return (
+                                        <div key={post.id} ref={(el) => (postRefs.current[post.id] = el)}>
+                                            <PostDetail
+                                                post={post}
+                                                topicDetails={topicDetails}
+                                                isTopic={false}
+                                                handleJumpToPost={handleJumpToPost}
+
+                                            // index={index}
+                                            />
+                                        </div>
+                                    )
+                                })}
+                                {/* <PostDetail
                                     key={post.id}
                                     post={post}
                                     isTopic={false}
                                     // index={index}
-                                    replies={replies}
                                     handleDelete={() => { dispatch(deleteTopic(post.id)) }}
-                                />
-                                <PostDetail
-                                    key={post.id}
-                                    post={post}
-                                    isTopic={false}
-                                    // index={index}
-                                    handleDelete={() => { dispatch(deleteTopic(post.id)) }}
-                                />
+                                /> */}
                                 {/* ))} */}
                             </div>
                         </div>
                         <div className="flex gap-4 mt-[2rem]">
-                            <div className="bg-[#004D5A] cursor-pointer flex gap-2 flex-grow-0 px-9 py-3 rounded-md">
+                            <div className="bg-[#004D5A] cursor-pointer flex gap-2 flex-grow-0 px-9 py-3 rounded-md" onClick={() => setFormVisible(true)}>
                                 <img src="/images/post/link-forward.svg" className="w-[17px]" />
                                 <span className="text-white">رد</span>
                             </div>

@@ -39,10 +39,15 @@ const postsSlice = createSlice({
             state.loading = false; // Reset loading to false
             state.error = null;
         },
+        appendPost: (state, action) => {
+            state.status = 'succeeded';
+            state.loading = false;
+            state.posts.push(action.payload);
+        }
     },
 });
 
-export const { setLoading, setPosts, setError, removeTopic, addTopic, resetError } = postsSlice.actions;
+export const { setLoading, setPosts, setError, removeTopic, addTopic, resetError, setPostReplies, appendPost } = postsSlice.actions;
 
 export const fetchPosts = (method = "new") => async (dispatch) => {
     try {
@@ -159,4 +164,56 @@ export const createTopic = (post) => async (dispatch) => {
         return Promise.reject(err);
     }
 };
+
+export const fetchSpecifcTopicAndItsPosts = (topicId) => async (dispatch) => {
+    try {
+        dispatch(setLoading());
+        if (!topicId) {
+            dispatch(setError(["Topic id is required"]));
+            return;
+        }
+
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
+        let username = process.env.REACT_APP_API_USERNAME;
+        if (user) {
+            username = user.username;
+        }
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/t/${topicId}/1.json`, {
+            headers: {
+                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                'Api-Username': username,
+                'Content-Type': 'application/json'
+            }
+        });
+        const posts = response.data.topic_list.topics;
+        dispatch(setPosts(posts));
+    } catch (err) {
+        dispatch(setError(err.response.data.errors));
+    }
+}
+
+export const fetchPostReplies = (postId) => async (dispatch) => {
+    try {
+        dispatch(setLoading());
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
+        let username = process.env.REACT_APP_API_USERNAME;
+        if (user) {
+            username = user.username;
+        }
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/posts/${postId}/replies`, {
+            headers: {
+                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                'Api-Username': username,
+                'Content-Type': 'application/json'
+            }
+        });
+        const replies = response.data;
+        dispatch(setPostReplies(replies));
+    } catch (err) {
+        dispatch(setError(err.message));
+    }
+};
+
 export default postsSlice.reducer;

@@ -1,27 +1,89 @@
 import moment from 'moment';
 import 'moment/locale/ar'; // Import Arabic locale
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
 
-const PostDetail = ({ post, isTopic, replies = [] }) => {
+const PostDetail = ({ post, topicDetails, isTopic, handleJumpToPost }) => {
+    const username = post?.topic_creator?.username;
+    const image = post?.avatar_template;
+    const dispatch = useDispatch();
+
     //this component can either be topic and can also be a post...posts can have replies...
-
     function removeMetaDivs(content) {
         // Split the content into lines or segments
-        const segments = content.split(/(?=<div)/g); // Split by opening <div>
+        const segments = content?.split(/(?=<div)/g); // Split by opening <div>
 
         // Filter out any segment that represents a <div> with class "meta"
-        const filteredSegments = segments.filter(segment => {
+        const filteredSegments = segments?.filter(segment => {
             return !/<div[^>]*class=['"]?meta['"]?[^>]*>/.test(segment);
         });
 
         // Join the filtered segments back into a string
-        return filteredSegments.join('');
+        return filteredSegments?.join('');
     }
     const humanFriendlyDate = moment(post.last_posted_at).locale('ar').fromNow();
-    const firstletter = post.last_poster_username.charAt(0);
-    const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator?.avatar.replace("{size}", "28")}`;
+    const firstletter = post.last_poster_username?.charAt(0);
+    const poster_image = `${process.env.REACT_APP_API_URL + image?.replace("{size}", "28")}`;
 
     const [showReplies, setShowReplies] = useState(false);
+
+    const [loadingReplies, setLoadingReplies] = useState(false);
+    const [errors, setErrors] = useState([]);
+    const [replies, setReplies] = useState(null);
+
+    const fetchPostReplies = async (postId) => {
+        try {
+            setLoadingReplies(true);
+            const userObj = localStorage.getItem("salla_discourse_user");
+            const user = JSON.parse(userObj);
+            let username = process.env.REACT_APP_API_USERNAME;
+            if (user) {
+                username = user.username;
+            }
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/posts/${postId}/replies`, {
+                headers: {
+                    'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                    'Api-Username': username,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const replies = response.data;
+            setReplies(replies);
+            setLoadingReplies(false);
+        } catch (err) {
+            setErrors(err);
+        }
+    };
+
+    const handleToggleReplies = async () => {
+        if (!showReplies && !replies) {
+            await fetchPostReplies(post.id);
+        }
+        setShowReplies(prev => !prev);
+    }
+
+    const replied_to_image = post?.reply_to_user?.avatar_template;
+    const reply_to_user_image = `${process.env.REACT_APP_API_URL + replied_to_image?.replace("{size}", "28")}`;
+
+    const handleBookmarkPost = async () => {
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
+        let username = process.env.REACT_APP_API_USERNAME;
+        if (user) {
+            username = user.username;
+        }
+        if (post?.bookmarked) {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/bookmarks/`, {
+                headers: {
+                    'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                    'Api-Username': username,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+        }
+    }
     return (
         <div className="border-gray-300 rounded-lg mt-3 bg-white" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4">
@@ -29,14 +91,14 @@ const PostDetail = ({ post, isTopic, replies = [] }) => {
                     <>
                         <div className="flex gap-8 pb-5">
                             <div className="flex gap-3 items-center">
-                                <p className="w-auto h-auto text-[14px] text-[#444444]">محتاج فزعتكم</p>
+                                <p className="w-auto h-auto text-[14px] text-[#444444]">{post?.category?.name}</p>
                             </div>
                             <div>
                                 <p># الضريبة</p>
                             </div>
                         </div>
                         <span className="text-[24px] font-bold">
-                            يا جماعة عندي سؤال متى افعل الضريبة لمتجري؟ وهل اواجه مشاكل اذا ما فعلته؟
+                            {topicDetails?.title}
                         </span>
                     </>
                 )}
@@ -47,7 +109,7 @@ const PostDetail = ({ post, isTopic, replies = [] }) => {
                             <img src={poster_image} className="w-[44px] h-[44px] rounded-full" />
                             <div className="flex-col">
                                 <div>
-                                    <span className="text-[#444444] text-[16px] font-bold">لوك عيسى</span>
+                                    <span className="text-[#444444] text-[16px] font-bold">{username}</span>
                                 </div>
                                 <div
                                     className="content text-right text-[#707070] mb-4 mt-3"
@@ -56,27 +118,39 @@ const PostDetail = ({ post, isTopic, replies = [] }) => {
                             </div>
                         </div>
                     </div>
+                    {replied_to_image && (
+                        <div className="flex gap-3 ml-8">
+                            <img src="/images/post/arrow-turn-back.svg" />
+                            <img src={reply_to_user_image} className="w-[24px] h-[24px] rounded-full" />
+                            <p className="text-[#666666] font-bold">{post?.reply_to_user?.username}</p>
+                        </div>
+                    )}
                 </div>
 
             </div>
-            <div className={`flex gap-5 w-full items-center ${replies.length > 0 ? 'justify-between' : 'justify-end'}`}>
+            <div className={`flex gap-5 w-full items-center ${post?.reply_count > 0 ? 'justify-between' : 'justify-end'}`}>
                 {isTopic ? (
                     <div className="flex">
                         <img src="/images/post/eye.svg" className="mr-4" />
-                        <span className="pr-4 text-[#004D5A]">{post.like_count}</span>
+                        <span className="pr-4 text-[#004D5A]">{post.views}</span>
                     </div>
                 ) : (
-                    replies.length > 0 &&
+                    post?.reply_count > 0 &&
                     (
-                        <div className="cursor-pointer bg-[#eefcf9] text-[#004D5A] mr-3 rounded-lg" onClick={() => setShowReplies(prev => !prev)}>
-                            <div className="flex gap-2 font-medium p-2">
-                                <span>{replies.length}</span>
+                        <div className="cursor-pointer bg-[#eefcf9] text-[#004D5A] mr-3 rounded-lg" onClick={() => handleToggleReplies()}>
+                            <div className="flex gap-2 font-medium p-2 items-center">
+                                <span>{post?.reply_count}</span>
                                 <span>ردود</span>
-                                <img
-                                    src={`/images/post/arrow-up.svg`} alt=""
-                                    className={`cursor-pointer hidden sm:block ${showReplies ? 'rotate-180' : ''}`}
-                                    
-                                />
+                                {loadingReplies ?
+                                    <img src="/images/loader.gif" alt="Loading..." className="w-4 h-4" />
+                                    :
+                                    <img
+                                        src={`/images/post/arrow-up.svg`} alt=""
+                                        className={`cursor-pointer hidden sm:block ${showReplies ? 'rotate-180' : ''}`}
+
+                                    />
+                                }
+
                             </div>
                         </div>
                     )
@@ -93,8 +167,13 @@ const PostDetail = ({ post, isTopic, replies = [] }) => {
                         <span className="pr-4 text-[#004D5A]">{post.like_count}</span>
                         <img src="/images/post/heart.svg" />
                     </div>
-                    <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
-                        <img src="/images/post/save.svg" />
+                    <div className={`flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "p-[15px]": ""}`} onClick={() => handleBookmarkPost()}>
+                        {
+                            post?.bookmarked ?
+                                <img src="/images/post/save-filled.svg" className="w-[12px] h-[15px]" />
+                                :
+                                <img src="/images/post/save.svg" />
+                        }
                     </div>
                     <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
                         <img src="/images/post/paperclip.svg" />
@@ -105,16 +184,18 @@ const PostDetail = ({ post, isTopic, replies = [] }) => {
             {showReplies && (
                 <>
                     {replies?.map((reply) => {
+                        const replier_image = `${process.env.REACT_APP_API_URL + reply?.avatar_template?.replace("{size}", "28")}`;
+
                         return (
                             <div className="flex flex-col">
                                 {/* div for name of person who did the reply */}
                                 <div className="mr-[5rem]">
                                     <div className="flex gap-3 items-center mb-2">
                                         {/* <img src={poster_image} className="w-[50px] h-[50px]" /> */}
-                                        <img src={poster_image} className="w-[44px] h-[44px] rounded-full" />
+                                        <img src={replier_image} className="w-[44px] h-[44px] rounded-full" />
                                         <div className="flex-col">
                                             <div>
-                                                <span className="text-[#444444] text-[16px] font-bold">{reply.replied_to}</span>
+                                                <span className="text-[#444444] text-[16px] font-bold">{reply?.username}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -128,12 +209,12 @@ const PostDetail = ({ post, isTopic, replies = [] }) => {
                                                 <img src={poster_image} className="w-[32px] h-[32px] rounded-full" />
                                                 <div className="flex-col">
                                                     <div>
-                                                        <span className="text-[#444444] text-[16px] font-bold">لوك عيسى</span>
+                                                        <span className="text-[#444444] text-[16px] font-bold">{reply?.reply_to_user?.username}</span>
                                                     </div>
                                                     <div
                                                         className="content text-right text-[#707070] mb-4 mt-3"
                                                         // dangerouslySetInnerHTML={{ __html: removeMetaDivs(post.cooked) }}
-                                                        dangerouslySetInnerHTML={{ __html: reply.replied_to_content }}
+                                                        dangerouslySetInnerHTML={{ __html: post?.cooked }}
                                                     />
                                                 </div>
                                             </div>
@@ -142,13 +223,13 @@ const PostDetail = ({ post, isTopic, replies = [] }) => {
                                     <div>
                                         <div
                                             className="content text-right text-[#707070] mb-4 mt-3"
-                                            dangerouslySetInnerHTML={{ __html: reply.reply }}
+                                            dangerouslySetInnerHTML={{ __html: reply?.cooked }}
                                         />
                                     </div>
                                     <div className="flex">
-                                        <div className="border-[1px] cursor-pointer border-[#EEEEEE] flex gap-2 px-6 py-2 rounded-lg flex-grow-0 flex-shrink-0">
+                                        <div className="border-[1px] cursor-pointer border-[#EEEEEE] flex gap-2 px-6 py-2 rounded-lg flex-grow-0 flex-shrink-0" onClick={() => handleJumpToPost(reply?.id)}>
                                             <img src="/images/post/arrow-down.svg" />
-                                            <span className="text-[#004D5A] text-[14px] font-bold">الانتقال للمنشور</span>
+                                            <span className="text-[#004D5A] text-[14px] font-bold" >الانتقال للمنشور</span>
                                         </div>
                                     </div>
 
