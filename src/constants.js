@@ -1,9 +1,9 @@
 export const sidebar_items = {
   rawabat_items: [
-    { id:"1", name: "أكاديمية سلة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
-    { id:"2", name: "مركز المساعدة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
-    { id:"3", name: "مدونة سلة", image: "/images/sidebar/diagonal-arrow.png", link: "http://google.com/" },
-    { id:"4", name: "فيديوهات تعليمية", image: "/images/sidebar/diagonal-arrow.png" , link: "http://google.com/"},
+    { id:"1", name: "أكاديمية سلة", image: "/images/sidebar/diagonal-arrow.png", link: "https://academy.salla.com/" },
+    { id:"2", name: "مركز المساعدة", image: "/images/sidebar/diagonal-arrow.png", link: "https://help.salla.sa/" },
+    { id:"3", name: "مدونة سلة", image: "/images/sidebar/diagonal-arrow.png", link: "https://salla.com/blog/" },
+    { id:"4", name: "فيديوهات تعليمية", image: "/images/sidebar/diagonal-arrow.png" , link: "https://youtube.com/watch?v=lpmUHG_TkoM&list=PLD6ilV8p0p1PoKEcD3GLlUaPruQvxSjCb"},
   ]
 }
 
