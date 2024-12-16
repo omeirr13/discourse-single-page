@@ -7,13 +7,16 @@ const AddYourInfoForm = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
+    const [errors, setErrors] = useState("");
     const navigate = useNavigate();
 
     const redirectSignin= () => {
         navigate("/login");
     }
 
-    const handleSave = async () => {
+    const handleSave = async (event) => {
+
+        event.preventDefault();
 
         if(!email && !username && !password && !name){
             alert("Please fill out all fields");
@@ -36,6 +39,11 @@ const AddYourInfoForm = () => {
                 }
             });
 
+            if(response.data.error){
+                setErrors(response.data.error);
+                return;
+            }
+
             navigate("/login");
         }
         catch(error){
@@ -46,6 +54,7 @@ const AddYourInfoForm = () => {
     return (
         <div>
             <form onSubmit={handleSave}>
+                {errors && <div className="text-[#FF0000] text-right mt-2">{errors}</div>}
                 <div className="space-y-4">
                     <p className="text-[14px] mb-0 text-[#444444] font-medium text-right mt-5">البريد الالكتروني</p>
                     <input

@@ -6,6 +6,7 @@ import { encryptData } from "../../crypto";
 const AddYourInfoForm = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState("");
     const navigate = useNavigate();
 
     const redirectSignup = () => {
@@ -31,6 +32,10 @@ const AddYourInfoForm = () => {
                 },
                 withCredentials: true, 
             });
+            if(response.data.error){
+                setErrors(response.data.error);
+                return;
+            }
             const secretKey = process.env.REACT_APP_SECRET;
             const encryptedPassword = encryptData(password, secretKey);
             localStorage.setItem('salla_discourse_user', JSON.stringify(response.data.user));
@@ -45,6 +50,7 @@ const AddYourInfoForm = () => {
     return (
         <div>
             <form onSubmit={handleSave}>
+                {errors && <div className="text-[#FF0000] text-right mt-2">{errors}</div>}
                 <div className="space-y-4 mt-20">
                     <p className="text-[14px] mb-0 text-[#444444] font-medium text-right">اسم المستخدم</p>
                     <input
