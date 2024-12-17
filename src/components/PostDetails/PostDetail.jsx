@@ -107,7 +107,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     <>
                         <div className="flex gap-8 pb-5">
                             <div className="flex gap-3 items-center">
-                                <p className="w-auto h-auto text-[14px] text-[#444444]">{post?.category?.name}</p>
+                                <p className="w-auto h-auto text-[14px] text-[#444444]">#{post?.category?.name}</p>
                             </div>
                             {/* <div>
                                 <p># الضريبة</p>
