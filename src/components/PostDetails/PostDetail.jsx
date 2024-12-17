@@ -233,7 +233,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     <div className="relative flex justify-center items-center">
                         <div
                             className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer"
-                            onClick={() => handleCopy(`${process.env.REACT_APP_URL}/${topicId}/${post.post_number}`)}
+                            onClick={() => handleCopy(`${process.env.REACT_APP_URL}/detail/${topicId}/${post.post_number}`)}
                         >
                             <img src="/images/post/paperclip.svg"  alt="" />
                         </div>

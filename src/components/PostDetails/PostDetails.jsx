@@ -19,11 +19,9 @@ const PostDetails = () => {
     if (user) {
         isLoggedin = true;
         if(user.admin){
-            isAdmin = true
+            isAdmin = true;
         }
     }
-
-
 
     const [formVisible, setFormVisible] = useState(false);
     const [replyContent, setReplyContent] = useState("");
@@ -179,14 +177,14 @@ const PostDetails = () => {
                                     // index={index}
                                     handleJumpToPost={handleJumpToPost}
                                 />
-                                <div className="my-5 flex justify-end">
-                                    {/* <div className="flex gap-2 mr-3">
+                                {/* <div className="my-5 flex justify-end">
+                                    <div className="flex gap-2 mr-3">
                                         4 فزعات
-                                    </div> */}
+                                    </div> 
                                     <div className="py-2 px-6 border-[1px] border-[#DDDDDD] rounded-lg text-[#666666]">
                                         رتب حسب<b> الأحدث</b>
                                     </div>
-                                </div>
+                                </div> */}
                                 {topicPosts.map((post) => {
                                     return (
                                         <div key={post.id}  ref={(el) => postRefs.current[post.post_number] = el} >
