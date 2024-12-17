@@ -109,7 +109,7 @@ export const fetchTopicData = (topicId) => async (dispatch) => {
         const user = JSON.parse(userObj);
         const username = user?.username || process.env.REACT_APP_API_USERNAME;
 
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/t/${topicId}/1.json`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/t/${topicId}/1.json?track_visit=true&forceLoad=true`, {
             headers: {
                 'Api-Key': process.env.REACT_APP_API_KEY,
                 'Api-Username': username,
