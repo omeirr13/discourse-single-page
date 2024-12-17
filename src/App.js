@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import PostDetails from "./components/PostDetails/PostDetails";
 import Home from "./components/Home/Home";
 import CategoryPosts from "./components/Category/CategoryPosts";
+import ReactionsBar from "./components/ReactionBar";
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
       {showHeader && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/reactions" element={<ReactionsBar />} />
         <Route path="/detail/:topicId/:postNumber?" element={<PostDetails />} />
         <Route path="/category-detail/:categoryId" element={<CategoryPosts />} />
         <Route path="/signup" element={<Signup />} />
