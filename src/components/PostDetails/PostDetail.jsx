@@ -1,10 +1,11 @@
 import moment from 'moment';
 import 'moment/locale/ar'; // Import Arabic locale
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import { toggleBookmarkPost } from '../../redux/features/topicsSlice';
 
-const PostDetail = ({ post, topicDetails, isTopic, handleJumpToPost }) => {
+const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) => {
     const username = post?.topic_creator?.username;
     const image = post?.avatar_template;
     const dispatch = useDispatch();
@@ -55,7 +56,6 @@ const PostDetail = ({ post, topicDetails, isTopic, handleJumpToPost }) => {
             setErrors(err);
         }
     };
-
     const handleToggleReplies = async () => {
         if (!showReplies && !replies) {
             await fetchPostReplies(post.id);
@@ -67,23 +67,23 @@ const PostDetail = ({ post, topicDetails, isTopic, handleJumpToPost }) => {
     const reply_to_user_image = `${process.env.REACT_APP_API_URL + replied_to_image?.replace("{size}", "28")}`;
 
     const handleBookmarkPost = async () => {
-        const userObj = localStorage.getItem("salla_discourse_user");
-        const user = JSON.parse(userObj);
-        let username = process.env.REACT_APP_API_USERNAME;
-        if (user) {
-            username = user.username;
-        }
-        if (post?.bookmarked) {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/bookmarks/`, {
-                headers: {
-                    'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-                    'Api-Username': username,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-        }
+        dispatch(toggleBookmarkPost(post, isTopic));
     }
+    const { loading } = useSelector((state) => state.loading);
+
+    const [showTooltip, setShowTooltip] = useState(false);
+
+    const handleCopy = async (text) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setShowTooltip(true);
+
+            // Hide the tooltip after 2 seconds
+            setTimeout(() => setShowTooltip(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy text: ", err);
+        }
+    };
     return (
         <div className="border-gray-300 rounded-lg mt-3 bg-white" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4">
@@ -93,9 +93,9 @@ const PostDetail = ({ post, topicDetails, isTopic, handleJumpToPost }) => {
                             <div className="flex gap-3 items-center">
                                 <p className="w-auto h-auto text-[14px] text-[#444444]">{post?.category?.name}</p>
                             </div>
-                            <div>
+                            {/* <div>
                                 <p># الضريبة</p>
-                            </div>
+                            </div> */}
                         </div>
                         <span className="text-[24px] font-bold">
                             {topicDetails?.title}
@@ -156,29 +156,70 @@ const PostDetail = ({ post, topicDetails, isTopic, handleJumpToPost }) => {
                     )
                 )}
 
-                <div className="p-3 flex gap-2">
-                    <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
+                <div className="p-3 flex gap-2 items-center">
+                    {/* Attachment */}
+                    {/* <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
                         <img src="/images/post/attachment.svg" />
-                    </div>
+                    </div> */}
+                    {!isTopic && (
+                        <div className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE] ">
+                            <p className="text-[#707070]">Solution</p>
+                            <img src="/images/post/tick.svg" className="w-4 h-4" />
+                        </div>
+                    )}
+                    {/* Share */}
                     <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
                         <img src="/images/post/share.svg" />
                     </div>
+
+                    {/* Likes */}
                     <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
                         <span className="pr-4 text-[#004D5A]">{post.like_count}</span>
                         <img src="/images/post/heart.svg" />
                     </div>
-                    <div className={`flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "p-[15px]": ""}`} onClick={() => handleBookmarkPost()}>
-                        {
-                            post?.bookmarked ?
-                                <img src="/images/post/save-filled.svg" className="w-[12px] h-[15px]" />
-                                :
-                                <img src="/images/post/save.svg" />
-                        }
+
+                    {/* Bookmark */}
+                    <div
+                        className={`relative flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "px-[15px] py-[12px]" : ""
+                            }`}
+                        onClick={() => handleBookmarkPost()}
+                    >
+                        {loading["bookmark"] ? (
+                            <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
+                        ) : (
+                            <>
+                                {post?.bookmarked ? (
+                                    <img
+                                        src="/images/post/save-filled.svg"
+                                        className="w-[12px] h-[15px]"
+                                        alt="Bookmarked"
+                                    />
+                                ) : (
+                                    <img src="/images/post/save.svg" alt="Save" />
+                                )}
+                            </>
+                        )}
                     </div>
-                    <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
-                        <img src="/images/post/paperclip.svg" />
+
+                    {/* Tooltip */}
+                    <div className="relative flex justify-center items-center">
+                        <div
+                            className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer"
+                            onClick={() => handleCopy(`${process.env.REACT_APP_API_URL}/detail/${topicId}?post=${post.id}`)}
+                        >
+                            <img src="/images/post/paperclip.svg" />
+                        </div>
+                        {showTooltip && (
+                            <div
+                                className="absolute top-[-30px] left-[50%] transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow"
+                                style={{ whiteSpace: "nowrap" }}
+                            >
+                                !Copied
+                            </div>
+                        )}
                     </div>
                 </div>
+
 
             </div>
             {showReplies && (

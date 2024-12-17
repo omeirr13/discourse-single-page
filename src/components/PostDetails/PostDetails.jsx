@@ -3,20 +3,20 @@ import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategories } from "../../redux/features/categoriesSlice";
-import Select from "react-select";
-import { appendPost, createTopic, deleteTopic, fetchPosts } from "../../redux/features/postsSlice";
-import Header from "../Header";
 import PostDetail from "./PostDetail";
-import { useParams } from "react-router-dom";
-import HomePost from "../Home/HomePost";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PostDetailItem from "./PostDetailItem";
 import { appendPostOfTopic, fetchTopicData } from "../../redux/features/topicsSlice";
 import axios from "axios";
 
 const PostDetails = () => {
     const { topicId } = useParams();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    let postId = params.get('post');
 
+
+   
     const [formVisible, setFormVisible] = useState(false);
     const [replyContent, setReplyContent] = useState("");
 
@@ -63,6 +63,16 @@ const PostDetails = () => {
             });
         }
     };
+
+    useEffect(() => {
+        console.log(postRefs.current[postId], postId);
+        if (postId && postRefs.current[postId]) {
+            postRefs.current[postId].scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        }
+    }, [postId, postRefs]);
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
@@ -97,6 +107,17 @@ const PostDetails = () => {
         }
     };
     const quillRef = useRef(null);
+
+    useEffect(() => {
+        if (postId) {
+            // Scroll to the section related to the post
+            const element = document.getElementById(postId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }, [postId]);
+
     if (postsStatus == "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -130,7 +151,7 @@ const PostDetails = () => {
                                         <div className="flex space-x-4 mt-4">
                                             <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
                                                 {
-                                                    postsStatus=="loading" ? "Loading" : "نشر" 
+                                                    postsStatus == "loading" ? "Loading" : "نشر"
                                                 }
                                             </button>
                                             <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
@@ -147,6 +168,7 @@ const PostDetails = () => {
                             <div className="posts-container mt-[3rem]  w-full" style={{ display: 'inline-block', verticalAlign: 'top' }}>
                                 {/* {posts.map((post, index) => ( */}
                                 <PostDetail
+                                    topicId={topicId}
                                     post={post}
                                     topicDetails={topicDetails}
                                     isTopic={true}
@@ -165,6 +187,7 @@ const PostDetails = () => {
                                     return (
                                         <div key={post.id} ref={(el) => (postRefs.current[post.id] = el)}>
                                             <PostDetail
+                                                topicId={topicId}
                                                 post={post}
                                                 topicDetails={topicDetails}
                                                 isTopic={false}

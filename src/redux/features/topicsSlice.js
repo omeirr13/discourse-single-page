@@ -46,11 +46,34 @@ const topicsSlice = createSlice({
             state.loading = false;
             state.topicPosts.push(action.payload);
         },
+        toggleBookmark: (state, action) => {
+            state.status = 'succeeded';
+            state.loading = false;
+            const { isTopic, postId, bookmarked, bookmark_id } = action.payload;
+            if (isTopic) {
+                console.log("isTOpic");
+                state.topicDetails = {
+                    ...state.topicDetails,
+                    bookmarked,
+                    ...(bookmarked && { bookmark_id })
+                }
+            }
+            else {
+                state.topicPosts = state.topicPosts.map((post) => {
+                    return (post?.id == postId) ? {
+                        ...post,
+                        bookmarked,
+                         ...(bookmarked && { bookmark_id })
+                    } :
+                        post
+                });
+            }
+        },
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 
-export const { setLoading, setTopicData, setError, removePost, addPost, resetError, appendPostOfTopic } = topicsSlice.actions;
+export const { setLoading, setTopicData, setError, removePost, addPost, resetError, appendPostOfTopic, toggleBookmark } = topicsSlice.actions;
 
 // Thunk to fetch specific topic and its posts
 export const fetchTopicData = (topicId) => async (dispatch) => {
@@ -74,7 +97,7 @@ export const fetchTopicData = (topicId) => async (dispatch) => {
             },
         });
 
-        const { post_stream: { posts }, suggested_topics, ...topicDetails } = response.data;
+        const { post_stream: { posts }, suggested_topics = [], ...topicDetails } = response.data;
 
         const updatedSuggestedTopics = suggested_topics.slice(1); // This creates a new array without the first item
 
@@ -82,56 +105,66 @@ export const fetchTopicData = (topicId) => async (dispatch) => {
         console.log(topicDetails);
 
         dispatch(setTopicData({
-            topicPosts: posts,
+            topicPosts: posts.slice(1),
             suggestedTopics: updatedSuggestedTopics, // Pass the modified array
             topicDetails,
         }));
 
     } catch (err) {
+        console.log(err);
         const errorMessage = err.response?.data?.errors || ["An error occurred"];
         dispatch(setError(errorMessage));
     }
 };
 
 
-// export const toggleBookmarkPost = (post, isTopic) => async (dispatch) => {
-//     try {
-//         dispatch(setLoading());
-//         let id = null;
-//         if(isTopic){
-//             id = 
-//         }
-//         const formData = new FormData();
-//         formData.append("auto_delete_preference", 3);
-//         formData.append("bookmarkable_id", post?.id);
-//         formData.append("bookmarkable_type", "Post");
+export const toggleBookmarkPost = (post, isTopic) => async (dispatch) => {
+    try {
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
+        const username = user?.username || process.env.REACT_APP_API_USERNAME;
 
+        
+        if (!post?.bookmarked) {//not bookmarked previously
+            const formData = new FormData();
+            formData.append("auto_delete_preference", 3);
+            formData.append("bookmarkable_id", post?.id);
+            formData.append("bookmarkable_type", "Post");
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/bookmarks/`, formData, {
+                headers: {
+                    'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                    'Api-Username': username,
+                }
+            });
+            const { success, id } = response.data;
 
-//         const userObj = localStorage.getItem("salla_discourse_user");
-//         const user = JSON.parse(userObj);
-//         let username = process.env.REACT_APP_API_USERNAME;
-//         if (user) {
-//             username = user.username;
-//         }
-//         if (post?.bookmarked) {
-//             const response = await axios.post(`${process.env.REACT_APP_API_URL}/bookmarks/`, {
-//                 headers: {
-//                     'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-//                     'Api-Username': username,
-//                     'Content-Type': 'application/json'
-//                 }
-//             });
-//             const { success, id } = response;
+            if (success) {
+                let postId = post?.id;
+                dispatch(toggleBookmark({ isTopic, postId, bookmarked: true, bookmark_id: id }));
+            }
+        }
+        else {
+            let bookmark_id = post?.bookmark_id;
+            let postId = post?.id;
+            const body = { id: postId };
 
-//             if (success) {
-//                 dispatch(toggleBookmark());
-//             }
-
-//         }
-//     } catch (err) {
-//         dispatch(setError(errorMessage));
-//     }
-// }
+            const response = await axios.delete(`${process.env.REACT_APP_API_URL}/bookmarks/${bookmark_id}.json`, {
+                headers: {
+                    'Api-Key': process.env.REACT_APP_API_KEY,
+                    'Api-Username': username,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const { success } = response.data;
+            if (success) {
+                dispatch(toggleBookmark({ isTopic, postId, bookmarked: false }))
+            }
+        }
+    } catch (err) {
+        console.log(err);
+        dispatch(setError(err));
+    }
+}
 
 
 export default topicsSlice.reducer;
