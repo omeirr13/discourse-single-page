@@ -341,7 +341,6 @@ const Home = () => {
                                                             id={`category-${category.id}`} // Corrected syntax for unique ID
                                                             name="options"
                                                             onChange={() => {
-                                                                console.log(category.id);
                                                                 setNewPost({ ...newPost, category: category.id });
                                                             }}
                                                             className="form-radio ml-2 w-3 h-3 border-gray-300 focus:ring-0"

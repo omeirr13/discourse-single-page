@@ -25,8 +25,6 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
         // Join the filtered segments back into a string
         return filteredSegments?.join('');
     }
-    const humanFriendlyDate = moment(post.last_posted_at).locale('ar').fromNow();
-    const firstletter = post.last_poster_username?.charAt(0);
     const poster_image = `${process.env.REACT_APP_API_URL + image?.replace("{size}", "28")}`;
 
     const [showReplies, setShowReplies] = useState(false);
@@ -35,6 +33,19 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
     const [loadingReplies, setLoadingReplies] = useState(false);
     const [errors, setErrors] = useState([]);
     const [replies, setReplies] = useState(null);
+
+    //admin validation checks
+
+    const userObj = localStorage.getItem("salla_discourse_user");
+    const user = JSON.parse(userObj);
+    let isLoggedin = false;
+    let isAdmin = false;
+    if (user) {
+        isLoggedin = true;
+        if(user.admin){
+            isAdmin = true
+        }
+    }
 
     const fetchPostReplies = async (postId) => {
         try {
@@ -111,7 +122,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     <div className="mr-4 flex justify-between w-full">
                         <div className="flex gap-3 items-start">
                             {/* <img src={poster_image} className="w-[50px] h-[50px]" /> */}
-                            <img src={poster_image} className="w-[44px] h-[44px] rounded-full" />
+                            <img src={poster_image} className="w-[44px] h-[44px] rounded-full" alt=""  />
                             <div className="flex-col">
                                 <div>
                                     <span className="text-[#444444] text-[16px] font-bold">{username}</span>
@@ -125,8 +136,8 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     </div>
                     {replied_to_image && (
                         <div className="flex gap-3 ml-8">
-                            <img src="/images/post/arrow-turn-back.svg" />
-                            <img src={reply_to_user_image} className="w-[24px] h-[24px] rounded-full" />
+                            <img src="/images/post/arrow-turn-back.svg" alt=""  />
+                            <img src={reply_to_user_image} className="w-[24px] h-[24px] rounded-full" alt=""  />
                             <p className="text-[#666666] font-bold">{post?.reply_to_user?.username}</p>
                         </div>
                     )}
@@ -135,10 +146,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
             </div>
             <div className={`flex gap-5 w-full items-center ${post?.reply_count > 0 ? 'justify-between' : 'justify-end'}`}>
                 {isTopic ? (
-                    <div className="flex">
-                        <img src="/images/post/eye.svg" className="mr-4" />
-                        <span className="pr-4 text-[#004D5A]">{post.views}</span>
-                    </div>
+                    <></>
                 ) : (
                     post?.reply_count > 0 &&
                     (
@@ -166,59 +174,68 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     {/* <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
                         <img src="/images/post/attachment.svg" />
                     </div> */}
-                    {post?.accepted_answer && (
-                        <div onClick={()=>dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
-                            <p className="text-[#707070]">Solution</p>
-                            <img src="/images/post/filled-tick.svg" className="w-4 h-4" />
-                        </div>
+                    {isLoggedin && isAdmin && (
+                        <>
+                            {post?.accepted_answer && (
+                                <div onClick={()=>dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
+                                    <p className="text-[#707070]">حل العلامة</p>
+                                    <img src="/images/post/filled-tick.svg" alt="" className="w-4 h-4" />
+                                </div>
+                            )}
+                            {(!isTopic && !topicHasAcceptedSolution) && (
+                                <div onClick={()=>dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
+                                    <p className="text-[#707070]">حل العلامة</p>
+                                    <img src="/images/post/tick.svg" alt="" className="w-4 h-4" />
+                                </div>
+                            )}
+                        </>
                     )}
-                    {(!isTopic && !topicHasAcceptedSolution) && (
-                        <div onClick={()=>dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
-                            <p className="text-[#707070]">Solution</p>
-                            <img src="/images/post/tick.svg" className="w-4 h-4" />
-                        </div>
-                    )}
-                    {/* Share */}
-                    <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
-                        <img src="/images/post/share.svg" />
-                    </div>
 
-                    {/* Likes */}
-                    <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
-                        <span className="pr-4 text-[#004D5A]">{post.like_count}</span>
-                        <img src="/images/post/heart.svg" />
-                    </div>
+                    {isLoggedin && (
+                        // reply
+                        <>
+                            <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
+                                <img src="/images/post/share.svg" alt="" />
+                            </div>
 
-                    {/* Bookmark */}
-                    <div
-                        className={`relative flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "px-[15px] py-[12px]" : ""
-                            }`}
-                        onClick={() => handleBookmarkPost()}
-                    >
-                        {loading["bookmark"] ? (
-                            <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
-                        ) : (
-                            <>
-                                {post?.bookmarked ? (
-                                    <img
-                                        src="/images/post/save-filled.svg"
-                                        className="w-[12px] h-[15px]"
-                                        alt="Bookmarked"
-                                    />
+                            {/* likes */}
+                            <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
+                                <span className="pr-4 text-[#004D5A]">{post.like_count}</span>
+                                <img src="/images/post/heart.svg" alt="" />
+                            </div>
+
+                            {/* bookmarks */}
+                            <div
+                            className={`relative flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "px-[15px] py-[12px]" : ""
+                                }`}
+                            onClick={() => handleBookmarkPost()}>
+                                {loading["bookmark"] ? (
+                                    <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
                                 ) : (
-                                    <img src="/images/post/save.svg" alt="Save" />
+                                    <>
+                                        {post?.bookmarked ? (
+                                            <img
+                                                src="/images/post/save-filled.svg"
+                                                className="w-[12px] h-[15px]"
+                                                alt="Bookmarked"
+                                            />
+                                        ) : (
+                                            <img src="/images/post/save.svg" alt="Save" />
+                                        )}
+                                    </>
                                 )}
-                            </>
-                        )}
-                    </div>
+                            </div>
+                        </>
+                    )}
+
 
                     {/* Tooltip */}
                     <div className="relative flex justify-center items-center">
                         <div
                             className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer"
-                            onClick={() => handleCopy(`http://localhost:3001/detail/${topicId}/${post.post_number}`)}
+                            onClick={() => handleCopy(`${process.env.REACT_APP_URL}/${topicId}/${post.post_number}`)}
                         >
-                            <img src="/images/post/paperclip.svg" />
+                            <img src="/images/post/paperclip.svg"  alt="" />
                         </div>
                         {showTooltip && (
                             <div
@@ -244,7 +261,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                                 <div className="mr-[5rem]">
                                     <div className="flex gap-3 items-center mb-2">
                                         {/* <img src={poster_image} className="w-[50px] h-[50px]" /> */}
-                                        <img src={replier_image} className="w-[44px] h-[44px] rounded-full" />
+                                        <img src={replier_image} className="w-[44px] h-[44px] rounded-full" alt="" />
                                         <div className="flex-col">
                                             <div>
                                                 <span className="text-[#444444] text-[16px] font-bold">{reply?.username}</span>
@@ -258,7 +275,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                                         <div className="flex justify-between w-full">
                                             <div className="flex gap-3 items-start">
                                                 {/* <img src={poster_image} className="w-[50px] h-[50px]" /> */}
-                                                <img src={poster_image} className="w-[32px] h-[32px] rounded-full" />
+                                                <img src={poster_image} className="w-[32px] h-[32px] rounded-full" alt="" />
                                                 <div className="flex-col">
                                                     <div>
                                                         <span className="text-[#444444] text-[16px] font-bold">{reply?.reply_to_user?.username}</span>
@@ -280,7 +297,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                                     </div>
                                     <div className="flex">
                                         <div className="border-[1px] cursor-pointer border-[#EEEEEE] flex gap-2 px-6 py-2 rounded-lg flex-grow-0 flex-shrink-0" onClick={() => handleJumpToPost(reply?.post_number)}>
-                                            <img src="/images/post/arrow-down.svg" />
+                                            <img src="/images/post/arrow-down.svg" alt="" />
                                             <span className="text-[#004D5A] text-[14px] font-bold" >الانتقال للمنشور</span>
                                         </div>
                                     </div>

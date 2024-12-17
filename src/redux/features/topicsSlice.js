@@ -54,7 +54,6 @@ const topicsSlice = createSlice({
             state.loading = false;
             const { isTopic, postId, bookmarked, bookmark_id } = action.payload;
             if (isTopic) {
-                console.log("isTOpic");
                 state.topicDetails = {
                     ...state.topicDetails,
                     bookmarked,
@@ -122,7 +121,6 @@ export const fetchTopicData = (topicId) => async (dispatch) => {
         const updatedSuggestedTopics = suggested_topics.slice(1); // This creates a new array without the first item
 
         topicDetails.mainPost = posts[0];
-        console.log(topicDetails);
 
         dispatch(setTopicData({
             topicPosts: posts.slice(1),
@@ -166,7 +164,6 @@ export const toggleBookmarkPost = (post, isTopic) => async (dispatch) => {
         else {
             let bookmark_id = post?.bookmark_id;
             let postId = post?.id;
-            const body = { id: postId };
 
             const response = await axios.delete(`${process.env.REACT_APP_API_URL}/bookmarks/${bookmark_id}.json`, {
                 headers: {

@@ -1,18 +1,27 @@
-import React, { useEffect, useRef, useState, useLayoutEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import PostDetail from "./PostDetail";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PostDetailItem from "./PostDetailItem";
 import { appendPostOfTopic, fetchTopicData } from "../../redux/features/topicsSlice";
 import axios from "axios";
 
 const PostDetails = () => {
     const { topicId, postNumber} = useParams();
-    const location = useLocation();
-    const params = new URLSearchParams(location.search);
+
+    const userObj = localStorage.getItem("salla_discourse_user");
+    const user = JSON.parse(userObj);
+    let isLoggedin = false;
+    let isAdmin = false;
+    if (user) {
+        isLoggedin = true;
+        if(user.admin){
+            isAdmin = true
+        }
+    }
 
 
 
@@ -194,42 +203,35 @@ const PostDetails = () => {
                                         </div>
                                     )
                                 })}
-                                {/* <PostDetail
-                                    key={post.id}
-                                    post={post}
-                                    isTopic={false}
-                                    // index={index}
-                                    handleDelete={() => { dispatch(deleteTopic(post.id)) }}
-                                /> */}
-                                {/* ))} */}
                             </div>
                         </div>
-                        <div className="flex gap-4 mt-[2rem]">
-                            <div className="bg-[#004D5A] cursor-pointer flex gap-2 flex-grow-0 px-9 py-3 rounded-md" onClick={() => setFormVisible(true)}>
-                                <img src="/images/post/link-forward.svg" className="w-[17px]" />
-                                <span className="text-white">رد</span>
+                        {isLoggedin && (
+                            <div className="flex gap-4 mt-[2rem]">
+                                <div className="bg-[#004D5A] cursor-pointer flex gap-2 flex-grow-0 px-9 py-3 rounded-md" onClick={() => setFormVisible(true)}>
+                                    <img src="/images/post/link-forward.svg" className="w-[17px]" alt="" />
+                                    <span className="text-white">رد</span>
+                                </div>
+                                <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md">
+                                    <img src="/images/post/paper-clip.svg" alt="" />
+                                    <span className="text-[#004D5A] font-medium">شارك</span>
+                                </div>
                             </div>
-                            <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md">
-                                <img src="/images/post/paper-clip.svg" />
-                                <span className="text-[#004D5A] font-medium">شارك</span>
+                        )}
+
+                        {suggestedTopics && suggestedTopics.length && (
+
+                            <div className="mt-[6rem]">
+                                <span className="text-[18px] text-[#333333] font-medium">مواضيع مشابهة</span>
+                                <div className="mt-[2rem]">
+                                    {
+                                        suggestedTopics.map((topic) => (
+                                            <PostDetailItem post={topic} />
+                                        ))
+                                    }
+                                </div>
                             </div>
-                        </div>
 
-
-                        {/* last section */}
-                        <div className="mt-[6rem]">
-                            <span className="text-[18px] text-[#333333] font-medium">مواضيع مشابهة</span>
-                            <div className="mt-[2rem]">
-                                {
-                                    suggestedTopics.map((topic) => (
-                                        <PostDetailItem post={topic} />
-                                    ))
-                                }
-                            </div>
-                        </div>
-
-
-
+                        )}
                     </div>
                 </div>
                 <Sidebar categories={categories} categoryId={-1} />
