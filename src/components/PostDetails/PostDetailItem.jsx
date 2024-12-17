@@ -3,7 +3,7 @@ import 'moment/locale/ar'; // Import Arabic locale
 import { useNavigate } from 'react-router-dom';
 
 const PostDetailItem = ({ post }) => {
-
+    console.log(post);
     function extractTextAndTruncate(description) {
         // Remove all image tags
         const textWithoutImages = description.replace(/<img[^>]*>/g, '');

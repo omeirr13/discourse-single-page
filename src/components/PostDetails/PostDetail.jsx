@@ -3,12 +3,14 @@ import 'moment/locale/ar'; // Import Arabic locale
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { toggleBookmarkPost } from '../../redux/features/topicsSlice';
+import { acceptUnAcceptSolution, toggleBookmarkPost } from '../../redux/features/topicsSlice';
 
 const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) => {
     const username = post?.topic_creator?.username;
     const image = post?.avatar_template;
     const dispatch = useDispatch();
+
+    const { topicHasAcceptedSolution } = useSelector((state) => state.topics);
 
     //this component can either be topic and can also be a post...posts can have replies...
     function removeMetaDivs(content) {
@@ -28,7 +30,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
     const poster_image = `${process.env.REACT_APP_API_URL + image?.replace("{size}", "28")}`;
 
     const [showReplies, setShowReplies] = useState(false);
-    const [isSolutionMarked, setIsSolutionMarked] = useState(false);
+    // const [isSolutionMarked, setIsSolutionMarked] = useState(false);
 
     const [loadingReplies, setLoadingReplies] = useState(false);
     const [errors, setErrors] = useState([]);
@@ -58,40 +60,6 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
         }
     };
 
-    const acceptUnAcceptSolution = async(post) =>{
-
-        const userObj = localStorage.getItem("salla_discourse_user");
-        const user = JSON.parse(userObj);
-        let username = process.env.REACT_APP_API_USERNAME;
-        if (user) {
-            username = user.username;
-        }
-
-        try {
-
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/solution/accept`, {
-                id: post.id
-            },{
-                headers: {
-                    'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-                    'Api-Username': username,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if(response.data && response.data.success){
-
-                setIsSolutionMarked(true);
-            }
-
-        }
-        catch(error){
-
-            console.log(error);
-
-        }
-
-    }
 
     const handleToggleReplies = async () => {
         if (!showReplies && !replies) {
@@ -198,8 +166,14 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     {/* <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
                         <img src="/images/post/attachment.svg" />
                     </div> */}
-                    {!isTopic && (
-                        <div className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE] ">
+                    {post?.accepted_answer && (
+                        <div onClick={()=>dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
+                            <p className="text-[#707070]">Solution</p>
+                            <img src="/images/post/filled-tick.svg" className="w-4 h-4" />
+                        </div>
+                    )}
+                    {(!isTopic && !topicHasAcceptedSolution) && (
+                        <div onClick={()=>dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
                             <p className="text-[#707070]">Solution</p>
                             <img src="/images/post/tick.svg" className="w-4 h-4" />
                         </div>

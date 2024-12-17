@@ -15,7 +15,7 @@ const PostDetails = () => {
     const params = new URLSearchParams(location.search);
 
 
-   
+
     const [formVisible, setFormVisible] = useState(false);
     const [replyContent, setReplyContent] = useState("");
 
@@ -26,8 +26,7 @@ const PostDetails = () => {
     useEffect(() => {
         dispatch(fetchTopicData(topicId));
     }, [dispatch]);
-    const { topicPosts, topicDetails, status: postsStatus, error } = useSelector((state) => state.topics);
-
+    const { topicPosts, topicDetails, suggestedTopics, status: postsStatus, error } = useSelector((state) => state.topics);
     const handleClose = () => {
         setReplyContent("");
         setFormVisible(false);
@@ -221,8 +220,11 @@ const PostDetails = () => {
                         <div className="mt-[6rem]">
                             <span className="text-[18px] text-[#333333] font-medium">مواضيع مشابهة</span>
                             <div className="mt-[2rem]">
-                                <PostDetailItem post={post} />
-                                <PostDetailItem post={post} />
+                                {
+                                    suggestedTopics.map((topic) => (
+                                        <PostDetailItem post={topic} />
+                                    ))
+                                }
                             </div>
                         </div>
 

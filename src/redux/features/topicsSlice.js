@@ -11,6 +11,7 @@ const topicsSlice = createSlice({
         status: 'idle', // Represents API request status
         error: null, // Stores any errors from API calls
         loading: false, // Indicates loading state
+        topicHasAcceptedSolution: false
     },
     reducers: {
         setLoading: (state) => {
@@ -25,6 +26,8 @@ const topicsSlice = createSlice({
             state.suggestedTopics = suggestedTopics || [];
             state.topicPosts = topicPosts || [];
             state.topicDetails = topicDetails || {};
+
+            state.topicHasAcceptedSolution = state.topicPosts[0].topic_accepted_answer;
         },
         setError: (state, action) => {
             state.status = 'failed';
@@ -63,17 +66,34 @@ const topicsSlice = createSlice({
                     return (post?.id == postId) ? {
                         ...post,
                         bookmarked,
-                         ...(bookmarked && { bookmark_id })
+                        ...(bookmarked && { bookmark_id })
                     } :
                         post
                 });
             }
         },
+        acceptUnAcceptTopicSolution: (state, action) => {
+            state.status = 'succeeded';
+            state.loading = false;
+            const { postId } = action.payload;
+            state.topicPosts = state.topicPosts.map((post) => {
+                return (post?.id == postId) ? {
+                    ...post,
+                    topic_accepted_answer: !state.topicHasAcceptedSolution,
+                    accepted_answer: !state.topicHasAcceptedSolution
+                } :
+                    {
+                        ...post,
+                        topic_accepted_answer: !state.topicHasAcceptedSolution
+                    }
+            });
+            state.topicDetails.topic_accepted_answer = state.topicHasAcceptedSolution = !state.topicHasAcceptedSolution;
+        }
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 
-export const { setLoading, setTopicData, setError, removePost, addPost, resetError, appendPostOfTopic, toggleBookmark } = topicsSlice.actions;
+export const { setLoading, setTopicData, setError, removePost, addPost, resetError, appendPostOfTopic, toggleBookmark, acceptUnAcceptTopicSolution } = topicsSlice.actions;
 
 // Thunk to fetch specific topic and its posts
 export const fetchTopicData = (topicId) => async (dispatch) => {
@@ -124,7 +144,7 @@ export const toggleBookmarkPost = (post, isTopic) => async (dispatch) => {
         const user = JSON.parse(userObj);
         const username = user?.username || process.env.REACT_APP_API_USERNAME;
 
-        
+
         if (!post?.bookmarked) {//not bookmarked previously
             const formData = new FormData();
             formData.append("auto_delete_preference", 3);
@@ -166,5 +186,35 @@ export const toggleBookmarkPost = (post, isTopic) => async (dispatch) => {
     }
 }
 
+export const acceptUnAcceptSolution = (post) => async (dispatch, getState) => {
+    const state = getState();
+    const { topicHasAcceptedSolution } = state.topics;
+    const userObj = localStorage.getItem("salla_discourse_user");
+    const user = JSON.parse(userObj);
+    let username = process.env.REACT_APP_API_USERNAME;
+    if (user) {
+        username = user.username;
+    }
+
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/solution/${topicHasAcceptedSolution ? "unaccept" : "accept"}`, {
+            id: post.id
+        }, {
+            headers: {
+                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                'Api-Username': username,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.data && response.data.success) {
+            let postId = post.id;
+            dispatch(acceptUnAcceptTopicSolution({ postId }));
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+
+}
 
 export default topicsSlice.reducer;
