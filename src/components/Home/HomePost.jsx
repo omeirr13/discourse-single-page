@@ -29,12 +29,14 @@ const HomePost = ({ post }) => {
                                     <div className="flex gap-3 text-[14px] font-medium">
                                         <p className="text-[#444444] font-medium">{post.topic_creator?.username}</p>
                                         <span className="mb-1 text-[#999999]">{post.category?.name}</span>
-                                        <div className="bg-[#EFFBF6] rounded-full">
+                                        {post.has_accepted_answer && (
+                                            <div className="bg-[#EFFBF6] rounded-full">
                                             <div className="flex gap-2 px-3">
                                                 <img src="/images/home/tick.svg" alt="" />
                                                 <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
                                             </div>
-                                        </div>
+                                            </div>
+                                        )}
                                     </div>
                                     <p className='font-bold cursor-pointer' onClick={() => { navigate(`/detail/${post.id}`) }}>{post.title}</p>
                                     <div
@@ -66,11 +68,16 @@ const HomePost = ({ post }) => {
                 </div>
 
                 <div className="p-3 flex gap-8">
-                    {/* <div className="flex gap-2 items-center">
-                        <img src="/images/home/save.svg" className="cursor-pointer" />
+                    <div className="flex gap-2 items-center">
+                        {post.bookmarked ? (
+                            <img src="/images/post/save-filled.svg" alt="" className="cursor-pointer" />
+                        ) : (
+                            <img src="/images/home/save.svg" alt="" className="cursor-pointer" />
+                        )}
+                        
                         <span className="mb-1 text-[#999999]">اقرأ لاحقاً</span>
                     </div>
-                    <div className="flex gap-2 items-center">
+                    {/* <div className="flex gap-2 items-center">
                         <img src="/images/home/share.svg" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">انشر</span>
                     </div> */}
