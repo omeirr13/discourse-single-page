@@ -28,6 +28,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
     const poster_image = `${process.env.REACT_APP_API_URL + image?.replace("{size}", "28")}`;
 
     const [showReplies, setShowReplies] = useState(false);
+    const [isSolutionMarked, setIsSolutionMarked] = useState(false);
 
     const [loadingReplies, setLoadingReplies] = useState(false);
     const [errors, setErrors] = useState([]);
@@ -56,6 +57,41 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
             setErrors(err);
         }
     };
+
+    const acceptUnAcceptSolution = async(post) =>{
+
+        const userObj = localStorage.getItem("salla_discourse_user");
+        const user = JSON.parse(userObj);
+        let username = process.env.REACT_APP_API_USERNAME;
+        if (user) {
+            username = user.username;
+        }
+
+        try {
+
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/solution/accept`, {
+                id: post.id
+            },{
+                headers: {
+                    'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                    'Api-Username': username,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if(response.data && response.data.success){
+
+                setIsSolutionMarked(true);
+            }
+
+        }
+        catch(error){
+
+            console.log(error);
+
+        }
+
+    }
     const handleToggleReplies = async () => {
         if (!showReplies && !replies) {
             await fetchPostReplies(post.id);
@@ -162,7 +198,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                         <img src="/images/post/attachment.svg" />
                     </div> */}
                     {!isTopic && (
-                        <div className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE] ">
+                        <div className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE] " onClick={acceptUnAcceptSolution()}>
                             <p className="text-[#707070]">Solution</p>
                             <img src="/images/post/tick.svg" className="w-4 h-4" />
                         </div>
