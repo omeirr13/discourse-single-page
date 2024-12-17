@@ -92,6 +92,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
         }
 
     }
+
     const handleToggleReplies = async () => {
         if (!showReplies && !replies) {
             await fetchPostReplies(post.id);
@@ -198,7 +199,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                         <img src="/images/post/attachment.svg" />
                     </div> */}
                     {!isTopic && (
-                        <div className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE] " onClick={acceptUnAcceptSolution()}>
+                        <div className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE] ">
                             <p className="text-[#707070]">Solution</p>
                             <img src="/images/post/tick.svg" className="w-4 h-4" />
                         </div>
@@ -241,7 +242,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     <div className="relative flex justify-center items-center">
                         <div
                             className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer"
-                            onClick={() => handleCopy(`${process.env.REACT_APP_API_URL}/detail/${topicId}?post=${post.id}`)}
+                            onClick={() => handleCopy(`http://localhost:3001/detail/${topicId}/${post.post_number}`)}
                         >
                             <img src="/images/post/paperclip.svg" />
                         </div>
@@ -304,7 +305,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                                         />
                                     </div>
                                     <div className="flex">
-                                        <div className="border-[1px] cursor-pointer border-[#EEEEEE] flex gap-2 px-6 py-2 rounded-lg flex-grow-0 flex-shrink-0" onClick={() => handleJumpToPost(reply?.id)}>
+                                        <div className="border-[1px] cursor-pointer border-[#EEEEEE] flex gap-2 px-6 py-2 rounded-lg flex-grow-0 flex-shrink-0" onClick={() => handleJumpToPost(reply?.post_number)}>
                                             <img src="/images/post/arrow-down.svg" />
                                             <span className="text-[#004D5A] text-[14px] font-bold" >الانتقال للمنشور</span>
                                         </div>

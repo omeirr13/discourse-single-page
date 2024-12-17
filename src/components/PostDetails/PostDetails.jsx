@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useLayoutEffect } from "react";
 import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -10,10 +10,9 @@ import { appendPostOfTopic, fetchTopicData } from "../../redux/features/topicsSl
 import axios from "axios";
 
 const PostDetails = () => {
-    const { topicId } = useParams();
+    const { topicId, postNumber} = useParams();
     const location = useLocation();
     const params = new URLSearchParams(location.search);
-    let postId = params.get('post');
 
 
    
@@ -53,26 +52,33 @@ const PostDetails = () => {
 
 
     const post = topicDetails.mainPost || {};
-    const postRefs = useRef({});
+    const postRefs = useRef([]);
 
-    const handleJumpToPost = (postId) => {
-        if (postRefs.current[postId]) {
-            postRefs.current[postId].scrollIntoView({
+    const handleJumpToPost = (post_number) => {
+        const index = Number(post_number); // Ensure postId is a number
+        if (postRefs.current[index]) {
+            postRefs.current[index].scrollIntoView({
                 behavior: 'smooth',
                 block: 'start',
             });
+        } else {
+            console.warn(`Post ref for ID ${post_number} not found.`);
         }
     };
 
     useEffect(() => {
-        console.log(postRefs.current[postId], postId);
-        if (postId && postRefs.current[postId]) {
-            postRefs.current[postId].scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-            });
+        // Ensure topicPosts are loaded and postNumber is valid
+        if (postsStatus === "succeeded" && postNumber) {
+            const postIndex = Number(postNumber);
+            if (postRefs.current[postIndex]) {
+                postRefs.current[postIndex].scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                });
+            }
         }
-    }, [postId, postRefs]);
+    }, [postsStatus, postNumber, topicPosts]);
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
@@ -107,16 +113,6 @@ const PostDetails = () => {
         }
     };
     const quillRef = useRef(null);
-
-    useEffect(() => {
-        if (postId) {
-            // Scroll to the section related to the post
-            const element = document.getElementById(postId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-    }, [postId]);
 
     if (postsStatus == "loading") {
         return (
@@ -185,8 +181,9 @@ const PostDetails = () => {
                                 </div>
                                 {topicPosts.map((post) => {
                                     return (
-                                        <div key={post.id} ref={(el) => (postRefs.current[post.id] = el)}>
+                                        <div key={post.id}  ref={(el) => postRefs.current[post.post_number] = el} >
                                             <PostDetail
+                                                key={post.id}
                                                 topicId={topicId}
                                                 post={post}
                                                 topicDetails={topicDetails}
