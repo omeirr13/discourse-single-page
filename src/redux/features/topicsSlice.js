@@ -28,7 +28,8 @@ const topicsSlice = createSlice({
             state.topicPosts = topicPosts || [];
             state.topicDetails = topicDetails || {};
 
-            state.topicHasAcceptedSolution = state.topicDetails.topic_accepted_answer;
+            // state.topicHasAcceptedSolution = state.topicDetails.topic_accepted_answer;
+            state.topicHasAcceptedSolution = state?.topicDetails?.hasOwnProperty("accepted_answer");
         },
         setError: (state, action) => {
             state.status = 'failed';
