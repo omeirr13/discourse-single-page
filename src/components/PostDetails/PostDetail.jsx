@@ -280,7 +280,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                             <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" />
                         ) : (
                             <>
-                                {post?.accepted_answer && (
+                                {post?.accepted_answer ? (
                                     <div
                                         onClick={() => handleSolution(post)}
                                         className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]"
@@ -288,19 +288,21 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                                         <p className="text-[#707070]">حل العلامة</p>
                                         <img src="/images/post/filled-tick.svg" alt="" className="w-4 h-4" />
                                     </div>
-                                )}
-                                {!isTopic && !topicHasAcceptedSolution && (
-                                    <div
-                                        onClick={() => handleSolution(post)}
-                                        className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]"
-                                    >
-                                        <p className="text-[#707070]">حل العلامة</p>
-                                        <img src="/images/post/tick.svg" alt="" className="w-4 h-4" />
-                                    </div>
+                                ) : (
+                                    !isTopic && !topicHasAcceptedSolution && (
+                                        <div
+                                            onClick={() => handleSolution(post)}
+                                            className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]"
+                                        >
+                                            <p className="text-[#707070]">حل العلامة</p>
+                                            <img src="/images/post/tick.svg" alt="" className="w-4 h-4" />
+                                        </div>
+                                    )
                                 )}
                             </>
                         )
                     )}
+
 
                     {isLoggedin && (
                         // reply
