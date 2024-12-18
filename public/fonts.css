@@ -1,0 +1,25 @@
+@font-face {
+    font-family: 'Regular';
+    src: url('/fonts/regular.otf') format('opentype');
+    /* font-weight: normal; */
+    /* font-style: normal; */
+  }
+
+  @font-face {
+    font-family: 'Bold';
+    src: url('/fonts/bold.otf') format('opentype');
+    /* font-weight: normal; */
+    /* font-style: normal; */
+  }
+  @font-face {
+    font-family: 'Heavy';
+    src: url('/fonts/heavy.otf') format('opentype');
+    /* font-weight: normal; */
+    /* font-style: normal; */
+  }
+  @font-face {
+    font-family: 'Medium';
+    src: url('/fonts/medium.otf') format('opentype');
+    /* font-weight: normal; */
+    /* font-style: normal; */
+  }
