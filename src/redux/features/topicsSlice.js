@@ -54,8 +54,8 @@ const topicsSlice = createSlice({
             state.loading = false;
             const { isTopic, postId, bookmarked, bookmark_id } = action.payload;
             if (isTopic) {
-                state.topicDetails = {
-                    ...state.topicDetails,
+                state.topicDetails.mainPost = {
+                    ...state.topicDetails.mainPost,
                     bookmarked,
                     ...(bookmarked && { bookmark_id })
                 }
