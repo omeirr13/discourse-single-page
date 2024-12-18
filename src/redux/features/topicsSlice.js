@@ -87,12 +87,32 @@ const topicsSlice = createSlice({
                     }
             });
             state.topicDetails.topic_accepted_answer = state.topicHasAcceptedSolution = !state.topicHasAcceptedSolution;
-        }
+        },
+        toggleLike: (state, action) => {
+            state.status = 'succeeded';
+            state.loading = false;
+            const { isTopic, postId, reactions } = action.payload;
+            if (isTopic) {
+                state.topicDetails.mainPost = {
+                    ...state.topicDetails.mainPost,
+                    reactions,
+                }
+            }
+            else {
+                state.topicPosts = state.topicPosts.map((post) => {
+                    return (post?.id == postId) ? {
+                        ...post,
+                        reactions,
+                    } :
+                        post
+                });
+            }
+        },
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 
-export const { setLoading, setTopicData, setError, removePost, addPost, resetError, appendPostOfTopic, toggleBookmark, acceptUnAcceptTopicSolution } = topicsSlice.actions;
+export const { setLoading, setTopicData, setError, removePost, addPost, resetError, appendPostOfTopic, toggleBookmark, acceptUnAcceptTopicSolution, toggleLike } = topicsSlice.actions;
 
 // Thunk to fetch specific topic and its posts
 export const fetchTopicData = (topicId) => async (dispatch) => {

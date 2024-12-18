@@ -3,7 +3,7 @@ import 'moment/locale/ar'; // Import Arabic locale
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { acceptUnAcceptSolution, toggleBookmarkPost } from '../../redux/features/topicsSlice';
+import { acceptUnAcceptSolution, toggleBookmarkPost, toggleLike } from '../../redux/features/topicsSlice';
 
 const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) => {
     const username = post?.topic_creator?.username;
@@ -42,7 +42,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
     let isAdmin = false;
     if (user) {
         isLoggedin = true;
-        if(user.admin){
+        if (user.admin) {
             isAdmin = true
         }
     }
@@ -70,6 +70,8 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
             setErrors(err);
         }
     };
+
+
 
 
     const handleToggleReplies = async () => {
@@ -100,6 +102,58 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
             console.error("Failed to copy text: ", err);
         }
     };
+
+    const togglePostReaction = async (postId, reaction) => {
+        try {
+            const userObj = localStorage.getItem("salla_discourse_user");
+            const user = JSON.parse(userObj);
+            let username = process.env.REACT_APP_API_USERNAME;
+            if (user) {
+                username = user.username;
+            }
+
+            const url = `${process.env.REACT_APP_API_URL}/discourse-reactions/posts/${postId}/custom-reactions/${reaction}/toggle.json`;
+
+            const response = await axios.put(url, {}, {
+                headers: {
+                    'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                    'Api-Username': username,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(response.data);
+            const { reactions } = response?.data;
+
+            dispatch(toggleLike({ isTopic, postId: post?.id, reactions }));
+            console.log(reactions, "ok");
+            console.log('Reaction toggled successfully:', response.data);
+        } catch (err) {
+            console.error('Error toggling reaction:', err);
+            setErrors(err); // Optionally handle errors
+        }
+    };
+
+    const reactions = [
+        { emoji: '❤️', label: 'heartpulse' },
+        { emoji: '👍', label: '+1' },
+        { emoji: '😆', label: 'laughing' },
+        { emoji: '😮', label: 'open_mouth' },
+        { emoji: '👏', label: 'clap' },
+        { emoji: '🤗', label: 'hugs' },
+        { emoji: '😘', label: 'kissing_heart' },
+    ];
+
+    const handleReactionClick = async (postId, reaction) => {
+        await togglePostReaction(postId, reaction.label);
+        // dispatch();
+        console.log('Selected reaction:', reaction);
+    };
+
+    const reactionsMap = {};
+    post?.reactions?.forEach((reaction) => {
+        reactionsMap[reaction.id] = reaction.count;
+    });
+    console.log(reactionsMap);
     return (
         <div className="border-gray-300 rounded-lg mt-3 bg-white" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4">
@@ -122,7 +176,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     <div className="mr-4 flex justify-between w-full">
                         <div className="flex gap-3 items-start">
                             {/* <img src={poster_image} className="w-[50px] h-[50px]" /> */}
-                            <img src={poster_image} className="w-[44px] h-[44px] rounded-full" alt=""  />
+                            <img src={poster_image} className="w-[44px] h-[44px] rounded-full" alt="" />
                             <div className="flex-col">
                                 <div>
                                     <span className="text-[#444444] text-[16px] font-bold">{username}</span>
@@ -136,38 +190,73 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     </div>
                     {replied_to_image && (
                         <div className="flex gap-3 ml-8">
-                            <img src="/images/post/arrow-turn-back.svg" alt=""  />
-                            <img src={reply_to_user_image} className="w-[24px] h-[24px] rounded-full" alt=""  />
+                            <img src="/images/post/arrow-turn-back.svg" alt="" />
+                            <img src={reply_to_user_image} className="w-[24px] h-[24px] rounded-full" alt="" />
                             <p className="text-[#666666] font-bold">{post?.reply_to_user?.username}</p>
                         </div>
                     )}
                 </div>
 
             </div>
-            <div className={`flex gap-5 w-full items-center ${post?.reply_count > 0 ? 'justify-between' : 'justify-end'}`}>
-                {isTopic ? (
-                    <></>
-                ) : (
-                    post?.reply_count > 0 &&
-                    (
-                        <div className="cursor-pointer bg-[#eefcf9] text-[#004D5A] mr-3 rounded-lg" onClick={() => handleToggleReplies()}>
-                            <div className="flex gap-2 font-medium p-2 items-center">
-                                <span>{post?.reply_count}</span>
-                                <span>ردود</span>
-                                {loadingReplies ?
-                                    <img src="/images/loader.gif" alt="Loading..." className="w-4 h-4" />
-                                    :
-                                    <img
-                                        src={`/images/post/arrow-up.svg`} alt=""
-                                        className={`cursor-pointer hidden sm:block ${showReplies ? 'rotate-180' : ''}`}
 
-                                    />
-                                }
 
+            <div className={`flex gap-5 w-full items-center justify-between`}>
+                <div className="flex">
+
+
+                    {isTopic ? (
+                        <></>
+                    ) : (
+                        post?.reply_count > 0 &&
+                        (
+                            <div className="cursor-pointer bg-[#eefcf9] text-[#004D5A] mr-3 rounded-lg" onClick={() => handleToggleReplies()}>
+                                <div className="flex gap-2 font-medium p-2 items-center">
+                                    <span>{post?.reply_count}</span>
+                                    <span>ردود</span>
+                                    {loadingReplies ?
+                                        <img src="/images/loader.gif" alt="Loading..." className="w-4 h-4" />
+                                        :
+                                        <img
+                                            src={`/images/post/arrow-up.svg`} alt=""
+                                            className={`cursor-pointer hidden sm:block ${showReplies ? 'rotate-180' : ''}`}
+
+                                        />
+                                    }
+
+                                </div>
                             </div>
-                        </div>
-                    )
-                )}
+                        )
+                    )}
+                    <div className="w-[228px] p-2">
+
+                        {reactions?.map((reaction) => (
+                            <button
+                                key={reaction.label}
+                                className="p-1 hover:bg-gray-100 rounded-full"
+                            >
+                                <div className="flex flex-col items-center">
+                                    {reactionsMap[reaction.label] && (
+                                        <div className="relative group">
+                                            <p
+                                                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-200 text-sm rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                {reactionsMap[reaction.label]}
+                                            </p>
+                                            <span
+                                                role="img"
+                                                aria-label={reaction.label}
+                                                className="cursor-pointer"
+                                            >
+                                                {reaction.emoji}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
                 <div className="p-3 flex gap-2 items-center">
                     {/* Attachment */}
@@ -177,13 +266,13 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     {isLoggedin && isAdmin && (
                         <>
                             {post?.accepted_answer && (
-                                <div onClick={()=>dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
+                                <div onClick={() => dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
                                     <p className="text-[#707070]">حل العلامة</p>
                                     <img src="/images/post/filled-tick.svg" alt="" className="w-4 h-4" />
                                 </div>
                             )}
                             {(!isTopic && !topicHasAcceptedSolution) && (
-                                <div onClick={()=>dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
+                                <div onClick={() => dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
                                     <p className="text-[#707070]">حل العلامة</p>
                                     <img src="/images/post/tick.svg" alt="" className="w-4 h-4" />
                                 </div>
@@ -199,16 +288,34 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                             </div>
 
                             {/* likes */}
-                            <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
-                                <span className="pr-4 text-[#004D5A]">{post.like_count}</span>
-                                <img src="/images/post/heart.svg" alt="" />
+                            <div className="relative inline-block group">
+                                {/* Icon that triggers the reactions bar */}
+                                <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
+
+                                    <img src="/images/post/heart.svg" alt="" />
+                                </div>
+
+                                {/* Reactions bar */}
+                                <div className="hidden absolute bottom-full left-1/2 transform -translate-x-1/2 space-x-2 p-2 bg-white border border-gray-300 rounded-lg shadow-lg group-hover:flex">
+                                    {reactions?.map((reaction) => (
+                                        <button
+                                            key={reaction.label}
+                                            className="p-1 hover:bg-gray-100 rounded-full"
+                                            onClick={() => handleReactionClick(post?.id, reaction)}
+                                        >
+                                            <span role="img" aria-label={reaction.label}>
+                                                {reaction.emoji}
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* bookmarks */}
                             <div
-                            className={`relative flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "px-[15px] py-[12px]" : ""
-                                }`}
-                            onClick={() => handleBookmarkPost()}>
+                                className={`relative flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "px-[15px] py-[12px]" : ""
+                                    }`}
+                                onClick={() => handleBookmarkPost()}>
                                 {loading["bookmark"] ? (
                                     <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
                                 ) : (
@@ -235,7 +342,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                             className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer"
                             onClick={() => handleCopy(`${process.env.REACT_APP_URL}/detail/${topicId}/${post.post_number}`)}
                         >
-                            <img src="/images/post/paperclip.svg"  alt="" />
+                            <img src="/images/post/paperclip.svg" alt="" />
                         </div>
                         {showTooltip && (
                             <div
@@ -246,7 +353,9 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                             </div>
                         )}
                     </div>
+
                 </div>
+
 
 
             </div>
