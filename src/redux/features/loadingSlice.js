@@ -2,20 +2,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  loading: {}, // An object to store multiple loading states
+  loading: {
+    react: {},
+    solution: {},
+    bookmark: {},
+  },
 };
 
 const loadingSlice = createSlice({
   name: "loading",
   initialState,
   reducers: {
-    setLoading(state, action) {
-      const { key, value } = action.payload;
-      state.loading[key] = value;
+    setIndiLoading(state, action) {
+      const { actionType, postId, value } = action.payload;
+      if (!state.loading[actionType]) {
+        state.loading[actionType] = {};
+      }
+      state.loading[actionType][postId] = value;
     },
   },
 });
 
-export const { setLoading } = loadingSlice.actions;
-
+export const { setIndiLoading } = loadingSlice.actions;
 export default loadingSlice.reducer;

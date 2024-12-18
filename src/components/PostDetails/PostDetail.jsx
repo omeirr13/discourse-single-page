@@ -1,9 +1,8 @@
-import moment from 'moment';
-import 'moment/locale/ar'; // Import Arabic locale
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { acceptUnAcceptSolution, toggleBookmarkPost, toggleLike } from '../../redux/features/topicsSlice';
+import {  setIndiLoading } from '../../redux/features/loadingSlice';
 
 const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) => {
     const username = post?.topic_creator?.username;
@@ -71,9 +70,6 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
         }
     };
 
-
-
-
     const handleToggleReplies = async () => {
         if (!showReplies && !replies) {
             await fetchPostReplies(post.id);
@@ -85,7 +81,19 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
     const reply_to_user_image = `${process.env.REACT_APP_API_URL + replied_to_image?.replace("{size}", "28")}`;
 
     const handleBookmarkPost = async () => {
-        dispatch(toggleBookmarkPost(post, isTopic));
+        dispatch(setIndiLoading({ actionType: "bookmark", postId: post.id, value: true }));
+
+        await dispatch(toggleBookmarkPost(post, isTopic));
+
+        dispatch(setIndiLoading({ actionType: "bookmark", postId: post.id, value: false }));
+    }   
+    const handleSolution = async (post) => {
+
+        dispatch(setIndiLoading({ actionType: "solution", postId: post.id, value: true }));
+
+        await dispatch(acceptUnAcceptSolution(post))
+
+        dispatch(setIndiLoading({ actionType: "solution", postId: post.id, value: false }));
     }
     const { loading } = useSelector((state) => state.loading);
 
@@ -105,6 +113,8 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
 
     const togglePostReaction = async (postId, reaction) => {
         try {
+            dispatch(setIndiLoading({actionType: "react", postId, value: true}));
+
             const userObj = localStorage.getItem("salla_discourse_user");
             const user = JSON.parse(userObj);
             let username = process.env.REACT_APP_API_USERNAME;
@@ -121,16 +131,18 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(response.data);
-            const { reactions } = response?.data;
+            if(!response.data.errors){
 
-            dispatch(toggleLike({ isTopic, postId: post?.id, reactions }));
-            console.log(reactions, "ok");
-            console.log('Reaction toggled successfully:', response.data);
+                const reactions = response.data.reactions;
+                await dispatch(toggleLike({ isTopic, postId: post?.id, reactions }));
+            }
+
         } catch (err) {
             console.error('Error toggling reaction:', err);
             setErrors(err); // Optionally handle errors
         }
+
+        dispatch(setIndiLoading({ actionType: "react", postId, value: false }));
     };
 
     const reactions = [
@@ -153,7 +165,6 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
     post?.reactions?.forEach((reaction) => {
         reactionsMap[reaction.id] = reaction.count;
     });
-    console.log(reactionsMap);
     return (
         <div className="border-gray-300 rounded-lg mt-3 bg-white" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4">
@@ -263,21 +274,32 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     {/* <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
                         <img src="/images/post/attachment.svg" />
                     </div> */}
+
                     {isLoggedin && isAdmin && (
-                        <>
-                            {post?.accepted_answer && (
-                                <div onClick={() => dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
-                                    <p className="text-[#707070]">حل العلامة</p>
-                                    <img src="/images/post/filled-tick.svg" alt="" className="w-4 h-4" />
-                                </div>
-                            )}
-                            {(!isTopic && !topicHasAcceptedSolution) && (
-                                <div onClick={() => dispatch(acceptUnAcceptSolution(post))} className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]">
-                                    <p className="text-[#707070]">حل العلامة</p>
-                                    <img src="/images/post/tick.svg" alt="" className="w-4 h-4" />
-                                </div>
-                            )}
-                        </>
+                        loading.solution[post.id] ? (
+                            <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" />
+                        ) : (
+                            <>
+                                {post?.accepted_answer && (
+                                    <div
+                                        onClick={() => handleSolution(post)}
+                                        className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]"
+                                    >
+                                        <p className="text-[#707070]">حل العلامة</p>
+                                        <img src="/images/post/filled-tick.svg" alt="" className="w-4 h-4" />
+                                    </div>
+                                )}
+                                {!isTopic && !topicHasAcceptedSolution && (
+                                    <div
+                                        onClick={() => handleSolution(post)}
+                                        className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]"
+                                    >
+                                        <p className="text-[#707070]">حل العلامة</p>
+                                        <img src="/images/post/tick.svg" alt="" className="w-4 h-4" />
+                                    </div>
+                                )}
+                            </>
+                        )
                     )}
 
                     {isLoggedin && (
@@ -292,7 +314,13 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                                 {/* Icon that triggers the reactions bar */}
                                 <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
 
-                                    <img src="/images/post/heart.svg" alt="" />
+                                    {loading.react[post.id] ? (
+
+                                        <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" /> )
+                                        :(
+                                        <img src="/images/post/heart.svg" alt="" /> )
+                                    }
+                                   
                                 </div>
 
                                 {/* Reactions bar */}
@@ -316,8 +344,8 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                                 className={`relative flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "px-[15px] py-[12px]" : ""
                                     }`}
                                 onClick={() => handleBookmarkPost()}>
-                                {loading["bookmark"] ? (
-                                    <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
+                                {loading.bookmark[post.id] ? (
+                                    <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" />
                                 ) : (
                                     <>
                                         {post?.bookmarked ? (
@@ -355,8 +383,6 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     </div>
 
                 </div>
-
-
 
             </div>
             {showReplies && (
