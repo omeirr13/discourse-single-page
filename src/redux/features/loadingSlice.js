@@ -6,6 +6,7 @@ const initialState = {
     react: {},
     solution: {},
     bookmark: {},
+    auth: {},
   },
 };
 
