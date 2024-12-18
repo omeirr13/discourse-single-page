@@ -32,7 +32,7 @@ const postsSlice = createSlice({
         addTopic: (state, action) => {
             state.status = 'succeeded';
             state.loading = false; // Set loading to false
-            state.posts.unshift(action.payload);
+            state.posts.unshift({ ...action.payload, id: action.payload.topic_id });
         },
         resetError: (state) => {
             state.status = 'idle';
@@ -149,7 +149,7 @@ export const createTopic = (post) => async (dispatch) => {
         const userObj = localStorage.getItem("salla_discourse_user");
         const user = JSON.parse(userObj);
 
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/posts.json`, body, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/posts.json?include_topic_title`, body, {
             headers: {
                 'Api-Key': `${process.env.REACT_APP_API_KEY}`,
                 'Api-Username': user.username,

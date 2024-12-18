@@ -32,7 +32,7 @@ const PostDetails = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchTopicData(topicId));
-    }, [dispatch]);
+    }, [dispatch, topicId]);
     const { topicPosts, topicDetails, suggestedTopics, status: postsStatus, error } = useSelector((state) => state.topics);
     const handleClose = () => {
         setReplyContent("");

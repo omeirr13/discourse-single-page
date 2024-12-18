@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { acceptUnAcceptSolution, toggleBookmarkPost, toggleLike } from '../../redux/features/topicsSlice';
-import {  setIndiLoading } from '../../redux/features/loadingSlice';
+import { setIndiLoading } from '../../redux/features/loadingSlice';
 
 const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) => {
     const username = post?.topic_creator?.username;
@@ -86,7 +86,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
         await dispatch(toggleBookmarkPost(post, isTopic));
 
         dispatch(setIndiLoading({ actionType: "bookmark", postId: post.id, value: false }));
-    }   
+    }
     const handleSolution = async (post) => {
 
         dispatch(setIndiLoading({ actionType: "solution", postId: post.id, value: true }));
@@ -113,7 +113,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
 
     const togglePostReaction = async (postId, reaction) => {
         try {
-            dispatch(setIndiLoading({actionType: "react", postId, value: true}));
+            dispatch(setIndiLoading({ actionType: "react", postId, value: true }));
 
             const userObj = localStorage.getItem("salla_discourse_user");
             const user = JSON.parse(userObj);
@@ -131,7 +131,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     'Content-Type': 'application/json'
                 }
             });
-            if(!response.data.errors){
+            if (!response.data.errors) {
 
                 const reactions = response.data.reactions;
                 await dispatch(toggleLike({ isTopic, postId: post?.id, reactions }));
@@ -315,28 +315,35 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                                 <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
 
                                     {loading.react[post.id] ? (
+                                        <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" />
+                                    ) : (
+                                        !post?.yours ? (
+                                            <img src="/images/post/heart.svg" alt="Heart" />
+                                        ) : (
+                                            <img src="/images/post/heart-cross.svg" alt="Heart Cross" />
+                                        )
+                                    )}
 
-                                        <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" /> )
-                                        :(
-                                        <img src="/images/post/heart.svg" alt="" /> )
-                                    }
-                                   
+
                                 </div>
 
                                 {/* Reactions bar */}
-                                <div className="hidden absolute bottom-full left-1/2 transform -translate-x-1/2 space-x-2 p-2 bg-white border border-gray-300 rounded-lg shadow-lg group-hover:flex">
-                                    {reactions?.map((reaction) => (
-                                        <button
-                                            key={reaction.label}
-                                            className="p-1 hover:bg-gray-100 rounded-full"
-                                            onClick={() => handleReactionClick(post?.id, reaction)}
-                                        >
-                                            <span role="img" aria-label={reaction.label}>
-                                                {reaction.emoji}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
+                                {!post?.yours && (
+
+                                    <div className="hidden absolute bottom-full left-1/2 transform -translate-x-1/2 space-x-2 p-2 bg-white border border-gray-300 rounded-lg shadow-lg group-hover:flex">
+                                        {reactions?.map((reaction) => (
+                                            <button
+                                                key={reaction.label}
+                                                className="p-1 hover:bg-gray-100 rounded-full"
+                                                onClick={() => handleReactionClick(post?.id, reaction)}
+                                            >
+                                                <span role="img" aria-label={reaction.label}>
+                                                    {reaction.emoji}
+                                                </span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* bookmarks */}

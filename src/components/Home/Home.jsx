@@ -19,15 +19,15 @@ const Home = () => {
     const combinedCategories = categories.reduce((acc, category) => {
         acc.push(category);
         if (category.subcategory_count > 0 && Array.isArray(category.subcategory_list)) {
-          acc.push(...category.subcategory_list);
+            acc.push(...category.subcategory_list);
         }
-      
-        return acc;
-      }, []);
 
-      const filteredUserCategories = user && user.admin 
-      ? combinedCategories
-      : combinedCategories.filter(item => item.only_admin_can_post === false);
+        return acc;
+    }, []);
+
+    const filteredUserCategories = user && user.admin
+        ? combinedCategories
+        : combinedCategories.filter(item => item.only_admin_can_post === false);
 
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
 
@@ -39,7 +39,7 @@ const Home = () => {
 
     let is_userLoggedIn = false;
 
-    if(user){
+    if (user) {
         is_userLoggedIn = true;
     }
     // const { posts, status: postsStatus } = useSelector((state) => state.posts);
@@ -332,29 +332,27 @@ const Home = () => {
 
 
                                         </div>
-                                        <div className="mb-4 h-[54px] flex items-center border gap-4 border-gray-300 rounded-md p-2">
-                                            {filteredUserCategories.map((category) => {
-                                                return (
-                                                    <div className="flex items-center" key={category.id}>
-                                                        <input
-                                                            type="radio"
-                                                            id={`category-${category.id}`} // Corrected syntax for unique ID
-                                                            name="options"
-                                                            onChange={() => {
-                                                                setNewPost({ ...newPost, category: category.id });
-                                                            }}
-                                                            className="form-radio ml-2 w-3 h-3 border-gray-300 focus:ring-0"
-                                                            checked={newPost.category === category.id} 
-                                                        />
-                                                        <label
-                                                            htmlFor={`category-${category.id}`} // Corrected syntax for matching ID
-                                                            className="ml-2 text-[#666666] font-medium"
-                                                        >
-                                                            {category.name}
-                                                        </label>
-                                                    </div>
-                                                );
-                                            })}
+                                        <div className="mb-4 grid grid-cols-5 gap-4 border border-gray-300 rounded-md p-4">
+                                            {filteredUserCategories.map((category) => (
+                                                <div className="flex items-center" key={category.id}>
+                                                    <input
+                                                        type="radio"
+                                                        id={`category-${category.id}`} // Corrected syntax for unique ID
+                                                        name="options"
+                                                        onChange={() => {
+                                                            setNewPost({ ...newPost, category: category.id });
+                                                        }}
+                                                        className="form-radio ml-2 w-3 h-3 border-gray-300 focus:ring-0"
+                                                        checked={newPost.category === category.id}
+                                                    />
+                                                    <label
+                                                        htmlFor={`category-${category.id}`} // Corrected syntax for matching ID
+                                                        className="ml-2 text-[#666666] font-medium"
+                                                    >
+                                                        {category.name}
+                                                    </label>
+                                                </div>
+                                            ))}
                                         </div>
 
 
@@ -425,10 +423,10 @@ const Home = () => {
                                 }}
                             /> */}
                             {is_userLoggedIn && (
-                            <button type="submit" className="btn px-8 py-3 text-[14px] mt-9 font-bold rounded-lg text-[#004D5A] hover:underline w-[185px] h-[52px]" onClick={() => setFormVisible(true)}>
-                                أضف سؤال جديد +
-                            </button>
-                             )}
+                                <button type="submit" className="btn px-8 py-3 text-[14px] mt-9 font-bold rounded-lg text-[#004D5A] hover:underline w-[185px] h-[52px]" onClick={() => setFormVisible(true)}>
+                                    أضف سؤال جديد +
+                                </button>
+                            )}
                         </div>
 
                         <div className="flex justify-center">

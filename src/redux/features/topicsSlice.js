@@ -21,13 +21,14 @@ const topicsSlice = createSlice({
         },
         setTopicData: (state, action) => {
             const { topicPosts, suggestedTopics, topicDetails } = action.payload;
+            console.log(topicPosts, topicDetails, "okayyyy");
             state.status = 'succeeded';
             state.loading = false;
             state.suggestedTopics = suggestedTopics || [];
             state.topicPosts = topicPosts || [];
             state.topicDetails = topicDetails || {};
 
-            state.topicHasAcceptedSolution = state.topicPosts[0].topic_accepted_answer;
+            state.topicHasAcceptedSolution = state.topicDetails.topic_accepted_answer;
         },
         setError: (state, action) => {
             state.status = 'failed';
@@ -128,7 +129,7 @@ export const fetchTopicData = (topicId) => async (dispatch) => {
         const user = JSON.parse(userObj);
         const username = user?.username || process.env.REACT_APP_API_USERNAME;
 
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/t/${topicId}/1.json?track_visit=true&forceLoad=true`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/t/${topicId}.json?track_visit=true&forceLoad=true`, {
             headers: {
                 'Api-Key': process.env.REACT_APP_API_KEY,
                 'Api-Username': username,
