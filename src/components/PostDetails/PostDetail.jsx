@@ -4,7 +4,7 @@ import axios from 'axios';
 import { acceptUnAcceptSolution, toggleBookmarkPost, toggleLike } from '../../redux/features/topicsSlice';
 import { setIndiLoading } from '../../redux/features/loadingSlice';
 
-const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) => {
+const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost, showReplyForm }) => {
     const username = post?.topic_creator?.username;
     const image = post?.avatar_template;
     const dispatch = useDispatch();
@@ -305,7 +305,7 @@ const PostDetail = ({ topicId, post, topicDetails, isTopic, handleJumpToPost }) 
                     {isLoggedin && (
                         // reply
                         <>
-                            <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
+                            <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer" onClick={showReplyForm}>
                                 <img src="/images/post/share.svg" alt="" />
                             </div>
 

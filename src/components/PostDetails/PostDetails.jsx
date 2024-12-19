@@ -10,7 +10,7 @@ import { appendPostOfTopic, fetchTopicData } from "../../redux/features/topicsSl
 import axios from "axios";
 
 const PostDetails = () => {
-    const { topicId, postNumber} = useParams();
+    const { topicId, postNumber } = useParams();
 
     const userObj = localStorage.getItem("salla_discourse_user");
     const user = JSON.parse(userObj);
@@ -18,7 +18,7 @@ const PostDetails = () => {
     let isAdmin = false;
     if (user) {
         isLoggedin = true;
-        if(user.admin){
+        if (user.admin) {
             isAdmin = true;
         }
     }
@@ -95,6 +95,9 @@ const PostDetails = () => {
         formData.append("topic_id", id);
         formData.append("nested_post", "true");
 
+        if (replyToPostNumber) {
+            formData.append("reply_to_post_number", replyToPostNumber);
+        }
         try {
             const userObj = localStorage.getItem("salla_discourse_user");
             const user = JSON.parse(userObj);
@@ -110,16 +113,23 @@ const PostDetails = () => {
             if (data.success) {
                 setReplyContent("");
                 setFormVisible(false);
-                dispatch(appendPostOfTopic(response?.data?.post));
+                if (replyToPostNumber) {
+                    dispatch(fetchTopicData(topicId));
+                } else {
+                    dispatch(appendPostOfTopic(response?.data?.post));
+                }
             } else {
                 console.error("Failed to post:", response.statusText);
             }
         } catch (error) {
             console.error("Error:", error);
         }
+        finally {
+            setReplyToPostNumber(null);
+        }
     };
     const quillRef = useRef(null);
-
+    const [replyToPostNumber, setReplyToPostNumber] = useState(null);
     if (postsStatus == "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -176,6 +186,7 @@ const PostDetails = () => {
                                     isTopic={true}
                                     // index={index}
                                     handleJumpToPost={handleJumpToPost}
+                                    showReplyForm={() => { setReplyToPostNumber(post?.id); setFormVisible(true) }}
                                 />
                                 {/* <div className="my-5 flex justify-end">
                                     <div className="flex gap-2 mr-3">
@@ -187,7 +198,7 @@ const PostDetails = () => {
                                 </div> */}
                                 {topicPosts.map((post) => {
                                     return (
-                                        <div key={post.id}  ref={(el) => postRefs.current[post.post_number] = el} >
+                                        <div key={post.id} ref={(el) => postRefs.current[post.post_number] = el} >
                                             <PostDetail
                                                 key={post.id}
                                                 topicId={topicId}
@@ -195,7 +206,7 @@ const PostDetails = () => {
                                                 topicDetails={topicDetails}
                                                 isTopic={false}
                                                 handleJumpToPost={handleJumpToPost}
-
+                                                showReplyForm={() => { setReplyToPostNumber(post?.id); setFormVisible(true) }}
                                             // index={index}
                                             />
                                         </div>
