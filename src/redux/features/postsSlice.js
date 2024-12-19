@@ -49,7 +49,7 @@ const postsSlice = createSlice({
 
 export const { setLoading, setPosts, setError, removeTopic, addTopic, resetError, setPostReplies, appendPost } = postsSlice.actions;
 
-export const fetchPosts = (method = "new") => async (dispatch) => {
+export const fetchPosts = (method = "latest") => async (dispatch) => {
     try {
         dispatch(setLoading());
         const userObj = localStorage.getItem("salla_discourse_user");

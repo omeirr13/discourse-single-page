@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -26,6 +26,7 @@ const PostDetails = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [replyContent, setReplyContent] = useState("");
     const [showCopytooltip, setShowCopyTooltip] = useState(false);
+    const [editorValue, setEditorValue] = useState("");
 
     // const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
 
@@ -54,6 +55,68 @@ const PostDetails = () => {
 
 
     const modalRef = useRef(null);
+
+    const imageHandler = (e) => {
+        const editor = quillRef.current.getEditor();
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", "image/*");
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files[0];
+            if (/^image\//.test(file.type)) {
+                const formData = new FormData();
+                formData.append("type", "composer");
+                formData.append("synchronous", true);
+                formData.append("file", file);
+
+                const uploadUrl = `${process.env.REACT_APP_API_URL}/uploads.json`;
+                const userObj = localStorage.getItem("salla_discourse_user");
+                const user = JSON.parse(userObj);
+
+                try {
+                    const response = await axios.post(uploadUrl, formData, {
+                        headers: {
+                            'Api-Key': `${process.env.REACT_APP_API_KEY}`,
+                            'Api-Username': user.username,
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                    const data = response.data;
+                    const imageUrl = data.url;
+                    editor.insertEmbed(editor.getSelection().index, "image", imageUrl.replace("//", "http://"));
+                } catch (err) {
+                    console.log(err);
+                }
+            } else {
+                console.error("Only image files are allowed.");
+            }
+        };
+    };
+
+    const modules = useMemo(() => ({
+        toolbar: {
+            container: [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', "strike"],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' },
+                { 'indent': '-1' }, { 'indent': '+1' }],
+                ['image', "link"],
+                [{ 'color': ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc', '#9933ff', '#ffffff', '#facccc', '#ffebcc', '#ffffcc', '#cce8cc', '#cce0f5', '#ebd6ff', '#bbbbbb', '#f06666', '#ffc266', '#ffff66', '#66b966', '#66a3e0', '#c285ff', '#888888', '#a10000', '#b26b00', '#b2b200', '#006100', '#002966', '#3d1466'] }]
+            ],
+            handlers: {
+                image: imageHandler,
+            },
+        },
+    }), []);
+
+    const handleChange = useCallback((value) => {
+        setEditorValue(value);
+    }, []);
+
+
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -100,10 +163,9 @@ const PostDetails = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-
         const formData = new FormData();
         const { id, category_id } = topicDetails;
-        formData.append("raw", quillRef.current.getEditor().getText());
+        formData.append("raw", editorValue);
         formData.append("category", category_id);
         formData.append("topic_id", id);
         formData.append("nested_post", "true");
@@ -125,6 +187,7 @@ const PostDetails = () => {
             const { data } = response;
             if (data.success) {
                 setReplyContent("");
+                setEditorValue("");
                 setFormVisible(false);
                 if (replyToPostNumber) {
                     dispatch(fetchTopicData(topicId));
@@ -165,11 +228,11 @@ const PostDetails = () => {
                                             </label>
                                             <ReactQuill
                                                 ref={quillRef}
-                                                // value={replyContent}
-                                                // onChange={(raw) => setReplyContent(raw)}
                                                 className="p-2 rounded-lg"
                                                 theme="snow"
-                                                dir="rtl"
+                                                modules={modules}
+                                                value={editorValue}
+                                                onChange={handleChange}
                                             />
                                         </div>
 

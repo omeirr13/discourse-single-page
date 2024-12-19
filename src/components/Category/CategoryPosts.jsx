@@ -11,7 +11,7 @@ const CategoryPosts = () => {
     const { categoryId } = useParams();
 
     const [formVisible, setFormVisible] = useState(false);
-    const [filterSelected, setFilterSelected] = useState("new");
+    const [filterSelected, setFilterSelected] = useState("latest");
 
     const [newPost, setNewPost] = useState({
         title: "",
@@ -223,13 +223,6 @@ const CategoryPosts = () => {
                                             <label htmlFor="content" className="block text-right font-semibold mb-3 text-gray-800">
                                                 اكتب موضوعك هنا:
                                             </label>
-                                            {/* <ReactQuill
-                                                value={newPost.raw}
-                                                onChange={(raw) => setNewPost({ ...newPost, raw })}
-                                                className="p-2 rounded-lg"
-                                                theme="snow"
-                                                dir="rtl"
-                                            /> */}
                                             <ReactQuill
                                                 theme="snow"
                                                 ref={quillRef}
@@ -258,14 +251,7 @@ const CategoryPosts = () => {
                         >
                             <span
                                 className="text-[#004D5A] sm:text-[64px] text-[48px] font-extrabold text-center"
-                                style={{
-                                    WebkitTextStroke: "3px #FFFFFF",
-                                    WebkitTextFillColor: "#004D5A",
-                                    textShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-                                }}
-                            >
-                                جماعة سلا
-                            </span>
+                            > مجتمع سلة </span>
 
                             {/* <p className="mt-4 text-center hidden sm:block text-[#707070]">
                                 Salla community tag line and description
