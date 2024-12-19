@@ -163,6 +163,11 @@ const PostDetails = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+
+        if(!editorValue){
+            console.log("you need to provide content first")
+            return;
+        }
         const formData = new FormData();
         const { id, category_id } = topicDetails;
         formData.append("raw", editorValue);

@@ -65,35 +65,13 @@ export const fetchPosts = (method = "latest") => async (dispatch) => {
                 'Content-Type': 'application/json'
             }
         });
-        const posts = response.data.topic_list.topics;
+        const posts = response.data.topic_list.topics.filter(topic => !topic.closed);
         dispatch(setPosts(posts));
     } catch (err) {
         dispatch(setError(err.message));
     }
 };
 
-export const fetchSpecificPost = (id) => async (dispatch) => {
-    try {
-        dispatch(setLoading());
-        const userObj = localStorage.getItem("salla_discourse_user");
-        const user = JSON.parse(userObj);
-        let username = process.env.REACT_APP_API_USERNAME;
-        if (user) {
-            username = user.username;
-        }
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/t/${id}/3.json`, {
-            headers: {
-                'Api-Key': `${process.env.REACT_APP_API_KEY}`,
-                'Api-Username': username,
-                'Content-Type': 'application/json'
-            }
-        });
-        const posts = response.data.topic_list.topics;
-        dispatch(setPosts(posts));
-    } catch (err) {
-        dispatch(setError(err.message));
-    }
-}
 export const fetchCategoryPosts = (category, method) => async (dispatch) => {
     try {
         dispatch(setLoading());
@@ -110,7 +88,7 @@ export const fetchCategoryPosts = (category, method) => async (dispatch) => {
                 'Content-Type': 'application/json'
             }
         });
-        const posts = response.data.topic_list.topics;
+        const posts = response.data.topic_list.topics.filter(topic => !topic.closed);
         dispatch(setPosts(posts));
     } catch (err) {
         dispatch(setError(err.message));
