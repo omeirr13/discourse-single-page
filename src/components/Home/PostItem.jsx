@@ -2,7 +2,7 @@ import moment from 'moment';
 import 'moment/locale/ar'; // Import Arabic locale
 import { useNavigate } from 'react-router-dom';
 
-const HomePost = ({ post }) => {
+const PostItem = ({ post }) => {
 
     function extractTextAndTruncate(description) {
         // Remove all image tags
@@ -92,4 +92,4 @@ const HomePost = ({ post }) => {
 
     );
 };
-export default HomePost;
+export default PostItem;

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import HomePost from "./HomePost";
+import PostItem from "./PostItem";
 import Sidebar from "../Sidebar";
-import { deleteTopic, fetchPosts, fetchCategoryPosts, createTopic, resetError } from "../../redux/features/postsSlice";
+import { fetchPosts, fetchCategoryPosts, createTopic, resetError } from "../../redux/features/postsSlice";
 import { fetchCategories } from "../../redux/features/categoriesSlice";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
@@ -462,11 +462,10 @@ const Home = () => {
                                         <div>أُووبس! لا توجد مشاركات جديدة</div>
                                     ) : (
                                         filteredPosts.map((post, index) => (
-                                            <HomePost
+                                            <PostItem
                                                 key={post.id}
                                                 post={post}
                                                 index={index}
-                                                handleDelete={() => { dispatch(deleteTopic(post.id)) }}
                                             />
                                         ))
                                     )}

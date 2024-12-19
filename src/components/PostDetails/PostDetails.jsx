@@ -3,11 +3,11 @@ import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import PostDetail from "./PostDetail";
 import { useParams } from "react-router-dom";
-import PostDetailItem from "./PostDetailItem";
+import PostItem from "../Home/PostItem";
 import { appendPostOfTopic, fetchTopicData } from "../../redux/features/topicsSlice";
 import axios from "axios";
+import PostDetailItem from "./PostDetailItem";
 
 const PostDetails = () => {
     const { topicId, postNumber } = useParams();
@@ -192,7 +192,7 @@ const PostDetails = () => {
                         <div className="flex">
                             <div className="posts-container mt-[3rem]  w-full" style={{ display: 'inline-block', verticalAlign: 'top' }}>
                                 {/* {posts.map((post, index) => ( */}
-                                <PostDetail
+                                <PostDetailItem
                                     topicId={topicId}
                                     post={post}
                                     topicDetails={topicDetails}
@@ -212,7 +212,7 @@ const PostDetails = () => {
                                 {topicPosts.map((post) => {
                                     return (
                                         <div key={post.id} ref={(el) => postRefs.current[post.post_number] = el} >
-                                            <PostDetail
+                                            <PostDetailItem
                                                 key={post.id}
                                                 topicId={topicId}
                                                 post={post}
@@ -257,7 +257,11 @@ const PostDetails = () => {
                                 <div className="mt-[2rem]">
                                     {
                                         suggestedTopics.map((topic) => (
-                                            <PostDetailItem post={topic} />
+                                            <PostItem
+                                                key={topic.id}
+                                                post={topic}
+                                                index={topic.id}
+                                            />
                                         ))
                                     }
                                 </div>

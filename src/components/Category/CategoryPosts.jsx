@@ -3,9 +3,8 @@ import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import { createTopic, deleteTopic, fetchCategoryPosts, resetError, setLoading } from "../../redux/features/postsSlice";
-import CategoryPostItem from "./CategoryPostItem";
-import { fetchCategories } from "../../redux/features/categoriesSlice";
+import { createTopic, fetchCategoryPosts, resetError } from "../../redux/features/postsSlice";
+import PostItem from "../Home/PostItem";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 const CategoryPosts = () => {
@@ -29,16 +28,23 @@ const CategoryPosts = () => {
     const filteredPosts = posts.filter(post => post);
     const navigate = useNavigate();
     const handleFormSubmit = async (e) => {
-        try {
-            e.preventDefault();
-            await dispatch(createTopic({ ...newPost, category: categoryId }));
-            if (!postsLoading) {
-                handleClose();
-                navigate("/");
+        e.preventDefault();
+        if(newPost.raw && newPost.title){
+            try {
+                await dispatch(createTopic({ ...newPost, category: categoryId }));
+                if (!postsLoading) {
+                    handleClose();
+                    navigate(`/category-detail/${categoryId}`);
+                }
+            } catch (err) {
+                console.log(err);
             }
-        } catch (err) {
-            console.log(err);
         }
+        else {
+            console.log("you need to fill out all information");
+            return false;
+        }
+
     };
 
     const handleClose = () => {
@@ -71,12 +77,8 @@ const CategoryPosts = () => {
 
     const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
 
-    // useEffect(() => {
-    //     dispatch(fetchCategories(true));
-    // }, [dispatch]);
-
-    const singleCategory = categories.find((category) => category.id == categoryId) || 
-    categories.flatMap((category) => category.subcategory_list || []).find((sub) => sub.id == categoryId);
+    const singleCategory = categories?.find((category) => category.id == categoryId) || 
+    categories?.flatMap((category) => category.subcategory_list || []).find((sub) => sub.id == categoryId);
 
     const userObj = localStorage.getItem("salla_discourse_user");
     const user = JSON.parse(userObj);
@@ -185,6 +187,7 @@ const CategoryPosts = () => {
                                                 type="text"
                                                 id="title"
                                                 name="title"
+                                                required
                                                 value={newPost.title}
                                                 onChange={(e) => { setNewPost({ ...newPost, title: e.target.value }); }}
                                                 className="w-full h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
@@ -302,11 +305,10 @@ const CategoryPosts = () => {
                                         <div>أُووبس! لا توجد مشاركات جديدة</div>
                                     ) : (
                                         filteredPosts.map((post, index) => (
-                                            <CategoryPostItem
+                                            <PostItem
                                                 key={post.id}
                                                 post={post}
                                                 index={index}
-                                                handleDelete={() => { dispatch(deleteTopic(post.id)) }}
                                             />
                                         ))
                                     )}

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Sidebar = ({ categoryId }) => {
     const dispatch = useDispatch();
-    const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
+    const { categories} = useSelector((state) => state.categories);
     useEffect(() => {
         if (!categories) {
             dispatch(fetchCategories(true));
@@ -43,13 +43,6 @@ const Sidebar = ({ categoryId }) => {
     const toggleLinks = () => {
         setLinksOpen(prev => !prev);
     }
-    // if (categoriesStatus === "loading") {
-    //     return (
-    //         <div className="flex items-center justify-center h-screen">
-    //             <img src="/images/loader.gif" alt="Loading..." className="w-16 h-16" />
-    //         </div>
-    //     );
-    // }
 
     const toggle = (id) => {
         if (closedIds.includes(id)) {
