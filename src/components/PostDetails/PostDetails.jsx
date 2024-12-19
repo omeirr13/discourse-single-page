@@ -186,7 +186,7 @@ const PostDetails = () => {
                                     isTopic={true}
                                     // index={index}
                                     handleJumpToPost={handleJumpToPost}
-                                    showReplyForm={() => { setReplyToPostNumber(post?.id); setFormVisible(true) }}
+                                    showReplyForm={() => { setReplyToPostNumber(post?.post_number); setFormVisible(true) }}
                                 />
                                 {/* <div className="my-5 flex justify-end">
                                     <div className="flex gap-2 mr-3">
@@ -206,7 +206,7 @@ const PostDetails = () => {
                                                 topicDetails={topicDetails}
                                                 isTopic={false}
                                                 handleJumpToPost={handleJumpToPost}
-                                                showReplyForm={() => { setReplyToPostNumber(post?.id); setFormVisible(true) }}
+                                                showReplyForm={() => { setReplyToPostNumber(post?.post_number); setFormVisible(true) }}
                                             // index={index}
                                             />
                                         </div>
