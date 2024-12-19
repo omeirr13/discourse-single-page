@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { sidebar_items } from "../constants";
 import { Link } from "react-router-dom";
 import React from "react";
+import { fetchCategories } from "../redux/features/categoriesSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 
 
-const Sidebar = ({ categories, categoryId }) => {
+const Sidebar = ({ categoryId }) => {
+    const dispatch = useDispatch();
+    const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
+    useEffect(() => {
+        if (!categories) {
+            dispatch(fetchCategories(true));
+        }
+    }, [dispatch]);
 
     const Item = ({ name, linkhref, id }) => {
         return (
@@ -55,7 +64,7 @@ const Sidebar = ({ categories, categoryId }) => {
             <ul className="space-y-4 text-gray-600 mt-4 text-right mr-5">
                 <Item name="الرئيسية" id={-1} linkhref={`/`} />
             </ul>
-            {categories.map((category) => {
+            {categories?.map((category) => {
                 if (!category.subcategory_list) {
                     if (!category.has_children) {
                         return (

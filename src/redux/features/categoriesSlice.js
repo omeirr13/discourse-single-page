@@ -4,8 +4,7 @@ import axios from 'axios';
 const categoriesSlice = createSlice({
   name: 'categories',
   initialState: {
-    categories: [
-  ],
+    categories: null,
     status: 'idle',
     error: null,
   },

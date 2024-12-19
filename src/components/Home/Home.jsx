@@ -16,7 +16,7 @@ const Home = () => {
     const user = JSON.parse(userObj);
 
 
-    const combinedCategories = categories.reduce((acc, category) => {
+    const combinedCategories = categories?.reduce((acc, category) => {
         acc.push(category);
         if (category.subcategory_count > 0 && Array.isArray(category.subcategory_list)) {
             acc.push(...category.subcategory_list);
@@ -197,7 +197,7 @@ const Home = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [newPost, setNewPost] = useState({
         title: "",
-        category: filteredUserCategories.length > 0 ? filteredUserCategories[0].id : "",
+        category: filteredUserCategories?.length > 0 ? filteredUserCategories[0].id : "",
         raw: "",
     });
     const handleFormSubmit = async (e) => {
@@ -333,7 +333,7 @@ const Home = () => {
 
                                         </div>
                                         <div className="mb-4 grid grid-cols-5 gap-4 border border-gray-300 rounded-md p-4">
-                                            {filteredUserCategories.map((category) => (
+                                            {filteredUserCategories?.map((category) => (
                                                 <div className="flex items-center" key={category.id}>
                                                     <input
                                                         type="radio"
@@ -446,7 +446,7 @@ const Home = () => {
                                                 onChange={(e) => handleFilterSelect(e.target.value)}
                                                 value={filterSelected}>
                                                 <option value="">حدد عامل التصفية</option>
-                                                {categories.map((category) => (
+                                                {categories?.map((category) => (
                                                     <option key={category.id} value={category.id}>
                                                         {category.name}
                                                     </option>
@@ -486,7 +486,7 @@ const Home = () => {
 
                     </div>
                 </div>
-                <Sidebar categories={categories} categoryId={-1} />
+                <Sidebar categoryId={-1} />
             </div>
 
         </>

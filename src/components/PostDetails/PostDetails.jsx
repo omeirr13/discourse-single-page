@@ -26,7 +26,7 @@ const PostDetails = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [replyContent, setReplyContent] = useState("");
 
-    const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
+    // const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
 
 
     const dispatch = useDispatch();
@@ -243,7 +243,7 @@ const PostDetails = () => {
                         )}
                     </div>
                 </div>
-                <Sidebar categories={categories} categoryId={-1} />
+                <Sidebar categoryId={-1} />
             </div>
 
         </>

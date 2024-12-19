@@ -71,9 +71,9 @@ const CategoryPosts = () => {
 
     const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
 
-    useEffect(() => {
-        dispatch(fetchCategories(true));
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(fetchCategories(true));
+    // }, [dispatch]);
 
     const singleCategory = categories.find((category) => category.id == categoryId) || 
     categories.flatMap((category) => category.subcategory_list || []).find((sub) => sub.id == categoryId);
@@ -325,7 +325,7 @@ const CategoryPosts = () => {
 
                     </div>
                 </div>
-                <Sidebar categories={categories} categoryId={categoryId} />
+                <Sidebar categoryId={categoryId} />
             </div>
 
         </>
