@@ -25,6 +25,7 @@ const PostDetails = () => {
 
     const [formVisible, setFormVisible] = useState(false);
     const [replyContent, setReplyContent] = useState("");
+    const [showCopytooltip, setShowCopyTooltip] = useState(false);
 
     // const { categories, status: categoriesStatus } = useSelector((state) => state.categories);
 
@@ -37,6 +38,18 @@ const PostDetails = () => {
     const handleClose = () => {
         setReplyContent("");
         setFormVisible(false);
+    };
+
+    const handleMainCopy = async (text) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setShowCopyTooltip(true);
+
+            // Hide the tooltip after 2 seconds
+            setTimeout(() => setShowCopyTooltip(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy text: ", err);
+        }
     };
 
 
@@ -220,14 +233,24 @@ const PostDetails = () => {
                                     <img src="/images/post/link-forward.svg" className="w-[17px]" alt="" />
                                     <span className="text-white">رد</span>
                                 </div>
-                                <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md">
+                                <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md" onClick={() => handleMainCopy(`${process.env.REACT_APP_URL}/detail/${topicId}`)}>
                                     <img src="/images/post/paper-clip.svg" alt="" />
                                     <span className="text-[#004D5A] font-medium">شارك</span>
+                                </div>
+                                <div className="relative">
+                                    {showCopytooltip && (
+                                        <div
+                                            className="absolute bottom-[4rem] left-[5rem] transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow"
+                                            style={{ whiteSpace: "nowrap" }}
+                                        >
+                                            !Copied
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
 
-                        {suggestedTopics && suggestedTopics.length && (
+                        {suggestedTopics && suggestedTopics.length > 0 && (
 
                             <div className="mt-[6rem]">
                                 <span className="text-[18px] text-[#333333] font-medium">مواضيع مشابهة</span>
