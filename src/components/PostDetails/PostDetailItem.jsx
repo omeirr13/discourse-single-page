@@ -165,6 +165,32 @@ const PostDetailItem = ({ topicId, post, topicDetails, isTopic, handleJumpToPost
     post?.reactions?.forEach((reaction) => {
         reactionsMap[reaction.id] = reaction.count;
     });
+    const Reaction = ({ reaction }) => {
+        return (
+            <button
+                key={reaction.label}
+                className="p-1 hover:bg-gray-100 rounded-full"
+            >
+                <div className="flex flex-col items-center">
+                    <div className="relative group">
+                        <p
+                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-200 text-sm rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                            {reactionsMap[reaction.label]}
+                        </p>
+                        <span
+                            role="img"
+                            aria-label={reaction.label}
+                            className="cursor-pointer"
+                        >
+                            {reaction.emoji}
+                        </span>
+                    </div>
+                </div>
+
+            </button>
+        )
+    }
     return (
         <div className="border-gray-300 rounded-lg mt-3 bg-white" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4">
@@ -211,10 +237,168 @@ const PostDetailItem = ({ topicId, post, topicDetails, isTopic, handleJumpToPost
             </div>
 
 
-            <div className={`flex gap-5 w-full items-center justify-between`}>
+            <div className={`flex sm:hidden gap-5 w-full items-center justify-between`}>
+                <div className="flex flex-col items-start w-full">
+                    {/* Attachment */}
+                    {/* <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
+                        <img src="/images/post/attachment.svg" />
+                    </div> */}
+                    <div className="flex gap-2 items-center p-3">
+
+
+                        {isLoggedin && (
+                            // reply
+                            <>
+                                <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer" onClick={showReplyForm}>
+                                    <img src="/images/post/share.svg" alt="" />
+                                </div>
+
+                                {/* likes */}
+                                <div className="relative inline-block group">
+                                    {/* Icon that triggers the reactions bar */}
+                                    <div className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer">
+
+                                        {loading.react[post.id] ? (
+                                            <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" />
+                                        ) : (
+                                            !post?.yours ? (
+                                                <img src="/images/post/heart.svg" alt="Heart" />
+                                            ) : (
+                                                <img src="/images/post/heart-cross.svg" alt="Heart Cross" />
+                                            )
+                                        )}
+
+
+                                    </div>
+
+                                    {/* Reactions bar */}
+                                    {!post?.yours && (
+
+                                        <div className="hidden absolute bottom-full left-1/2 transform -translate-x-1/2 space-x-2 p-2 bg-white border border-gray-300 rounded-lg shadow-lg group-hover:flex">
+                                            {reactions?.map((reaction) => (
+                                                <button
+                                                    key={reaction.label}
+                                                    className="p-1 hover:bg-gray-100 rounded-full"
+                                                    onClick={() => handleReactionClick(post?.id, reaction)}
+                                                >
+                                                    <span role="img" aria-label={reaction.label}>
+                                                        {reaction.emoji}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* bookmarks */}
+                                <div
+                                    className={`relative flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer ${post?.bookmarked ? "px-[15px] py-[12px]" : ""
+                                        }`}
+                                    onClick={() => handleBookmarkPost()}>
+                                    {loading.bookmark[post.id] ? (
+                                        <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" />
+                                    ) : (
+                                        <>
+                                            {post?.bookmarked ? (
+                                                <img
+                                                    src="/images/post/save-filled.svg"
+                                                    className="w-[12px] h-[15px]"
+                                                    alt="Bookmarked"
+                                                />
+                                            ) : (
+                                                <img src="/images/post/save.svg" alt="Save" />
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </>
+                        )}
+
+
+                        {/* Tooltip */}
+                        <div className="relative flex justify-center items-center">
+                            <div
+                                className="flex justify-center items-center border-[1px] border-[#EEEEEE] rounded-sm cursor-pointer"
+                                onClick={() => handleCopy(`${process.env.REACT_APP_URL}/detail/${topicId}/${post.post_number}`)}
+                            >
+                                <img src="/images/post/paperclip.svg" alt="" />
+                            </div>
+                            {showTooltip && (
+                                <div
+                                    className="absolute top-[-30px] left-[50%] transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow"
+                                    style={{ whiteSpace: "nowrap" }}
+                                >
+                                    !Copied
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className={`pl-4 flex ${post?.reply_count > 0 ? 'justify-between w-full pb-2' : 'justify-end'}`}>
+                        {/* replies */}
+                        <div className="flex gap-2">
+
+
+                            {isTopic ? (
+                                <></>
+                            ) : (
+                                post?.reply_count > 0 &&
+                                (
+                                    <div className="cursor-pointer bg-[#eefcf9] text-[#004D5A] mr-3 rounded-lg" onClick={() => handleToggleReplies()}>
+                                        <div className="flex gap-2 font-medium p-2 items-center">
+                                            <span>{post?.reply_count}</span>
+                                            <span>ردود</span>
+                                            {loadingReplies ?
+                                                <img src="/images/loader.gif" alt="Loading..." className="w-4 h-4" />
+                                                :
+                                                <img
+                                                    src={`/images/post/arrow-up.svg`} alt=""
+                                                    className={`cursor-pointer hidden sm:block ${showReplies ? 'rotate-180' : ''}`}
+
+                                                />
+                                            }
+
+                                        </div>
+                                    </div>
+                                )
+                            )}
+
+                            {isLoggedin && isAdmin && (
+                                loading.solution[post.id] ? (
+                                    <img src="/images/loader.gif" alt="Loading..." className="w-[12px] h-[15px]" />
+                                ) : (
+                                    <>
+                                        {post?.accepted_answer && (
+                                            <div
+                                                onClick={() => handleSolution(post)}
+                                                className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]"
+                                            >
+                                                <p className="text-[#707070]">حل العلامة</p>
+                                                <img src="/images/post/filled-tick.svg" alt="" className="w-4 h-4" />
+                                            </div>
+                                        )}
+                                        {!isTopic && !topicHasAcceptedSolution && (
+                                            <div
+                                                onClick={() => handleSolution(post)}
+                                                className="flex gap-1 justify-center items-center border-[1px] p-[9px] cursor-pointer rounded-sm border-[#EEEEEE]"
+                                            >
+                                                <p className="text-[#707070]">حل العلامة</p>
+                                                <img src="/images/post/tick.svg" alt="" className="w-4 h-4" />
+                                            </div>
+                                        )}
+                                    </>
+                                )
+                            )}
+                        </div>
+                        {/* reactions */}
+                        {reactions?.map((reaction) =>
+                            reactionsMap[reaction.label] ? <Reaction reaction={reaction} /> : null
+                        )}
+                    </div>
+
+                </div>
+            </div>
+            <div className={`hidden sm:flex gap-5 w-full items-center justify-between`}>
                 <div className="flex">
-
-
                     {isTopic ? (
                         <></>
                     ) : (
@@ -239,33 +423,9 @@ const PostDetailItem = ({ topicId, post, topicDetails, isTopic, handleJumpToPost
                         )
                     )}
                     <div className="w-[228px] p-2">
-
-                        {reactions?.map((reaction) => (
-                            <button
-                                key={reaction.label}
-                                className="p-1 hover:bg-gray-100 rounded-full"
-                            >
-                                <div className="flex flex-col items-center">
-                                    {reactionsMap[reaction.label] && (
-                                        <div className="relative group">
-                                            <p
-                                                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-200 text-sm rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                            >
-                                                {reactionsMap[reaction.label]}
-                                            </p>
-                                            <span
-                                                role="img"
-                                                aria-label={reaction.label}
-                                                className="cursor-pointer"
-                                            >
-                                                {reaction.emoji}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-
-                            </button>
-                        ))}
+                        {reactions?.map((reaction) =>
+                            reactionsMap[reaction.label] ? <Reaction reaction={reaction} /> : null
+                        )}
                     </div>
                 </div>
 

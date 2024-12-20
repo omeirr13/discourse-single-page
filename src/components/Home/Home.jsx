@@ -15,7 +15,6 @@ const Home = () => {
     const userObj = localStorage.getItem("salla_discourse_user");
     const user = JSON.parse(userObj);
 
-
     const combinedCategories = categories?.reduce((acc, category) => {
         acc.push(category);
         if (category.subcategory_count > 0 && Array.isArray(category.subcategory_list)) {
@@ -294,6 +293,20 @@ const Home = () => {
         setNewPost(prevState => ({ ...prevState, raw: value }));
     }, []);
 
+    useEffect(() => {
+        if (formVisible) {
+            // Disable scrolling on body when modal is open
+            document.body.style.overflow = "hidden";
+        } else {
+            // Re-enable scrolling when modal is closed
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            // Cleanup to ensure no leftover styles
+            document.body.style.overflow = "auto";
+        };
+    }, [formVisible]);
     if (categoriesStatus === "loading" || postsStatus === "loading") {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -301,23 +314,29 @@ const Home = () => {
             </div>
         );
     }
-
     return (
         <>
             <div className="flex justify-end">
                 <div className="flex justify-end w-full">
                     {formVisible && (
                         <div className="fixed inset-0 z-50 flex justify-center items-end bg-black bg-opacity-20">
-                            <div className="flex w-[80vw] p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl" ref={modalRef}>
-                                <div className="rounded-lg p-4 mb-6 w-full">
+                            <div
+                                className="relative flex flex-col w-[90vw] sm:w-[80vw] h-[39rem] sm:h-[712px] bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A] overflow-hidden"
+                                dir="rtl"
+                                ref={modalRef}
+                            >
+                                <div className="overflow-y-auto p-6">
                                     <form onSubmit={handleFormSubmit}>
                                         <div className="mb-4">
                                             {postsError?.map((error, index) => (
-                                                <>
-                                                    <span key={index} className="text-[red]"> {error}</span><br />
-                                                </>
+                                                <span key={index} className="text-red-500 block">
+                                                    {error}
+                                                </span>
                                             ))}
-                                            <label htmlFor="title" className="block text-right font-semibold text-gray-800">
+                                            <label
+                                                htmlFor="title"
+                                                className="block text-right font-semibold text-gray-800"
+                                            >
                                                 اكتب العنوان
                                             </label>
                                             <input
@@ -325,28 +344,29 @@ const Home = () => {
                                                 id="title"
                                                 name="title"
                                                 value={newPost.title}
-                                                onChange={(e) => { setNewPost({ ...newPost, title: e.target.value }); }}
+                                                onChange={(e) =>
+                                                    setNewPost({ ...newPost, title: e.target.value })
+                                                }
                                                 className="w-full h-[54px] p-2 border border-gray-300 rounded-lg mt-2"
                                                 placeholder="اكتب عنوان مختصر يقدم نبذه عن الموضوع"
                                             />
-
-
                                         </div>
-                                        <div className="mb-4 grid grid-cols-5 gap-4 border border-gray-300 rounded-md p-4">
+
+                                        <div className="mb-4 grid grid-cols-3 sm:grid-cols-5 gap-4 border border-gray-300 rounded-md p-4">
                                             {filteredUserCategories?.map((category) => (
                                                 <div className="flex items-center" key={category.id}>
                                                     <input
                                                         type="radio"
-                                                        id={`category-${category.id}`} // Corrected syntax for unique ID
+                                                        id={`category-${category.id}`}
                                                         name="options"
-                                                        onChange={() => {
-                                                            setNewPost({ ...newPost, category: category.id });
-                                                        }}
+                                                        onChange={() =>
+                                                            setNewPost({ ...newPost, category: category.id })
+                                                        }
                                                         className="form-radio ml-2 w-3 h-3 border-gray-300 focus:ring-0"
                                                         checked={newPost.category === category.id}
                                                     />
                                                     <label
-                                                        htmlFor={`category-${category.id}`} // Corrected syntax for matching ID
+                                                        htmlFor={`category-${category.id}`}
                                                         className="ml-2 text-[#666666] font-medium"
                                                     >
                                                         {category.name}
@@ -355,27 +375,34 @@ const Home = () => {
                                             ))}
                                         </div>
 
-
-
-
                                         <div className="mb-4">
-                                            <label htmlFor="content" className="block text-right font-semibold mb-3 text-gray-800">
+                                            <label
+                                                htmlFor="content"
+                                                className="block text-right font-semibold mb-3 text-gray-800"
+                                            >
                                                 اكتب موضوعك هنا:
                                             </label>
                                             <ReactQuill
                                                 theme="snow"
                                                 ref={quillRef}
-                                                value={editorValue} // Bind the state to value
+                                                value={editorValue}
                                                 modules={modules}
                                                 onChange={handleChange}
                                             />
                                         </div>
 
                                         <div className="flex space-x-4 mt-4">
-                                            <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
+                                            <button
+                                                type="submit"
+                                                className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white"
+                                            >
                                                 نشر
                                             </button>
-                                            <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
+                                            <button
+                                                type="button"
+                                                onClick={handleClose}
+                                                className="px-4 py-2 rounded bg-gray-200 text-black"
+                                            >
                                                 إلغاء
                                             </button>
                                         </div>
@@ -384,6 +411,7 @@ const Home = () => {
                             </div>
                         </div>
                     )}
+
                     <div className="sm:p-6 mt-4 w-full" dir="rtl">
                         <div
                             className="flex flex-col items-center justify-center pb-[90px]"

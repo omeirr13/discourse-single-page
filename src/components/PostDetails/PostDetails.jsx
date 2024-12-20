@@ -33,7 +33,7 @@ const PostDetails = () => {
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchTopicData(topicId,postNumber));
+        dispatch(fetchTopicData(topicId, postNumber));
     }, [dispatch, topicId]);
     const { topicPosts, topicDetails, suggestedTopics, status: postsStatus, error } = useSelector((state) => state.topics);
     const handleClose = () => {
@@ -164,7 +164,7 @@ const PostDetails = () => {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
-        if(!editorValue){
+        if (!editorValue) {
             console.log("you need to provide content first")
             return;
         }
@@ -195,7 +195,7 @@ const PostDetails = () => {
                 setEditorValue("");
                 setFormVisible(false);
                 if (replyToPostNumber) {
-                    dispatch(fetchTopicData(topicId,postNumber));
+                    dispatch(fetchTopicData(topicId, postNumber));
                 } else {
                     dispatch(appendPostOfTopic(response?.data?.post));
                 }
@@ -223,9 +223,14 @@ const PostDetails = () => {
             <div className="flex justify-end">
                 <div className="flex space-x-8 justify-end w-full">
                     {formVisible && (
-                        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-20">
-                            <div className="w-1/2 p-l6 pr-6 mt-1 bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A]" dir="rtl" ref={modalRef}>
-                                <div className="rounded-lg p-4 mb-6">
+                        <div className="fixed inset-0 z-50 flex justify-center items-end bg-black bg-opacity-20">
+                            <div
+                                className="relative flex h-[27rem] sm:h-[35rem] flex-col w-[90vw] sm:w-[80vw] bg-[#fbfdfe] shadow-lg border-t-[10px] border-t-[#004D5A] overflow-hidden"
+                                dir="rtl"
+                                ref={modalRef}
+                            >
+                                {/* max-h-[39rem] sm:max-h-[712px] */}
+                                <div className="overflow-y-auto p-6">
                                     <form onSubmit={handleFormSubmit}>
                                         <div className="mb-4">
                                             <label htmlFor="content" className="block text-right font-semibold text-gray-800">
@@ -243,9 +248,7 @@ const PostDetails = () => {
 
                                         <div className="flex space-x-4 mt-4">
                                             <button type="submit" className="btn bg-blue-500 px-4 py-2 rounded ml-3 text-white">
-                                                {
-                                                    postsStatus == "loading" ? "Loading" : "نشر"
-                                                }
+                                                {postsStatus == "loading" ? "Loading" : "نشر"}
                                             </button>
                                             <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-200 text-black">
                                                 إلغاء
@@ -256,9 +259,11 @@ const PostDetails = () => {
                             </div>
                         </div>
                     )}
+
                     <div className="p-6 mt-4 w-full" dir="rtl">
                         <div className="flex">
                             <div className="posts-container mt-[3rem]  w-full" style={{ display: 'inline-block', verticalAlign: 'top' }}>
+                                <img src="/images/post/go-back.svg" />
                                 {/* {posts.map((post, index) => ( */}
                                 <PostDetailItem
                                     topicId={topicId}

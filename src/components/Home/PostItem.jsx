@@ -28,7 +28,7 @@ const PostItem = ({ post }) => {
                                 <div className="flex-col">
                                     <div className="flex gap-3 text-[14px] font-medium">
                                         <p className="text-[#444444] font-medium">{post.topic_creator?.username}</p>
-                                        <span className="mb-1 text-[#999999]">{post.category?.name}</span>
+                                        <span className="mb-1 text-[#999999] text-nowrap">{post.category?.name}</span>
                                         {post.has_accepted_answer && (
                                             <div className="bg-[#EFFBF6] rounded-full">
                                             <div className="flex gap-2 px-3">
@@ -53,37 +53,37 @@ const PostItem = ({ post }) => {
             </div>
             <div className="flex gap-5 w-full justify-between">
                 <div className="p-3 flex gap-8">
-                    <div className="flex gap-2 items-center">
-                        <img src="/images/home/like.svg" alt="" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">{post.like_count}</span>
+                    <div className="flex gap-1 sm:gap-2 items-center justify-center">
+                        <img src="/images/home/like.svg" alt="" className="cursor-pointer sm:w-auto" />
+                        <span className="mt-1 text-[#999999]">{post.like_count}</span>
                     </div>
-                    <div className="flex gap-2 items-center">
-                        <img src="/images/home/cloud.svg" alt="" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">{post.posts_count - 1}</span>
+                    <div className="flex gap-1 sm:gap-2 items-center justify-center">
+                        <img src="/images/home/cloud.svg" alt="" className="cursor-pointer sm:w-auto" />
+                        <span className="mt-1 text-[#999999]">{post.posts_count - 1}</span>
                     </div>
-                    <div className="flex gap-2">
-                        <img src="/images/home/eye.svg" alt="" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">{post.views}</span>
+                    <div className="flex gap-1 sm:gap-2 items-center justify-center">
+                        <img src="/images/home/eye.svg" alt="" className="cursor-pointer sm:w-auto" />
+                        <span className="mt-1 text-[#999999]">{post.views}</span>
                     </div>
                 </div>
 
-                <div className="p-3 flex gap-8">
-                    <div className="flex gap-2 items-center">
+                <div className="p-3 flex gap-4">
+                    <div className="flex gap-1 sm:gap-2 items-center justify-center">
                         {post.bookmarked ? (
-                            <img src="/images/post/save-filled.svg" alt="" className="cursor-pointer" />
+                            <img src="/images/post/save-filled.svg" alt="" className="cursor-pointer w-[15px] sm:w-auto" />
                         ) : (
-                            <img src="/images/home/save.svg" alt="" className="cursor-pointer" />
+                            <img src="/images/home/save.svg" alt="" className="cursor-pointer w-[21px] sm:w-auto" />
                         )}
                         
-                        <span className="mb-1 text-[#999999]">اقرأ لاحقاً</span>
+                        <span className="mt-1 text-[#999999] text-nowrap hidden sm:block">اقرأ لاحقاً</span>
                     </div>
                     {/* <div className="flex gap-2 items-center">
                         <img src="/images/home/share.svg" className="cursor-pointer" />
                         <span className="mb-1 text-[#999999]">انشر</span>
                     </div> */}
-                    <div className="flex gap-2">
-                        <img src="/images/home/clock.svg" alt="" className="cursor-pointer" />
-                        <span className="mb-1 text-[#999999]">{humanFriendlyDate}</span>
+                    <div className="flex gap-2 justify-center items-center">
+                        <img src="/images/home/clock.svg" alt="" className="cursor-pointer w-[17px] sm:w-auto" />
+                        <span className="mt-1 text-[#999999] text-nowrap text-[15px]">{humanFriendlyDate}</span>
                     </div>
                 </div>
 

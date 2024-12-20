@@ -48,7 +48,13 @@ code {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   width: 43vw;
-  height: 290px !important;
+  height: 49vh !important;
+}
+
+@media (max-width: 400px) { /* Tailwind's default breakpoint for "sm" and below */
+  .ql-container {
+    height: 10rem !important;
+  }
 }
 
 
