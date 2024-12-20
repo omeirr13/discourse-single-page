@@ -52,7 +52,7 @@ const PostItem = ({ post }) => {
 
             </div>
             <div className="flex gap-5 w-full justify-between">
-                <div className="p-3 flex gap-8">
+                <div className="p-3 flex gap-3 sm:gap-8">
                     <div className="flex gap-1 sm:gap-2 items-center justify-center">
                         <img src="/images/home/like.svg" alt="" className="cursor-pointer sm:w-auto" />
                         <span className="mt-1 text-[#999999]">{post.like_count}</span>
@@ -67,12 +67,12 @@ const PostItem = ({ post }) => {
                     </div>
                 </div>
 
-                <div className="p-3 flex gap-4">
+                <div className="p-3 flex gap-2 sm:gap-4">
                     <div className="flex gap-1 sm:gap-2 items-center justify-center">
                         {post.bookmarked ? (
-                            <img src="/images/post/save-filled.svg" alt="" className="cursor-pointer w-[15px] sm:w-auto" />
+                            <img src="/images/post/save-filled.svg" alt="" className="cursor-pointer w-[14px]" />
                         ) : (
-                            <img src="/images/home/save.svg" alt="" className="cursor-pointer w-[21px] sm:w-auto" />
+                            <img src="/images/home/save.svg" alt="" className="cursor-pointer w-[18px]" />
                         )}
                         
                         <span className="mt-1 text-[#999999] text-nowrap hidden sm:block">اقرأ لاحقاً</span>
