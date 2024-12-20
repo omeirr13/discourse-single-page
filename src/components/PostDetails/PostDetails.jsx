@@ -301,7 +301,7 @@ const PostDetails = () => {
                                     <img src="/images/post/link-forward.svg" className="w-[17px]" alt="" />
                                     <span className="text-white">رد</span>
                                 </div>
-                                <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md" onClick={() => handleMainCopy(`${process.env.REACT_APP_URL}/detail/${topicId}/${postNumber}`)}>
+                                <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md" onClick={() => handleMainCopy(`${process.env.REACT_APP_URL}/detail/${topicId}/1`)}>
                                     <img src="/images/post/paper-clip.svg" alt="" />
                                     <span className="text-[#004D5A] font-medium">شارك</span>
                                 </div>
