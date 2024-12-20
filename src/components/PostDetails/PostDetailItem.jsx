@@ -218,6 +218,13 @@ const PostDetailItem = ({ topicId, post, topicDetails, isTopic, handleJumpToPost
                                 <div>
                                     <span className="text-[#444444] text-[16px] font-bold">{username}</span>
                                 </div>
+                                {replied_to_image && (
+                                    <div className="flex sm:hidden gap-3 ml-8">
+                                        <img src="/images/post/arrow-turn-back.svg" alt="" />
+                                        <img src={reply_to_user_image} className="w-[24px] h-[24px] rounded-full" alt="" />
+                                        <p className="text-[#666666] font-bold">{post?.reply_to_user?.username}</p>
+                                    </div>
+                                )}
                                 <div
                                     className="content text-right text-[#707070] mb-4 mt-3"
                                     dangerouslySetInnerHTML={{ __html: removeMetaDivs(post.cooked) }}
@@ -226,7 +233,7 @@ const PostDetailItem = ({ topicId, post, topicDetails, isTopic, handleJumpToPost
                         </div>
                     </div>
                     {replied_to_image && (
-                        <div className="flex gap-3 ml-8">
+                        <div className="hidden sm:flex gap-3 ml-8">
                             <img src="/images/post/arrow-turn-back.svg" alt="" />
                             <img src={reply_to_user_image} className="w-[24px] h-[24px] rounded-full" alt="" />
                             <p className="text-[#666666] font-bold">{post?.reply_to_user?.username}</p>
@@ -388,11 +395,11 @@ const PostDetailItem = ({ topicId, post, topicDetails, isTopic, handleJumpToPost
                                     </>
                                 )
                             )}
+                            {/* reactions */}
+                            {reactions?.map((reaction) =>
+                                reactionsMap[reaction.label] ? <Reaction reaction={reaction} /> : null
+                            )}
                         </div>
-                        {/* reactions */}
-                        {reactions?.map((reaction) =>
-                            reactionsMap[reaction.label] ? <Reaction reaction={reaction} /> : null
-                        )}
                     </div>
 
                 </div>

@@ -3,7 +3,7 @@ import Sidebar from "../Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PostItem from "../Home/PostItem";
 import { appendPostOfTopic, fetchTopicData } from "../../redux/features/topicsSlice";
 import axios from "axios";
@@ -11,7 +11,7 @@ import PostDetailItem from "./PostDetailItem";
 
 const PostDetails = () => {
     const { topicId, postNumber } = useParams();
-
+    const navigate = useNavigate();
     const userObj = localStorage.getItem("salla_discourse_user");
     const user = JSON.parse(userObj);
     let isLoggedin = false;
@@ -263,7 +263,7 @@ const PostDetails = () => {
                     <div className="p-6 mt-4 w-full" dir="rtl">
                         <div className="flex">
                             <div className="posts-container mt-[3rem]  w-full" style={{ display: 'inline-block', verticalAlign: 'top' }}>
-                                <img src="/images/post/go-back.svg" />
+                                <img src="/images/post/go-back.svg" className="p-3 cursor-pointer" onClick={() => navigate(-1)} />
                                 {/* {posts.map((post, index) => ( */}
                                 <PostDetailItem
                                     topicId={topicId}
