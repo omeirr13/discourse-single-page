@@ -17,7 +17,7 @@ const PostItem = ({ post }) => {
     const humanFriendlyDate = moment(post.last_posted_at || post.created_at).locale('ar').fromNow();
     const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator?.avatar.replace("{size}", "28")}`;
     return (
-        <div  onClick={() => { navigate(`/detail/${post.id}/${post.highest_post_number}`) }} className="border-[#DDDDDD] cursor-pointer border-[1px] border-l-0 border-t-0 border-r-0 bg-white rounded-lg m-3" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
+        <div onClick={() => { navigate(`/detail/${post.id}/${post.highest_post_number}`) }} className="border-[#DDDDDD] cursor-pointer border-[1px] border-l-0 border-t-0 border-r-0 bg-white rounded-lg m-3" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4 pb-0">
                 <div className="flex items-start mb-4">
                     <div className="flex justify-between w-full">
@@ -29,15 +29,27 @@ const PostItem = ({ post }) => {
                                     <div className="flex gap-3 text-[14px] font-medium">
                                         <p className="text-[#444444] font-medium">{post.topic_creator?.username}</p>
                                         <span className="mb-1 text-[#999999] text-nowrap">{post.category?.name}</span>
+                                        <div className="sm:flex hidden">
+                                            {post.has_accepted_answer && (
+                                                <div className="bg-[#EFFBF6] rounded-full w-[7rem] sm:w-auto">
+                                                    <div className="flex gap-2 px-3">
+                                                        <img src="/images/home/tick.svg" alt="" />
+                                                        <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
+                                    <div className="flex sm:hidden">
                                         {post.has_accepted_answer && (
                                             <div className="bg-[#EFFBF6] rounded-full w-[7rem] sm:w-auto">
-                                            <div className="flex gap-2 px-3">
-                                                <img src="/images/home/tick.svg" alt="" />
-                                                <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
-                                            </div>
+                                                <div className="flex gap-2 px-3">
+                                                    <img src="/images/home/tick.svg" alt="" />
+                                                    <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
+                                                </div>
                                             </div>
                                         )}
+                                    </div>
                                     <p className='font-bold'>{post.title || post.topic_creator.title} </p>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
@@ -74,7 +86,7 @@ const PostItem = ({ post }) => {
                         ) : (
                             <img src="/images/home/save.svg" alt="" className="cursor-pointer w-[18px]" />
                         )}
-                        
+
                         <span className="mt-1 text-[#999999] text-nowrap hidden sm:block">اقرأ لاحقاً</span>
                     </div>
                     {/* <div className="flex gap-2 items-center">
