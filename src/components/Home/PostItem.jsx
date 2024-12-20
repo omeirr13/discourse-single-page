@@ -23,21 +23,21 @@ const PostItem = ({ post }) => {
                     <div className="flex justify-between w-full">
                         <div className="flex justify-between w-full">
                             <div className="flex gap-3" alt="">
-                                <img src={poster_image} alt="" className="w-[44px] h-[44px] rounded-full" />
+                                <img src={poster_image} alt="" className="w-[30px] h-[30px] sm:w-[44px] sm:h-[44px] rounded-full" />
 
                                 <div className="flex-col">
                                     <div className="flex gap-3 text-[14px] font-medium">
                                         <p className="text-[#444444] font-medium">{post.topic_creator?.username}</p>
                                         <span className="mb-1 text-[#999999] text-nowrap">{post.category?.name}</span>
+                                    </div>
                                         {post.has_accepted_answer && (
-                                            <div className="bg-[#EFFBF6] rounded-full">
+                                            <div className="bg-[#EFFBF6] rounded-full w-[7rem] sm:w-auto">
                                             <div className="flex gap-2 px-3">
                                                 <img src="/images/home/tick.svg" alt="" />
                                                 <span className="mb-1 text-[#008C56] font-medium">تم الاجابة</span>
                                             </div>
                                             </div>
                                         )}
-                                    </div>
                                     <p className='font-bold'>{post.title || post.topic_creator.title} </p>
                                     <div
                                         className="content text-right text-[#707070] mb-4 mt-3"
