@@ -17,7 +17,7 @@ const PostItem = ({ post }) => {
     const humanFriendlyDate = moment(post.last_posted_at || post.created_at).locale('ar').fromNow();
     const poster_image = `${process.env.REACT_APP_API_URL + post.topic_creator?.avatar.replace("{size}", "28")}`;
     return (
-        <div  onClick={() => { navigate(`/detail/${post.id}`) }} className="border-[#DDDDDD] cursor-pointer border-[1px] border-l-0 border-t-0 border-r-0 bg-white rounded-lg m-3" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
+        <div  onClick={() => { navigate(`/detail/${post.id}/${post.highest_post_number}`) }} className="border-[#DDDDDD] cursor-pointer border-[1px] border-l-0 border-t-0 border-r-0 bg-white rounded-lg m-3" style={{ boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}>
             <div className="p-4 pb-0">
                 <div className="flex items-start mb-4">
                     <div className="flex justify-between w-full">

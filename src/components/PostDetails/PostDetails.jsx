@@ -159,7 +159,7 @@ const PostDetails = () => {
                 });
             }
         }
-    }, [postsStatus, postNumber, topicPosts]);
+    }, [postsStatus, postNumber]);
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
