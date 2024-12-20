@@ -33,7 +33,7 @@ const PostDetails = () => {
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchTopicData(topicId));
+        dispatch(fetchTopicData(topicId,postNumber));
     }, [dispatch, topicId]);
     const { topicPosts, topicDetails, suggestedTopics, status: postsStatus, error } = useSelector((state) => state.topics);
     const handleClose = () => {
@@ -195,7 +195,7 @@ const PostDetails = () => {
                 setEditorValue("");
                 setFormVisible(false);
                 if (replyToPostNumber) {
-                    dispatch(fetchTopicData(topicId));
+                    dispatch(fetchTopicData(topicId,postNumber));
                 } else {
                     dispatch(appendPostOfTopic(response?.data?.post));
                 }
@@ -301,7 +301,7 @@ const PostDetails = () => {
                                     <img src="/images/post/link-forward.svg" className="w-[17px]" alt="" />
                                     <span className="text-white">رد</span>
                                 </div>
-                                <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md" onClick={() => handleMainCopy(`${process.env.REACT_APP_URL}/detail/${topicId}`)}>
+                                <div className="border-[1px] cursor-pointer border-[#96EDD9] px-9 py-3 flex flex-grow-0 rounded-md" onClick={() => handleMainCopy(`${process.env.REACT_APP_URL}/detail/${topicId}/${postNumber}`)}>
                                     <img src="/images/post/paper-clip.svg" alt="" />
                                     <span className="text-[#004D5A] font-medium">شارك</span>
                                 </div>

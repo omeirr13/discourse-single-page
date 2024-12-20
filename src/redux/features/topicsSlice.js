@@ -117,7 +117,7 @@ const topicsSlice = createSlice({
 export const { setLoading, setTopicData, setError, removePost, addPost, resetError, appendPostOfTopic, toggleBookmark, acceptUnAcceptTopicSolution, toggleLike } = topicsSlice.actions;
 
 // Thunk to fetch specific topic and its posts
-export const fetchTopicData = (topicId) => async (dispatch) => {
+export const fetchTopicData = (topicId,postNumber) => async (dispatch) => {
     try {
         dispatch(setLoading());
 
@@ -130,7 +130,7 @@ export const fetchTopicData = (topicId) => async (dispatch) => {
         const user = JSON.parse(userObj);
         const username = user?.username || process.env.REACT_APP_API_USERNAME;
 
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/t/${topicId}.json?track_visit=true&forceLoad=true`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/t/${topicId}/${postNumber}.json?track_visit=true&forceLoad=true`, {
             headers: {
                 'Api-Key': process.env.REACT_APP_API_KEY,
                 'Api-Username': username,
